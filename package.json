@@ -9,9 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.421.0",
+    "mysql2": "^3.6.1",
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "sequelize": "^6.33.0"
   },
   "devDependencies": {
     "eslint": "latest",
