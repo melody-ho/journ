@@ -1,7 +1,7 @@
 // Imports //
 import { HeadBucketCommand } from "@aws-sdk/client-s3";
-import rds from "@/database/config/rds";
-import s3 from "@/database/config/s3";
+import rds from "@/database/rds";
+import s3 from "@/database/s3";
 import styles from "./page.module.css";
 
 // Private //
