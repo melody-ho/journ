@@ -1,3 +1,4 @@
+import initializeModels from "./models";
 import mysql2 from "mysql2";
 import { Sequelize } from "sequelize";
 
@@ -14,5 +15,7 @@ const rds = new Sequelize(config.DB, config.USER, config.PASSWORD, {
   dialect: "mysql",
   dialectModule: mysql2,
 });
+
+initializeModels(rds);
 
 export default rds;
