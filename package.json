@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.421.0",
+    "argon2": "^0.31.1",
     "mysql2": "^3.6.1",
     "next": "latest",
     "react": "latest",
