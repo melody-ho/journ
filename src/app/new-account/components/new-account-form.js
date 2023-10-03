@@ -1,12 +1,14 @@
 "use client";
 
 import createUser from "../actions/create-user";
+import { experimental_useFormState as useFormState } from "react-dom";
 
 export default function NewAccountForm() {
   // TO DO: client-side validation of form data //
   // TO DO: display loading state after submission //
+  const [formState, formAction] = useFormState(createUser, null);
   return (
-    <form action={createUser}>
+    <form action={formAction}>
       <section>
         <h2>What should we call you?</h2>
         <h3>This can be changed later in account settings.</h3>
@@ -44,6 +46,7 @@ export default function NewAccountForm() {
         </ul>
       </section>
       <button>Create account</button>
+      <h2>{formState ? formState : ""}</h2>
     </form>
   );
 }
