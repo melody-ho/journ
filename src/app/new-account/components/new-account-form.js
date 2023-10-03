@@ -1,11 +1,16 @@
 "use client";
 
+/// imports ///
 import createUser from "../actions/create-user";
-import { experimental_useFormState as useFormState } from "react-dom";
 import { useState } from "react";
 import z from "zod";
+import {
+  experimental_useFormState as useFormState,
+  experimental_useFormStatus as useFormStatus,
+} from "react-dom";
 
-export default function NewAccountForm() {
+/// children components ///
+function FormFields() {
   // client-side form validation //
   // first name
   const [firstNameStatus, setFirstNameStatus] = useState("valid");
@@ -85,13 +90,11 @@ export default function NewAccountForm() {
     matchPasswords();
   }
 
-  // TO DO: display loading state after submission //
-
-  // server-side error handling //
-  const [formState, formAction] = useFormState(createUser, null);
+  // form status initialization //
+  const { pending } = useFormStatus();
 
   return (
-    <form action={formAction}>
+    <>
       <section>
         <h2>What should we call you?</h2>
         <h3>This can be changed later in account settings.</h3>
@@ -104,6 +107,7 @@ export default function NewAccountForm() {
               name="firstName"
               onBlur={handleChangeFirstName}
               onChange={handleChangeFirstName}
+              readOnly={pending}
               type="text"
             ></input>
             <p aria-hidden={`${firstNameMessage ? "false" : "true"}`}>
@@ -112,7 +116,12 @@ export default function NewAccountForm() {
           </li>
           <li>
             <label htmlFor="last-name">last name</label>
-            <input id="last-name" name="lastName" type="text"></input>
+            <input
+              id="last-name"
+              name="lastName"
+              readOnly={pending}
+              type="text"
+            ></input>
           </li>
         </ul>
       </section>
@@ -128,6 +137,7 @@ export default function NewAccountForm() {
               name="username"
               onBlur={handleUsernameChange}
               onChange={handleUsernameChange}
+              readOnly={pending}
               type="text"
             ></input>
             <p aria-hidden={`${userNameMessage ? "false" : "true"}`}>
@@ -142,6 +152,7 @@ export default function NewAccountForm() {
               name="password"
               onBlur={handlePasswordChange}
               onChange={handlePasswordChange}
+              readOnly={pending}
               type="password"
             ></input>
             <p aria-hidden={`${passwordMessage ? "false" : "true"}`}>
@@ -156,6 +167,7 @@ export default function NewAccountForm() {
               name="confirmPassword"
               onBlur={handleConfirmPasswordChange}
               onChange={handleConfirmPasswordChange}
+              readOnly={pending}
               type="password"
             ></input>
             <p aria-hidden={`${confirmPasswordMessage ? "false" : "true"}`}>
@@ -164,7 +176,19 @@ export default function NewAccountForm() {
           </li>
         </ul>
       </section>
-      <button>Create account</button>
+      <button disabled={pending}>Create account</button>
+    </>
+  );
+}
+
+/// main component ///
+export default function NewAccountForm() {
+  // server-side error handling //
+  const [formState, formAction] = useFormState(createUser, null);
+
+  return (
+    <form action={formAction}>
+      <FormFields />
       <h2>{formState ? formState : ""}</h2>
     </form>
   );
