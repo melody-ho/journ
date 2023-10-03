@@ -1,7 +1,9 @@
 "use client";
 
 /// imports ///
+import checkUsername from "../actions/check-username";
 import createUser from "../actions/create-user";
+import debounce from "lodash.debounce";
 import { useState } from "react";
 import z from "zod";
 import {
@@ -31,6 +33,10 @@ function FormFields() {
   // username
   const [usernameStatus, setUsernameStatus] = useState("valid");
   const [userNameMessage, setUsernameMessage] = useState(null);
+  const [usernameUnavailable, checkUsernameAvailability] = useFormState(
+    checkUsername,
+    null,
+  );
   const userNameSchema = z
     .string()
     .min(6, { message: "Username must be at least 6 characters." })
@@ -47,7 +53,9 @@ function FormFields() {
       setUsernameStatus("invalid");
       setUsernameMessage(error.issues[0].message);
     }
+    checkUsernameAvailability(e.target.value);
   }
+  const debouncedHandleUsernameChange = debounce(handleUsernameChange, 250);
   // password
   const [passwordStatus, setPasswordStatus] = useState("valid");
   const [passwordMessage, setPasswordMessage] = useState(null);
@@ -132,16 +140,24 @@ function FormFields() {
           <li>
             <label htmlFor="username">username</label>
             <input
-              className={usernameStatus}
+              className={usernameUnavailable ? "invalid" : usernameStatus}
               id="username"
               name="username"
-              onBlur={handleUsernameChange}
-              onChange={handleUsernameChange}
+              onBlur={debouncedHandleUsernameChange}
+              onChange={debouncedHandleUsernameChange}
               readOnly={pending}
               type="text"
             ></input>
-            <p aria-hidden={`${userNameMessage ? "false" : "true"}`}>
-              {userNameMessage ? userNameMessage : ""}
+            <p
+              aria-hidden={`${
+                userNameMessage || usernameUnavailable ? "false" : "true"
+              }`}
+            >
+              {userNameMessage
+                ? userNameMessage
+                : usernameUnavailable
+                ? usernameUnavailable
+                : ""}
             </p>
           </li>
           <li>
