@@ -1,8 +1,8 @@
 "use client";
 
 /// imports ///
-import checkUsername from "../actions/check-username";
-import createUser from "../actions/create-user";
+import checkUsername from "../_actions/check-username";
+import createUser from "../_actions/create-user";
 import debounce from "lodash.debounce";
 import { useState } from "react";
 import z from "zod";
