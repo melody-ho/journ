@@ -15,12 +15,14 @@ import {
 function FormFields() {
   // client-side form validation //
   // first name
+  const [firstName, setfirstName] = useState("");
   const [firstNameStatus, setFirstNameStatus] = useState("valid");
   const [firstNameMessage, setFirstNameMessage] = useState(null);
   const firstNameSchema = z
     .string()
     .min(1, { message: "First name is required." });
   function handleChangeFirstName(e) {
+    setfirstName(e.target.value);
     try {
       firstNameSchema.parse(e.target.value);
       setFirstNameStatus("valid");
@@ -31,8 +33,9 @@ function FormFields() {
     }
   }
   // username
+  const [username, setUsername] = useState("");
   const [usernameStatus, setUsernameStatus] = useState("valid");
-  const [userNameMessage, setUsernameMessage] = useState(null);
+  const [usernameMessage, setUsernameMessage] = useState(null);
   const [usernameUnavailable, checkUsernameAvailability] = useFormState(
     checkUsername,
     null,
@@ -45,6 +48,7 @@ function FormFields() {
       message: "Username format is invalid.",
     });
   function handleUsernameChange(e) {
+    setUsername(e.target.value);
     try {
       userNameSchema.parse(e.target.value);
       setUsernameStatus("valid");
@@ -57,8 +61,10 @@ function FormFields() {
   }
   const debouncedHandleUsernameChange = debounce(handleUsernameChange, 250);
   // password
+  const [password, setPassword] = useState("");
   const [passwordStatus, setPasswordStatus] = useState("valid");
   const [passwordMessage, setPasswordMessage] = useState(null);
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmPasswordStatus, setConfirmPasswordStatus] = useState("valid");
   const [confirmPasswordMessage, setConfirmPasswordMessage] = useState(null);
   function matchPasswords() {
@@ -77,6 +83,7 @@ function FormFields() {
     .min(6, { message: "Password must be at least 6 characters." })
     .max(255, { message: "Password cannot be longer than 255 characters." });
   function handlePasswordChange(e) {
+    setPassword(e.target.value);
     try {
       passwordSchema.parse(e.target.value);
       setPasswordStatus("valid");
@@ -95,6 +102,7 @@ function FormFields() {
     }
   }
   function handleConfirmPasswordChange(e) {
+    setConfirmPassword(e.target.value);
     matchPasswords();
   }
 
@@ -150,11 +158,11 @@ function FormFields() {
             ></input>
             <p
               aria-hidden={`${
-                userNameMessage || usernameUnavailable ? "false" : "true"
+                usernameMessage || usernameUnavailable ? "false" : "true"
               }`}
             >
-              {userNameMessage
-                ? userNameMessage
+              {usernameMessage
+                ? usernameMessage
                 : usernameUnavailable
                 ? usernameUnavailable
                 : ""}
@@ -192,7 +200,22 @@ function FormFields() {
           </li>
         </ul>
       </section>
-      <button disabled={pending}>Create account</button>
+      <button
+        disabled={
+          !firstName ||
+          !username ||
+          !password ||
+          !confirmPassword ||
+          firstNameMessage ||
+          usernameMessage ||
+          usernameUnavailable ||
+          passwordMessage ||
+          confirmPasswordMessage ||
+          pending
+        }
+      >
+        Create account
+      </button>
     </>
   );
 }
