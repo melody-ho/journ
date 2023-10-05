@@ -14,7 +14,6 @@ export default async function authCredentials(formState, formData) {
     const authorized = await argon2.verify(user.password, password);
     if (!authorized) return "invalid";
     return "success";
-    // TO DO: set session cookie and redirect //
   } catch (error) {
     return "error";
   }

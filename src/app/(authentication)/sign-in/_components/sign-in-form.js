@@ -2,11 +2,11 @@
 
 /// imports ///
 import authCredentials from "../_actions/auth-credentials";
-import { useState } from "react";
 import {
   experimental_useFormState as useFormState,
   experimental_useFormStatus as useFormStatus,
 } from "react-dom";
+import { useEffect, useRef, useState } from "react";
 
 /// children components ///
 function FormFields() {
@@ -65,9 +65,20 @@ function FormFields() {
 export default function SignInForm() {
   // server-side response handling //
   const [formState, formAction] = useFormState(authCredentials, "initial");
+  const form = useRef(null);
+  useEffect(
+    function postOnSuccess() {
+      if (formState === "success") {
+        form.current.action = "./sign-in/success";
+        form.current.method = "post";
+        form.current.submit();
+      }
+    },
+    [formState],
+  );
 
   return (
-    <form action={formAction}>
+    <form action={formAction} ref={form}>
       <FormFields />
       <h2>
         {formState === "invalid"
