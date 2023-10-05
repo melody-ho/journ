@@ -1,11 +1,21 @@
 /// imports ///
-import { serialize } from "cookie";
+import { parse, serialize } from "cookie";
 
 /// private ///
 const TOKEN_NAME = "token";
 
+function parseCookies(headers) {
+  const cookies = headers.get("cookie");
+  return parse(cookies || "");
+}
+
 /// pubic ///
 const MAX_AGE = 60 * 60 * 24 * 10; // ten days
+
+function getTokenCookie(headers) {
+  const cookies = parseCookies(headers);
+  return cookies[TOKEN_NAME];
+}
 
 function setTokenCookie(res, token) {
   const cookie = serialize(TOKEN_NAME, token, {
@@ -19,4 +29,4 @@ function setTokenCookie(res, token) {
 }
 
 /// exports ///
-export { MAX_AGE, setTokenCookie };
+export { getTokenCookie, MAX_AGE, setTokenCookie };
