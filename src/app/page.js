@@ -1,20 +1,12 @@
 /// imports ///
-import { getUserSession } from "./(authentication)/_utils/sessions";
+import getUserId from "./(authentication)/_helpers/get-user-id";
 import { headers } from "next/headers";
 import rds from "@/database/rds";
-import { redirect } from "next/navigation";
 import styles from "./page.module.css";
 
 /// private ///
-async function getUserId() {
-  const reqHeaders = headers();
-  const session = await getUserSession(reqHeaders);
-  if (!session) redirect("/sign-in");
-  return session.user.id;
-}
-
 async function getUserData() {
-  const userId = await getUserId();
+  const userId = await getUserId(headers());
   try {
     const user = await rds.models.User.findByPk(userId, {
       attributes: { exclude: ["password", "createdAt", "updatedAt"] },
