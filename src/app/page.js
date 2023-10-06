@@ -11,7 +11,6 @@ async function getUserData() {
     const user = await rds.models.User.findByPk(userId, {
       attributes: { exclude: ["password", "createdAt", "updatedAt"] },
     });
-    // TO DO: handle if user not found //
     return user;
   } catch (error) {
     // TO DO: error handling //
