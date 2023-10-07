@@ -4,12 +4,12 @@
 import checkUsername from "../_actions/check-username";
 import createUser from "../_actions/create-user";
 import debounce from "lodash.debounce";
-import { useState } from "react";
 import z from "zod";
 import {
   experimental_useFormState as useFormState,
   experimental_useFormStatus as useFormStatus,
 } from "react-dom";
+import { useRef, useState } from "react";
 
 /// children components ///
 function FormFields() {
@@ -61,16 +61,16 @@ function FormFields() {
   }
   const debouncedHandleUsernameChange = debounce(handleUsernameChange, 250);
   // password
+  const passwordField = useRef(null);
   const [password, setPassword] = useState("");
   const [passwordStatus, setPasswordStatus] = useState("valid");
   const [passwordMessage, setPasswordMessage] = useState(null);
+  const confirmPasswordField = useRef(null);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmPasswordStatus, setConfirmPasswordStatus] = useState("valid");
   const [confirmPasswordMessage, setConfirmPasswordMessage] = useState(null);
   function matchPasswords() {
-    const passwordField = document.querySelector("#password");
-    const confirmField = document.querySelector("#confirm-password");
-    if (passwordField.value === confirmField.value) {
+    if (passwordField.current.value === confirmPasswordField.current.value) {
       setConfirmPasswordStatus("valid");
       setConfirmPasswordMessage(null);
     } else {
@@ -92,12 +92,11 @@ function FormFields() {
       setPasswordStatus("invalid");
       setPasswordMessage(error.issues[0].message);
     }
-    const confirmPasswordField = document.querySelector("#confirm-password");
-    if (e.target.value === "" && confirmPasswordField.value === "") {
+    if (e.target.value === "" && confirmPasswordField.current.value === "") {
       setConfirmPasswordStatus("valid");
       setConfirmPasswordMessage(null);
     }
-    if (confirmPasswordField.value !== "") {
+    if (confirmPasswordField.current.value !== "") {
       matchPasswords();
     }
   }
@@ -177,6 +176,7 @@ function FormFields() {
               onBlur={handlePasswordChange}
               onChange={handlePasswordChange}
               readOnly={pending}
+              ref={passwordField}
               type="password"
             ></input>
             <p aria-hidden={`${passwordMessage ? "false" : "true"}`}>
@@ -192,6 +192,7 @@ function FormFields() {
               onBlur={handleConfirmPasswordChange}
               onChange={handleConfirmPasswordChange}
               readOnly={pending}
+              ref={confirmPasswordField}
               type="password"
             ></input>
             <p aria-hidden={`${confirmPasswordMessage ? "false" : "true"}`}>
