@@ -1,8 +1,8 @@
 import { DataTypes, Model } from "sequelize";
 
-export default function defineVideoEntry(sequelize) {
-  class VideoEntry extends Model {}
-  VideoEntry.init(
+export default function defineEntry(sequelize) {
+  class Entry extends Model {}
+  Entry.init(
     {
       id: {
         type: DataTypes.UUID,
@@ -11,13 +11,17 @@ export default function defineVideoEntry(sequelize) {
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4,
       },
-      caption: {
+      type: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      content: {
         type: DataTypes.TEXT,
       },
     },
     {
       sequelize,
-      modelName: "VideoEntry",
+      modelName: "Entry",
     },
   );
 }

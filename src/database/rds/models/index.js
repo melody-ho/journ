@@ -1,17 +1,14 @@
-import defineImageEntry from "./imageEntry";
+import defineEntry from "./entry";
 import defineUser from "./user";
-import defineVideoEntry from "./videoEntry";
 
 export default function initializeModels(sequelize) {
   // define models //
   defineUser(sequelize);
-  defineImageEntry(sequelize);
-  defineVideoEntry(sequelize);
+  defineEntry(sequelize);
 
   // define associations //
   const user = sequelize.models.User;
-  const imageEntry = sequelize.models.ImageEntry;
-  const videoEntry = sequelize.models.VideoEntry;
-  user.hasMany(imageEntry, { foreignKey: "userId" });
-  user.hasMany(videoEntry, { foreignKey: "userId" });
+  const entry = sequelize.models.Entry;
+  user.hasMany(entry, { foreignKey: "userId" });
+  entry.belongsTo(user, { foreignKey: "userId" });
 }
