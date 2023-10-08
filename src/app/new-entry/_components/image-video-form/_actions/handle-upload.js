@@ -26,7 +26,7 @@ export default async function handleUpload(user, files, captions) {
     try {
       const id = await addEntry(user, type, caption);
       const key = `${user}/${type}s/${id}`;
-      const fileData = file.source.replace(/^data:*\/*;base64,/, "");
+      const fileData = file.source.replace(/^data:.*\/.*;base64,/, "");
       const upload = new Upload({
         client: s3,
         params: {
