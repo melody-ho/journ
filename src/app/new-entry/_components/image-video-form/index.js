@@ -62,34 +62,34 @@ export default function ImageVideoForm({ user }) {
     const files = e.target.files;
     for (let i = 0; i < files.length; i += 1) {
       const file = files[i];
-      const reader = new FileReader();
-      reader.onload = function addFile(e) {
-        const newFile = {
-          index: crypto.randomUUID(),
-          name: file.name,
-          source: e.target.result,
-          type: file.type,
-        };
-        if (newFile.type.startsWith("image/")) {
-          setImages((images) => [...images, newFile]);
-        } else {
-          setVideos((videos) => [...videos, newFile]);
-        }
-      };
-      reader.readAsDataURL(file);
+      const url = URL.createObjectURL(file);
+      file.index = crypto.randomUUID();
+      file.source = url;
+      if (file.type.startsWith("image/")) {
+        setImages((images) => [...images, file]);
+      } else {
+        setVideos((videos) => [...videos, file]);
+      }
     }
     e.target.value = "";
   }
 
   // prepare then hand data to server action when submit button is clicked //
-  function submitData(e) {
+  async function submitData(e) {
     e.preventDefault();
-    const files = [...images, ...videos];
-    const captions = {};
-    captionRefs.current.forEach((value, key) => {
-      captions[key] = value.value;
+    const formData = new FormData();
+    formData.append("user", user);
+    const indexes = [];
+    captionRefs.current.forEach((ref, index) => {
+      indexes.push(index);
+      formData.append(`captions[${index}]`, ref.value);
     });
-    handleUpload(user, files, captions);
+    formData.append("indexes", indexes);
+    const files = [...images, ...videos];
+    files.forEach((file) => {
+      formData.append(`files[${file.index}]`, file);
+    });
+    await handleUpload(formData);
   }
 
   return (
