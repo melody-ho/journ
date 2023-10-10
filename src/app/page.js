@@ -33,6 +33,9 @@ export default async function Home() {
   return (
     <main className={styles.main}>
       <h1>{`${user.firstName}`}</h1>
+      <form action="./sign-out" method="post">
+        <button>Sign out</button>
+      </form>
       <Entries userId={user.id} totalEntries={totalEntries} />
     </main>
   );
