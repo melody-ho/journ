@@ -32,10 +32,12 @@ export default async function getEntries(userId, page) {
       limit: PAGINATION_LIMIT,
       raw: true,
     });
-    // get corresponding source urls from S3 //
+    // get corresponding source urls from S3 for images/videos //
     entries.forEach(async (entry) => {
-      const key = `${userId}/${entry.type}s/${entry.id}`;
-      entry.srcUrl = await getS3Url(key);
+      if (entry.type === "image" || entry.type === "video") {
+        const key = `${userId}/${entry.type}s/${entry.id}`;
+        entry.srcUrl = await getS3Url(key);
+      }
     });
     return entries;
   } catch (error) {

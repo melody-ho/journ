@@ -42,7 +42,13 @@ export default function Entries({ userId, totalEntries }) {
   return (
     <section>
       {entries.map((entry) => {
-        if (entry.type === "image") {
+        if (entry.type === "text") {
+          return (
+            <div key={entry.id}>
+              <p>{entry.content}</p>
+            </div>
+          );
+        } else if (entry.type === "image") {
           return (
             <div key={entry.id}>
               <Image
