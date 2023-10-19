@@ -58,20 +58,39 @@ export default function ImageVideoForm({ user }) {
   );
 
   // update lists of images and videos when files are added //
-  function handleFileInput(e) {
-    const files = e.target.files;
+  function addNewFiles(files) {
     for (let i = 0; i < files.length; i += 1) {
       const file = files[i];
-      const url = URL.createObjectURL(file);
-      file.index = crypto.randomUUID();
-      file.source = url;
-      if (file.type.startsWith("image/")) {
-        setImages((images) => [...images, file]);
-      } else {
-        setVideos((videos) => [...videos, file]);
+      if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
+        const url = URL.createObjectURL(file);
+        file.index = crypto.randomUUID();
+        file.source = url;
+        if (file.type.startsWith("image/")) {
+          setImages((images) => [...images, file]);
+        } else {
+          setVideos((videos) => [...videos, file]);
+        }
       }
     }
+  }
+
+  // handle files added through file input //
+  function handleFileInput(e) {
+    const files = e.target.files;
+    addNewFiles(files);
     e.target.value = "";
+  }
+
+  // handle files added through drag and drop //
+  function handleFileDrop(e) {
+    e.preventDefault();
+    const files = e.dataTransfer.files;
+    addNewFiles(files);
+  }
+
+  // handle files being hovered over drop zone //
+  function handleDragOver(e) {
+    e.preventDefault();
   }
 
   // prepare then hand data to server action when submit button is clicked //
@@ -96,24 +115,26 @@ export default function ImageVideoForm({ user }) {
     <>
       <h2>Images and Videos</h2>
       <form>
-        <section>
-          <label htmlFor="files">Add images/videos</label>
-          <input
-            accept="image/*, video/*"
-            id="files"
-            multiple
-            name="files"
-            onChange={handleFileInput}
-            type="file"
-          ></input>
-        </section>
-        <section
-          hidden={imagePreviews.length === 0 && videoPreviews.length === 0}
-        >
-          {<ul>{imagePreviews}</ul>}
-          {<ul>{videoPreviews}</ul>}
-        </section>
-        <button onClick={submitData}>Upload</button>
+        <div onDragOver={handleDragOver} onDrop={handleFileDrop}>
+          <section>
+            <label htmlFor="files">Add images/videos</label>
+            <input
+              accept="image/*, video/*"
+              id="files"
+              multiple
+              name="files"
+              onChange={handleFileInput}
+              type="file"
+            ></input>
+          </section>
+          <section
+            hidden={imagePreviews.length === 0 && videoPreviews.length === 0}
+          >
+            {<ul>{imagePreviews}</ul>}
+            {<ul>{videoPreviews}</ul>}
+          </section>
+          <button onClick={submitData}>Upload</button>
+        </div>
       </form>
     </>
   );
