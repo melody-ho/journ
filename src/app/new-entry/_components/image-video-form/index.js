@@ -15,6 +15,10 @@ export default function ImageVideoForm({ user }) {
   // update DOM when list of images changes //
   useEffect(
     function updateImagePreviews() {
+      function deleteImage(index) {
+        const newImages = images.filter((image) => image.index !== index);
+        setImages(newImages);
+      }
       const newPreviews = images.map((image) => {
         return (
           <li key={image.index}>
@@ -29,6 +33,9 @@ export default function ImageVideoForm({ user }) {
                 captionRefs.current.set(image.index, ref);
               }}
             ></textarea>
+            <button onClick={() => deleteImage(image.index)} type="button">
+              Delete
+            </button>
           </li>
         );
       });
@@ -40,6 +47,10 @@ export default function ImageVideoForm({ user }) {
   // update DOM when list of videos changes //
   useEffect(
     function updateVideoPreviews() {
+      function deleteVideo(index) {
+        const newVideos = videos.filter((video) => video.index !== index);
+        setVideos(newVideos);
+      }
       const newPreviews = videos.map((video) => {
         return (
           <li key={video.index}>
@@ -49,12 +60,25 @@ export default function ImageVideoForm({ user }) {
                 captionRefs.current.set(video.index, ref);
               }}
             ></textarea>
+            <button onClick={() => deleteVideo(video.index)} type="button">
+              Delete
+            </button>
           </li>
         );
       });
       setVideoPreviews(newPreviews);
     },
     [videos],
+  );
+
+  // remove caption input ref if an image/video is removed //
+  useEffect(
+    function updateCaptionRefs() {
+      captionRefs.current.forEach((value, key) => {
+        if (value === null) captionRefs.current.delete(key);
+      });
+    },
+    [imagePreviews, videoPreviews],
   );
 
   // update lists of images and videos when files are added //
