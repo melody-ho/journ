@@ -18,6 +18,12 @@ export default function defineEntry(sequelize) {
       content: {
         type: DataTypes.TEXT,
       },
+      createdAt: {
+        type: DataTypes.DATE(6),
+      },
+      updatedAt: {
+        type: DataTypes.DATE(6),
+      },
     },
     {
       sequelize,
