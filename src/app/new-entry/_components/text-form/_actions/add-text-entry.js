@@ -5,11 +5,24 @@ import rds from "@/database/rds";
 export default async function addTextEntry(formData) {
   const content = formData.get("text");
   const userId = formData.get("user");
+  const tagNames = JSON.parse(formData.get("tags"));
   try {
-    await rds.models.Entry.create({
+    const entry = await rds.models.Entry.create({
       type: "text",
       content,
       userId,
+    });
+    tagNames.forEach(async (tagName) => {
+      const [tag, created] = await rds.models.Tag.findOrCreate({
+        where: { name: tagName },
+      });
+      await rds.models.UserTags.findOrCreate({
+        where: { userId, tagId: tag.id },
+      });
+      await rds.models.EntryTags.create({
+        entryId: entry.id,
+        tagId: tag.id,
+      });
     });
   } catch (error) {
     // TO DO: error handling //

@@ -1,15 +1,22 @@
 "use client";
 
 import addTextEntry from "./_actions/add-text-entry";
+import TagForm from "../tag-form";
 import { useRef } from "react";
 
 export default function TextForm({ user }) {
   const textForm = useRef(null);
 
+  let tags = [];
+  function getData(data) {
+    tags = data;
+  }
+
   async function submitEntry(e) {
     e.preventDefault();
     const formData = new FormData(textForm.current);
     formData.append("user", user);
+    formData.append("tags", JSON.stringify(tags));
     await addTextEntry(formData);
   }
 
@@ -19,6 +26,7 @@ export default function TextForm({ user }) {
       <form ref={textForm}>
         <label htmlFor="text">Text</label>
         <textarea id="text" name="text"></textarea>
+        <TagForm passData={getData} />
         <button onClick={submitEntry}>Add entry</button>
       </form>
     </>
