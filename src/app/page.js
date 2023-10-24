@@ -17,9 +17,16 @@ async function getUser() {
   }
 }
 
-async function getEntryTotal(userId) {
+async function getUserTags(userId) {
   try {
-    return await rds.models.Entry.count({ where: { userId } });
+    return await rds.models.Tag.findAll({
+      include: {
+        model: rds.models.User,
+        where: { id: userId },
+        attributes: [],
+      },
+      raw: true,
+    });
   } catch (error) {
     // TO DO: error handling //
   }
@@ -28,7 +35,7 @@ async function getEntryTotal(userId) {
 /// main component ///
 export default async function Home() {
   const user = await getUser();
-  const totalEntries = await getEntryTotal(user.id);
+  const userTags = await getUserTags(user.id);
 
   return (
     <main className={styles.main}>
@@ -36,7 +43,7 @@ export default async function Home() {
       <form action="./sign-out" method="post">
         <button>Sign out</button>
       </form>
-      <Entries userId={user.id} totalEntries={totalEntries} />
+      <Entries userId={user.id} userTags={userTags} />
     </main>
   );
 }

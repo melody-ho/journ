@@ -21,12 +21,23 @@ async function getS3Url(key) {
 }
 
 /// main ///
-export default async function getEntries(userId, page) {
+export default async function getEntries(userId, checkedTags, page) {
   try {
     // get entries data from RDS //
     const offset = PAGINATION_LIMIT * (page - 1);
+    const tagMatch = checkedTags.length === 0 ? {} : { id: checkedTags };
+    const tagFilter =
+      checkedTags.length === 0 ? {} : { idCount: checkedTags.length };
     const entries = await rds.models.Entry.findAll({
       where: { userId },
+      include: {
+        model: rds.models.Tag,
+        where: tagMatch,
+        attributs: [],
+      },
+      group: ["id"],
+      attributes: { include: [[rds.fn("COUNT", "id"), "idCount"]] },
+      having: tagFilter,
       order: [["createdAt", "ASC"]],
       offset,
       limit: PAGINATION_LIMIT,
