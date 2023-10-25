@@ -25,16 +25,21 @@ export default async function getEntries(userId, checkedTags, page) {
   try {
     // get entries data from RDS //
     const offset = PAGINATION_LIMIT * (page - 1);
-    const tagMatch = checkedTags.length === 0 ? {} : { id: checkedTags };
+    const tagMatch =
+      checkedTags.length === 0
+        ? []
+        : [
+            {
+              model: rds.models.Tag,
+              where: { id: checkedTags },
+              attributes: [],
+            },
+          ];
     const tagFilter =
       checkedTags.length === 0 ? {} : { idCount: checkedTags.length };
     const entries = await rds.models.Entry.findAll({
       where: { userId },
-      include: {
-        model: rds.models.Tag,
-        where: tagMatch,
-        attributs: [],
-      },
+      include: tagMatch,
       group: ["id"],
       attributes: { include: [[rds.fn("COUNT", "id"), "idCount"]] },
       having: tagFilter,
