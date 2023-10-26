@@ -2,6 +2,7 @@
 
 import getEntries from "../_actions/get-entries";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 export default function FilteredEntries({ checkedTags, userId }) {
@@ -56,13 +57,13 @@ export default function FilteredEntries({ checkedTags, userId }) {
       {entries.map((entry) => {
         if (entry.type === "text") {
           return (
-            <div key={entry.id}>
+            <Link href={`/entry/${entry.id}`} key={entry.id}>
               <p>{entry.content}</p>
-            </div>
+            </Link>
           );
         } else if (entry.type === "image") {
           return (
-            <div key={entry.id}>
+            <Link href={`/entry/${entry.id}`} key={entry.id}>
               <Image
                 alt={
                   entry.content
@@ -74,14 +75,14 @@ export default function FilteredEntries({ checkedTags, userId }) {
                 width="100"
               />
               <p>{entry.content}</p>
-            </div>
+            </Link>
           );
         } else {
           return (
-            <div key={entry.id}>
+            <Link href={`/entry/${entry.id}`} key={entry.id}>
               <video autoPlay loop muted src={entry.srcUrl}></video>
               <p>{entry.content}</p>
-            </div>
+            </Link>
           );
         }
       })}
