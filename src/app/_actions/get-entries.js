@@ -12,29 +12,30 @@ export default async function getEntries(userId, checkedTags, page) {
   try {
     // get entries data from RDS //
     const offset = PAGINATION_LIMIT * (page - 1);
-    const tagMatch =
-      checkedTags.length === 0
-        ? []
-        : [
-            {
-              model: rds.models.Tag,
-              where: { id: checkedTags },
-              attributes: [],
-            },
-          ];
-    const tagFilter =
-      checkedTags.length === 0 ? {} : { idCount: checkedTags.length };
-    const entries = await rds.models.Entry.findAll({
-      where: { userId },
-      include: tagMatch,
-      group: ["id"],
-      attributes: { include: [[rds.fn("COUNT", "id"), "idCount"]] },
-      having: tagFilter,
-      order: [["createdAt", "ASC"]],
-      offset,
-      limit: PAGINATION_LIMIT,
-      raw: true,
-    });
+    let entries;
+    if (checkedTags.length === 0) {
+      entries = await rds.models.Entry.findAll({
+        where: { userId },
+        order: [["createdAt", "ASC"]],
+        offset,
+        limit: PAGINATION_LIMIT,
+        raw: true,
+      });
+    } else {
+      const matchedEntries = await rds.models.EntryTag.findAll({
+        include: { model: rds.models.Entry, where: { userId } },
+        where: { tagId: checkedTags },
+        group: ["entryId"],
+        attributes: { include: [[rds.fn("COUNT", "id"), "matchCount"]] },
+        having: { matchCount: checkedTags.length },
+        order: [["createdAt", "ASC"]],
+        offset,
+        limit: PAGINATION_LIMIT,
+      });
+      entries = matchedEntries.map(
+        (matchedEntry) => matchedEntry.dataValues.Entry.dataValues,
+      );
+    }
     // get corresponding source urls from S3 for images/videos //
     entries.forEach(async (entry) => {
       if (entry.type === "image" || entry.type === "video") {
