@@ -16,10 +16,10 @@ export default async function addTextEntry(formData) {
       const [tag, created] = await rds.models.Tag.findOrCreate({
         where: { name: tagName },
       });
-      await rds.models.UserTags.findOrCreate({
+      await rds.models.UserTag.findOrCreate({
         where: { userId, tagId: tag.id },
       });
-      await rds.models.EntryTags.create({
+      await rds.models.EntryTag.create({
         entryId: entry.id,
         tagId: tag.id,
       });
