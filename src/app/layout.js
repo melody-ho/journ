@@ -10,11 +10,14 @@ export const metadata = {
   description: "Your journal. Your journey.",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children, entryModal }) {
   resetDatabase();
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        {entryModal}
+        {children}
+      </body>
     </html>
   );
 }
