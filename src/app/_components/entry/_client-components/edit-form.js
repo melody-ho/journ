@@ -1,5 +1,6 @@
 "use client";
 
+import deleteEntry from "../_server-actions/delete-entry";
 import updateChanges from "../_server-actions/update-changes";
 import { useRef, useState } from "react";
 
@@ -75,6 +76,9 @@ export default function EditForm({ entry }) {
       </form>
       <button onClick={enableEdit} type="button">
         edit
+      </button>
+      <button onClick={() => deleteEntry(entry.id)} type="button">
+        delete
       </button>
     </>
   );
