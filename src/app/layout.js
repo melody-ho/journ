@@ -1,4 +1,5 @@
 import "./globals.css";
+import fonts from "./_fonts";
 import rds from "@/database/rds";
 
 async function resetDatabase() {
@@ -10,10 +11,16 @@ export const metadata = {
   description: "Your journal. Your journey.",
 };
 
+const fontVariables = [];
+for (const font of Object.values(fonts)) {
+  fontVariables.push(font.variable);
+}
+const fontVariablesString = fontVariables.join(" ");
+
 export default function RootLayout({ children, entryModal }) {
   resetDatabase();
   return (
-    <html lang="en">
+    <html className={fontVariablesString} lang="en">
       <body>
         {entryModal}
         {children}
