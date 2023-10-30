@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/(authentication)/*": ["./src/app/(authentication)/*"],
+      "@/(index)/*": ["./src/app/(index)/*"],
+      "@/(dashboard)/*": ["./src/app/(index)/@dashboard/(dashboard)/*"]
     },
     "strict": true
   }

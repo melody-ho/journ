@@ -17,14 +17,11 @@ for (const font of Object.values(fonts)) {
 }
 const fontVariablesString = fontVariables.join(" ");
 
-export default function RootLayout({ children, entryModal }) {
+export default function RootLayout({ children }) {
   resetDatabase();
   return (
     <html className={fontVariablesString} lang="en">
-      <body>
-        {entryModal}
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
