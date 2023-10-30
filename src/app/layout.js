@@ -1,4 +1,5 @@
 import "./globals.css";
+import dynamic from "next/dynamic";
 import fonts from "./_fonts";
 import rds from "@/database/rds";
 
@@ -17,11 +18,18 @@ for (const font of Object.values(fonts)) {
 }
 const fontVariablesString = fontVariables.join(" ");
 
+const SplashScreenWrapper = dynamic(
+  () => import("./_client-components/splash-screen"),
+  { ssr: false },
+);
+
 export default function RootLayout({ children }) {
   resetDatabase();
   return (
     <html className={fontVariablesString} lang="en">
-      <body>{children}</body>
+      <body>
+        <SplashScreenWrapper>{children}</SplashScreenWrapper>
+      </body>
     </html>
   );
 }

@@ -13,6 +13,7 @@
     "@aws-sdk/lib-storage": "^3.425.0",
     "@aws-sdk/s3-request-presigner": "^3.427.0",
     "@hapi/iron": "^7.0.1",
+    "@lottiefiles/lottie-player": "^2.0.2",
     "argon2": "^0.31.1",
     "cookie": "^0.5.0",
     "lodash.debounce": "^4.0.8",
