@@ -1,0 +1,17 @@
+:root {
+  --background-rgb: 255, 255, 255;
+  --foreground-rgb: 0, 0, 0;
+  --high-contrast-rgb: 51, 51, 51;
+  --low-contrast-rgb: 248, 248, 248;
+  --medium-contrast-rgb: 230, 230, 230;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-rgb: 26, 26, 26;
+    --foreground-rgb: 255, 255, 255;
+    --high-contrast-rgb: 230, 230, 230;
+    --low-contrast-rgb: 33, 33, 33;
+    --medium-contrast-rgb: 51, 51, 51;
+  }
+}
