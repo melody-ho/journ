@@ -1,0 +1,62 @@
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+}
+
+.textInput {
+  background-color: transparent;
+  border: none;
+  border-bottom: 0.1em solid rgb(var(--foreground-rgb));
+  color: rgb(var(--high-contrast-rgb));
+  font-size: max(10px, calc(10px + 0.5vw));
+  width: max(150px, 18vw);
+}
+
+.textInput:focus {
+  outline: none;
+}
+
+.inputLabel {
+  font-size: max(8px, calc(8px + 0.5vw));
+  font-style: italic;
+  font-weight: 300;
+}
+
+.errorMessage {
+  color: rgb(var(--high-contrast-rgb));
+  font-size: max(8px, calc(8px + 0.5vw));
+  font-weight: 200;
+  margin-bottom: 1em;
+  margin-top: 0.25em;
+  min-height: 1.5em;
+}
+
+.submitButton {
+  align-self: flex-end;
+  aspect-ratio: 2.5;
+  background-color: rgb(var(--high-contrast-rgb));
+  border: none;
+  border-radius: max(10px, 0.8vw);
+  color: rgb(var(--background-rgb));
+  font-family: var(--font-monarcha);
+  font-size: max(12px, calc(12px + 0.5vw));
+  font-weight: 600;
+  width: max(120px, 50%);
+}
+
+.submitButton:disabled {
+  background-color: rgba(var(--high-contrast-rgb), 0.8);
+  color: rgba(var(--background-rgb), 0.2);
+}
+
+.submitStatus {
+  font-size: max(10px, calc(10px + 0.5vw));
+  margin-bottom: 1em;
+  margin-top: 1em;
+  min-height: 1.5em;
+}

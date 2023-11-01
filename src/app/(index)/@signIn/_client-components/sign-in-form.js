@@ -2,6 +2,7 @@
 
 /// imports ///
 import authCredentials from "./server-actions/auth-credentials";
+import styles from "./sign-in-form.module.css";
 import {
   experimental_useFormState as useFormState,
   experimental_useFormStatus as useFormStatus,
@@ -27,34 +28,43 @@ function FormFields() {
   return (
     <>
       <ul>
-        <li>
-          <label htmlFor="username">username</label>
+        <li className={styles.formField}>
           <input
+            className={styles.textInput}
             id="username"
             name="username"
             onBlur={handleUsernameChange}
             onChange={handleUsernameChange}
             type="text"
           ></input>
-          <p aria-hidden={usernameState !== ""}>
+          <label className={styles.inputLabel} htmlFor="username">
+            username
+          </label>
+          <p aria-hidden={usernameState !== ""} className={styles.errorMessage}>
             {usernameState === "" ? "Please enter your username." : ""}
           </p>
         </li>
-        <li>
-          <label htmlFor="password">password</label>
+        <li className={styles.formField}>
           <input
+            className={styles.textInput}
             id="password"
             name="password"
             onBlur={handlePasswordChange}
             onChange={handlePasswordChange}
             type="password"
           ></input>
-          <p aria-hidden={passwordState !== ""}>
+          <label className={styles.inputLabel} htmlFor="password">
+            password
+          </label>
+          <p aria-hidden={passwordState !== ""} className={styles.errorMessage}>
             {passwordState === "" ? "Please enter your password." : ""}
           </p>
         </li>
       </ul>
-      <button disabled={!usernameState || !passwordState || pending}>
+      <button
+        className={styles.submitButton}
+        disabled={!usernameState || !passwordState || pending}
+      >
         Log in
       </button>
     </>
@@ -78,9 +88,9 @@ export default function SignInForm() {
   );
 
   return (
-    <form action={formAction} ref={form}>
+    <form action={formAction} className={styles.form} ref={form}>
       <FormFields />
-      <h2>
+      <p className={styles.submitStatus}>
         {formState === "invalid"
           ? "Invalid credentials."
           : formState === "error"
@@ -88,7 +98,7 @@ export default function SignInForm() {
           : formState === "success"
           ? "Successful authentication."
           : ""}
-      </h2>
+      </p>
     </form>
   );
 }
