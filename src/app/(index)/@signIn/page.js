@@ -7,12 +7,19 @@ export default function SignIn() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <div className={styles.logotypeImageContainer}>
+        <div
+          className={`${styles.logotypeImageContainer} ${styles.desktopOnly}`}
+        >
           <ThemedImage alt="Journ" imageName="logotype" position="left" />
+        </div>
+        <div
+          className={`${styles.logotypeImageContainer} ${styles.mobileOnly}`}
+        >
+          <ThemedImage alt="Journ" imageName="logotype" position="center" />
         </div>
       </header>
       <main className={styles.main}>
-        <section className={styles.taglineSection}>
+        <section className={`${styles.taglineSection} ${styles.desktopOnly}`}>
           <p className={styles.tagline}>Your journal. Your journey.</p>
         </section>
         <section className={styles.signInSection}>
@@ -26,6 +33,9 @@ export default function SignIn() {
               </Link>
             </p>
           </div>
+        </section>
+        <section className={`${styles.taglineSection} ${styles.mobileOnly}`}>
+          <p className={styles.tagline}>Your journal. Your journey.</p>
         </section>
       </main>
     </div>

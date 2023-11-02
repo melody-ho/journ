@@ -1,70 +1,51 @@
 .page {
   display: grid;
-  grid-template: 1fr 2fr 8fr 1fr / 1fr 5fr 1fr;
-  height: max(600px, 100vh);
+  grid-template-rows: 1fr 2fr 8fr 1fr;
+  min-height: 100vh;
+  min-width: 350px;
 }
 
 .header {
   display: flex;
-  grid-area: 2 / 2 / 3 / 3;
+  grid-row: 2 / 3;
+  justify-content: center;
+  margin-bottom: 5vh;
 }
 
 .main {
-  display: grid;
-  grid-area: 3 / 2 / 4 / 3;
-  grid-template-columns: 5fr 4fr;
+  grid-row: 3 / 4;
 }
 
 .logotypeImageContainer {
   position: relative;
-  width: 35%;
-}
-
-.taglineSection {
-  background-image: url("/tagline-background/light.svg");
-  background-position: bottom right;
-  background-repeat: no-repeat;
-  display: grid;
-  grid-column: 1 / 2;
-  grid-template-rows: 1fr 1fr 2fr;
-}
-
-@media (prefers-color-scheme: dark) {
-  .taglineSection {
-    background-image: url("/tagline-background/dark.svg");
-  }
+  width: 60%;
 }
 
 .signInSection {
   display: flex;
-  grid-column: 2 / 3;
-  justify-content: right;
-}
-
-.tagline {
-  font-family: var(--font-bely-display);
-  font-size: max(16px, calc(16px + 1vw));
-  grid-row: 2 / 3;
-  margin-right: 5vw;
-  text-align: right;
+  justify-content: center;
 }
 
 .signInBox {
-  align-self: center;
+  aspect-ratio: 0.7;
   background-color: rgb(var(--medium-contrast-rgb));
-  border-radius: 1vw;
-  padding: 8%;
+  border-radius: 1vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-width: 500px;
+  padding: 10%;
 }
 
 .signInHeading {
   font-family: var(--font-monarcha);
-  font-size: max(20px, calc(20px + 1vw));
+  font-size: max(20px, calc(20px + 2vw));
   font-weight: 600;
-  margin-bottom: 5vh;
+  margin-bottom: 6vh;
 }
 
 .newAccount {
-  font-size: max(12px, calc(12px + 0.5vw));
+  font-size: max(12px, calc(12px + 1vw));
   font-weight: 200;
   text-align: center;
 }
@@ -72,7 +53,99 @@
 .newAccountLink {
   color: rgb(var(--foreground-rgb));
   font-family: var(--font-monarcha);
-  font-size: max(14px, calc(14px + 0.5vw));
+  font-size: max(14px, calc(14px + 1vw));
   font-weight: 400;
-  margin-left: 0.5rem;
+  margin-left: 0.5em;
+}
+
+.tagline {
+  font-family: var(--font-bely-display);
+  font-size: max(12px, calc(12px + 1vw));
+  margin-top: 5vh;
+  text-align: center;
+}
+
+.desktopOnly {
+  display: none;
+}
+
+@media (min-width: 1000px) and (min-aspect-ratio: 1) {
+  .desktopOnly {
+    display: block;
+  }
+
+  .page {
+    grid-template: 1fr 2fr 8fr 1fr / 1fr 5fr 1fr;
+    height: max(600px, 100vh);
+  }
+
+  .header {
+    grid-area: 2 / 2 / 3 / 3;
+    justify-content: start;
+    margin-bottom: initial;
+  }
+
+  .main {
+    display: grid;
+    grid-area: 3 / 2 / 4 / 3;
+    grid-template-columns: 5fr 4fr;
+  }
+
+  .logotypeImageContainer {
+    width: 35%;
+  }
+
+  .taglineSection {
+    background-image: url("/tagline-background/light.svg");
+    background-position: bottom right;
+    background-repeat: no-repeat;
+    display: grid;
+    grid-column: 1 / 2;
+    grid-template-rows: 1fr 1fr 2fr;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .taglineSection {
+      background-image: url("/tagline-background/dark.svg");
+    }
+  }
+
+  .signInSection {
+    grid-column: 2 / 3;
+    justify-content: right;
+  }
+
+  .tagline {
+    font-size: max(16px, calc(16px + 1vw));
+    grid-row: 2 / 3;
+    margin-right: 5vw;
+    margin-top: initial;
+    text-align: right;
+  }
+
+  .signInBox {
+    align-self: center;
+    aspect-ratio: auto;
+    border-radius: 1vw;
+    display: block;
+    max-width: initial;
+    padding: 8%;
+  }
+
+  .signInHeading {
+    font-size: max(20px, calc(20px + 1vw));
+    margin-bottom: 5vh;
+  }
+
+  .newAccount {
+    font-size: max(12px, calc(12px + 0.5vw));
+  }
+
+  .newAccountLink {
+    font-size: max(14px, calc(14px + 0.5vw));
+  }
+
+  .mobileOnly {
+    display: none;
+  }
 }
