@@ -9,47 +9,37 @@ const SPLASH_DURATION = 3000;
 
 export default function SplashScreen({ children }) {
   // initialize refs and states //
-  const modal = useRef(null);
+  const splashAnimation = useRef(null);
   const [splash, setSplash] = useState(true);
 
-  // display splash screen for fixed duration //
+  // fade out and remove splash screen after fixed duration //
   useEffect(
-    function openModal() {
-      if (modal) {
-        modal.current.showModal();
-        setTimeout(function fadeoutModal() {
-          modal.current.classList.add(`${styles.fadeout}`);
-          setTimeout(function removeModal() {
-            modal.current.close();
+    function endSplash() {
+      if (splashAnimation) {
+        setTimeout(function fadeoutAnimation() {
+          splashAnimation.current.classList.add(styles.splashFadeout);
+          setTimeout(function removeAnimation() {
             setSplash(false);
           }, FADEOUT_DURATION);
         }, SPLASH_DURATION);
       }
     },
-    [modal],
+    [splashAnimation],
   );
 
-  // prevent closing splash screen //
-  function preventCancel(e) {
-    e.preventDefault(e);
-  }
-
   return splash ? (
-    <dialog
-      className={styles.modal}
-      inert="true"
-      onCancel={preventCancel}
-      ref={modal}
-    >
-      <lottie-player
-        autoplay
-        src={
-          window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "/splash-screen-animation/dark.json"
-            : "/splash-screen-animation/light.json"
-        }
-      ></lottie-player>
-    </dialog>
+    <div className={styles.splashAnimationContainer}>
+      <div className={styles.splashAnimation} ref={splashAnimation}>
+        <lottie-player
+          autoplay
+          src={
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "/splash-screen-animation/dark.json"
+              : "/splash-screen-animation/light.json"
+          }
+        ></lottie-player>
+      </div>
+    </div>
   ) : (
     children
   );

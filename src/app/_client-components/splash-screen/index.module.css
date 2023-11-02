@@ -1,22 +1,22 @@
-.modal {
+.splashAnimationContainer {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+}
+
+.splashAnimation {
   --fadeout-duration: 0.5s;
-  background-color: transparent;
-  border: none;
   opacity: 1;
   transition: opacity var(--fadeout-duration);
-  width: 30vw;
+  width: 60vw;
 }
 
-.modal::backdrop {
-  background-color: rgb(255, 255, 255);
-}
-
-.fadeout {
+.splashFadeout {
   opacity: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  .modal::backdrop {
-    background-color: rgb(26, 26, 26);
+@media (min-width: 1000px) and (min-aspect-ratio: 1) {
+  .splashAnimation {
+    width: 30vw;
   }
 }
