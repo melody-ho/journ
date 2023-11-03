@@ -4,6 +4,7 @@
 import checkUsername from "./server-actions/check-username";
 import createUser from "./server-actions/create-user";
 import debounce from "lodash.debounce";
+import styles from "./new-account-form.module.css";
 import z from "zod";
 import {
   experimental_useFormState as useFormState,
@@ -110,14 +111,18 @@ function FormFields() {
 
   return (
     <>
-      <section>
-        <h2>What should we call you?</h2>
-        <h3>This can be changed later in account settings.</h3>
-        <ul>
-          <li>
-            <label htmlFor="first-name">first name</label>
+      <section className={styles.nameSection}>
+        <h2 className={styles.sectionHeading}>What should we call you?</h2>
+        <h3 className={styles.sectionSubheading}>
+          This can be changed later in account settings.
+        </h3>
+        <ul className={styles.nameFields}>
+          <li className={styles.formField}>
+            <label className={styles.inputLabel} htmlFor="first-name">
+              first name
+            </label>
             <input
-              className={firstNameStatus}
+              className={`${firstNameStatus} ${styles.inputField}`}
               id="first-name"
               name="firstName"
               onBlur={handleChangeFirstName}
@@ -125,13 +130,20 @@ function FormFields() {
               readOnly={pending}
               type="text"
             ></input>
-            <p aria-hidden={`${firstNameMessage ? "false" : "true"}`}>
+            <p className={styles.requiredIndicator}>required</p>
+            <p
+              aria-hidden={`${firstNameMessage ? "false" : "true"}`}
+              className={styles.hint}
+            >
               {firstNameMessage ? firstNameMessage : ""}
             </p>
           </li>
-          <li>
-            <label htmlFor="last-name">last name</label>
+          <li className={styles.formField}>
+            <label className={styles.inputLabel} htmlFor="last-name">
+              last name
+            </label>
             <input
+              className={styles.inputField}
               id="last-name"
               name="lastName"
               readOnly={pending}
@@ -140,14 +152,22 @@ function FormFields() {
           </li>
         </ul>
       </section>
-      <section>
-        <h2>Your username and password are used to access your account.</h2>
-        <h3>These can be changed later in account settings.</h3>
-        <ul>
-          <li>
-            <label htmlFor="username">username</label>
+      <section className={styles.usernamePwdSection}>
+        <h2 className={styles.sectionHeading}>
+          Your username and password are used to access your account.
+        </h2>
+        <h3 className={styles.sectionSubheading}>
+          These can be changed later in account settings.
+        </h3>
+        <ul className={styles.usernamePwdFields}>
+          <li className={`${styles.formField} ${styles.usernameField}`}>
+            <label className={styles.inputLabel} htmlFor="username">
+              username
+            </label>
             <input
-              className={usernameUnavailable ? "invalid" : usernameStatus}
+              className={`${usernameUnavailable ? "invalid" : usernameStatus} ${
+                styles.inputField
+              }`}
               id="username"
               name="username"
               onBlur={debouncedHandleUsernameChange}
@@ -155,10 +175,12 @@ function FormFields() {
               readOnly={pending}
               type="text"
             ></input>
+            <p className={styles.requiredIndicator}>required</p>
             <p
               aria-hidden={`${
                 usernameMessage || usernameUnavailable ? "false" : "true"
               }`}
+              className={styles.hint}
             >
               {usernameMessage
                 ? usernameMessage
@@ -167,10 +189,12 @@ function FormFields() {
                 : ""}
             </p>
           </li>
-          <li>
-            <label htmlFor="password">password</label>
+          <li className={`${styles.formField} ${styles.pwdField}`}>
+            <label className={styles.inputLabel} htmlFor="password">
+              password
+            </label>
             <input
-              className={passwordStatus}
+              className={`${passwordStatus} ${styles.inputField}`}
               id="password"
               name="password"
               onBlur={handlePasswordChange}
@@ -179,14 +203,20 @@ function FormFields() {
               ref={passwordField}
               type="password"
             ></input>
-            <p aria-hidden={`${passwordMessage ? "false" : "true"}`}>
+            <p className={styles.requiredIndicator}>required</p>
+            <p
+              aria-hidden={`${passwordMessage ? "false" : "true"}`}
+              className={styles.hint}
+            >
               {passwordMessage ? passwordMessage : ""}
             </p>
           </li>
-          <li>
-            <label htmlFor="confirm-password">confirm password</label>
+          <li className={`${styles.formField} ${styles.pwdConfirmField}`}>
+            <label className={styles.inputLabel} htmlFor="confirm-password">
+              confirm password
+            </label>
             <input
-              className={confirmPasswordStatus}
+              className={`${confirmPasswordStatus} ${styles.inputField}`}
               id="confirm-password"
               name="confirmPassword"
               onBlur={handleConfirmPasswordChange}
@@ -195,13 +225,18 @@ function FormFields() {
               ref={confirmPasswordField}
               type="password"
             ></input>
-            <p aria-hidden={`${confirmPasswordMessage ? "false" : "true"}`}>
+            <p className={styles.requiredIndicator}>required</p>
+            <p
+              aria-hidden={`${confirmPasswordMessage ? "false" : "true"}`}
+              className={styles.hint}
+            >
               {confirmPasswordMessage ? confirmPasswordMessage : ""}
             </p>
           </li>
         </ul>
       </section>
       <button
+        className={styles.submitButton}
         disabled={
           !firstName ||
           !username ||
@@ -227,9 +262,9 @@ export default function NewAccountForm() {
   const [formState, formAction] = useFormState(createUser, null);
 
   return (
-    <form action={formAction}>
+    <form action={formAction} className={styles.form}>
       <FormFields />
-      <h2>{formState ? formState : ""}</h2>
+      <p className={styles.submitStatus}>{formState ? formState : ""}</p>
     </form>
   );
 }

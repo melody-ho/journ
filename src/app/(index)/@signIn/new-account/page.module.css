@@ -1,0 +1,29 @@
+.page {
+  display: grid;
+  grid-template: 1fr 2fr 24fr 1fr / 1fr 5fr 1fr;
+  min-height: 100vh;
+  min-width: 350px;
+}
+
+.logotype {
+  grid-area: 2 / 2 / 3 / 3;
+  position: relative;
+  width: 30%;
+}
+
+.main {
+  grid-area: 3 / 2 / 4 / 3;
+}
+
+.heading {
+  font-family: var(--font-bely-display);
+  font-size: max(32px, calc(32px + 0.5vw));
+  margin-bottom: 1.5em;
+  margin-top: 0.25em;
+}
+
+@media (min-width: 1000px) {
+  .logotype {
+    width: 15%;
+  }
+}
