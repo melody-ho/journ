@@ -57,11 +57,140 @@
   color: rgba(var(--background-rgb), 0.2);
 }
 
+.loadingIndicator {
+  align-items: center;
+  align-self: center;
+  aspect-ratio: 3;
+  display: flex;
+  justify-content: center;
+  width: max(120px, 50%);
+}
+
+.spinner {
+  animation: spinner 5s infinite;
+  box-shadow:
+    -0.6em -0.6em 0 0.3em,
+    -0.6em -0.6em 0 0.3em,
+    -0.6em -0.6em 0 0.3em,
+    -0.6em -0.6em 0 0.3em;
+  color: rgb(var(--high-contrast-rgb));
+  display: inline-block;
+  height: 0.3em;
+  width: 0.3em;
+}
+
+@keyframes spinner {
+  0% {
+    box-shadow:
+      -0.6em -0.6em 0 0.3em,
+      -0.6em -0.6em 0 0.3em,
+      -0.6em -0.6em 0 0.3em,
+      -0.6em -0.6em 0 0.3em;
+  }
+  8.33% {
+    box-shadow:
+      -0.6em -0.6em 0 0.3em,
+      0.6em -0.6em 0 0.3em,
+      0.6em -0.6em 0 0.3em,
+      0.6em -0.6em 0 0.3em;
+  }
+  16.66% {
+    box-shadow:
+      -0.6em -0.6em 0 0.3em,
+      0.6em -0.6em 0 0.3em,
+      0.6em 0.6em 0 0.3em,
+      0.6em 0.6em 0 0.3em;
+  }
+  24.99% {
+    box-shadow:
+      -0.6em -0.6em 0 0.3em,
+      0.6em -0.6em 0 0.3em,
+      0.6em 0.6em 0 0.3em,
+      -0.6em 0.6em 0 0.3em;
+  }
+  33.32% {
+    box-shadow:
+      -0.6em -0.6em 0 0.3em,
+      0.6em -0.6em 0 0.3em,
+      0.6em 0.6em 0 0.3em,
+      -0.6em -0.6em 0 0.3em;
+  }
+  41.65% {
+    box-shadow:
+      0.6em -0.6em 0 0.3em,
+      0.6em -0.6em 0 0.3em,
+      0.6em 0.6em 0 0.3em,
+      0.6em -0.6em 0 0.3em;
+  }
+  49.98% {
+    box-shadow:
+      0.6em 0.6em 0 0.3em,
+      0.6em 0.6em 0 0.3em,
+      0.6em 0.6em 0 0.3em,
+      0.6em 0.6em 0 0.3em;
+  }
+  58.31% {
+    box-shadow:
+      -0.6em 0.6em 0 0.3em,
+      -0.6em 0.6em 0 0.3em,
+      0.6em 0.6em 0 0.3em,
+      -0.6em 0.6em 0 0.3em;
+  }
+  66.64% {
+    box-shadow:
+      -0.6em -0.6em 0 0.3em,
+      -0.6em -0.6em 0 0.3em,
+      0.6em 0.6em 0 0.3em,
+      -0.6em 0.6em 0 0.3em;
+  }
+  74.97% {
+    box-shadow:
+      -0.6em -0.6em 0 0.3em,
+      0.6em -0.6em 0 0.3em,
+      0.6em 0.6em 0 0.3em,
+      -0.6em 0.6em 0 0.3em;
+  }
+  83.3% {
+    box-shadow:
+      -0.6em -0.6em 0 0.3em,
+      0.6em 0.6em 0 0.3em,
+      0.6em 0.6em 0 0.3em,
+      -0.6em 0.6em 0 0.3em;
+  }
+  91.63% {
+    box-shadow:
+      -0.6em -0.6em 0 0.3em,
+      -0.6em 0.6em 0 0.3em,
+      -0.6em 0.6em 0 0.3em,
+      -0.6em 0.6em 0 0.3em;
+  }
+  100% {
+    box-shadow:
+      -0.6em -0.6em 0 0.3em,
+      -0.6em -0.6em 0 0.3em,
+      -0.6em -0.6em 0 0.3em,
+      -0.6em -0.6em 0 0.3em;
+  }
+}
+
 .submitStatus {
+  align-items: center;
+  display: flex;
   font-size: max(12px, calc(12px + 1vw));
+  gap: 0.5em;
   margin-bottom: 1em;
   margin-top: 1em;
   min-height: 1.5em;
+}
+
+.statusIcon {
+  height: 1.5em;
+  position: relative;
+  width: 1.5em;
+}
+
+.statusMessage {
+  font-weight: 600;
 }
 
 @media (min-width: 1000px) and (min-aspect-ratio: 1) {
@@ -81,6 +210,10 @@
   .submitButton {
     aspect-ratio: 2.5;
     font-size: max(12px, calc(12px + 0.5vw));
+  }
+
+  .loadingIndicator {
+    aspect-ratio: 2.5;
   }
 
   .submitStatus {

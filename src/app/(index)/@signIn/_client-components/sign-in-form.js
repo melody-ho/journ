@@ -3,6 +3,7 @@
 /// imports ///
 import authCredentials from "./server-actions/auth-credentials";
 import styles from "./sign-in-form.module.css";
+import ThemedImage from "@/app/_helper-components/themed-image";
 import {
   experimental_useFormState as useFormState,
   experimental_useFormStatus as useFormStatus,
@@ -10,7 +11,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 
 /// children components ///
-function FormFields() {
+function FormFields({ status }) {
   // client-side validation //
   // username
   const [usernameState, setUsernameState] = useState(null);
@@ -35,6 +36,7 @@ function FormFields() {
             name="username"
             onBlur={handleUsernameChange}
             onChange={handleUsernameChange}
+            readOnly={pending || status === "success"}
             type="text"
           ></input>
           <label className={styles.inputLabel} htmlFor="username">
@@ -51,6 +53,7 @@ function FormFields() {
             name="password"
             onBlur={handlePasswordChange}
             onChange={handlePasswordChange}
+            readOnly={pending || status === "success"}
             type="password"
           ></input>
           <label className={styles.inputLabel} htmlFor="password">
@@ -61,12 +64,18 @@ function FormFields() {
           </p>
         </li>
       </ul>
-      <button
-        className={styles.submitButton}
-        disabled={!usernameState || !passwordState || pending}
-      >
-        Log in
-      </button>
+      {pending || status === "success" ? (
+        <div className={styles.loadingIndicator}>
+          <div className={styles.spinner}></div>
+        </div>
+      ) : (
+        <button
+          className={styles.submitButton}
+          disabled={!usernameState || !passwordState}
+        >
+          Log in
+        </button>
+      )}
     </>
   );
 }
@@ -89,16 +98,46 @@ export default function SignInForm() {
 
   return (
     <form action={formAction} className={styles.form} ref={form}>
-      <FormFields />
-      <p className={styles.submitStatus}>
-        {formState === "invalid"
-          ? "Invalid credentials."
-          : formState === "error"
-          ? "An error occured."
-          : formState === "success"
-          ? "Successful authentication."
-          : ""}
-      </p>
+      <FormFields status={formState} />
+      <div
+        aria-hidden={formState === "initial"}
+        className={styles.submitStatus}
+      >
+        {formState === "invalid" ? (
+          <>
+            <div className={styles.statusIcon}>
+              <ThemedImage
+                alt="alert icon"
+                imageName="alert-icon"
+                position="center"
+              />
+            </div>
+            <p className={styles.statusMessage}>Invalid credentials.</p>
+          </>
+        ) : formState === "error" ? (
+          <>
+            <div className={styles.statusIcon}>
+              <ThemedImage
+                alt="sad face icon"
+                imageName="sad-icon"
+                position="center"
+              />
+            </div>
+            <p className={styles.statusMessage}>An error occurred.</p>
+          </>
+        ) : formState === "success" ? (
+          <>
+            <div className={styles.statusIcon}>
+              <ThemedImage
+                alt="success icon"
+                imageName="success-icon"
+                position="center"
+              />
+            </div>
+            <p className={styles.statusMessage}>Success!</p>
+          </>
+        ) : null}
+      </div>
     </form>
   );
 }
