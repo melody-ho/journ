@@ -4,16 +4,18 @@
 import checkUsername from "./server-actions/check-username";
 import createUser from "./server-actions/create-user";
 import debounce from "lodash.debounce";
+import Link from "next/link";
 import styles from "./new-account-form.module.css";
+import ThemedImage from "@/app/_helper-components/themed-image";
 import z from "zod";
 import {
   experimental_useFormState as useFormState,
   experimental_useFormStatus as useFormStatus,
 } from "react-dom";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /// children components ///
-function FormFields() {
+function FormFields({ status }) {
   // client-side form validation //
   // first name
   const [firstName, setfirstName] = useState("");
@@ -106,8 +108,25 @@ function FormFields() {
     matchPasswords();
   }
 
-  // form status initialization //
+  // pending status initialization //
   const { pending } = useFormStatus();
+
+  // show account creation status //
+  const statusModal = useRef(null);
+  useEffect(function openModal() {
+    if (statusModal.current) {
+      statusModal.current.close();
+      statusModal.current.showModal();
+    }
+  });
+
+  function handleCancel(e) {
+    e.preventDefault();
+  }
+
+  function closeModal() {
+    statusModal.current.close();
+  }
 
   return (
     <>
@@ -247,24 +266,78 @@ function FormFields() {
           usernameUnavailable ||
           passwordMessage ||
           confirmPasswordMessage ||
-          pending
+          pending ||
+          status
         }
       >
         Create account
       </button>
+      {pending || status ? (
+        <dialog
+          className={styles.statusModal}
+          onCancel={handleCancel}
+          ref={statusModal}
+        >
+          {pending ? (
+            <>
+              <div className={styles.modalContent}>
+                <div className={styles.loadingIndicator}>
+                  <div className={styles.spinner}></div>
+                </div>
+                <p className={styles.status}>Creating account...</p>
+              </div>
+            </>
+          ) : status === "success" ? (
+            <>
+              <div className={styles.modalContent}>
+                <div className={styles.statusIcon}>
+                  <ThemedImage
+                    alt="success icon"
+                    imageName="success-icon"
+                    position="center"
+                  />
+                </div>
+                <p className={styles.status}>Success! Welcome to Journ.</p>
+                <Link className={styles.signInLink} href="/">
+                  Sign-in page ➜
+                </Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className={styles.modalContent}>
+                <div className={styles.statusIcon}>
+                  <ThemedImage
+                    alt="sad face icon"
+                    imageName="sad-icon"
+                    position="center"
+                  />
+                </div>
+                <p className={styles.status}>Oh no! An error occurred.</p>
+                <button
+                  className={styles.backButton}
+                  onClick={closeModal}
+                  type="button"
+                >
+                  Try again ➜
+                </button>
+              </div>
+            </>
+          )}
+        </dialog>
+      ) : null}
     </>
   );
 }
 
 /// main component ///
 export default function NewAccountForm() {
-  // server-side error handling //
+  // initialize submission status //
   const [formState, formAction] = useFormState(createUser, null);
 
   return (
     <form action={formAction} className={styles.form}>
-      <FormFields />
-      <p className={styles.submitStatus}>{formState ? formState : ""}</p>
+      <FormFields status={formState} />
     </form>
   );
 }

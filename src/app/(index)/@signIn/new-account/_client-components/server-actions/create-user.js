@@ -38,7 +38,8 @@ export default async function createUser(formState, formData) {
       lastName: validatedData.lastName,
     });
     await newUser.save();
+    return "success";
   } catch (error) {
-    return "An error occurred while creating your account. Please try again.";
+    return "error";
   }
 }

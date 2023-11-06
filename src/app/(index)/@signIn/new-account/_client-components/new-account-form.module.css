@@ -28,14 +28,6 @@
   color: rgba(var(--background-rgb), 0.2);
 }
 
-.submitStatus {
-  align-self: flex-end;
-  font-size: max(16px, calc(16px + 0.5vw));
-  margin-bottom: 1em;
-  margin-top: 1em;
-  min-height: 1.5em;
-}
-
 .sectionHeading {
   font-family: var(--font-monarcha);
   font-size: max(15px, calc(15px + 0.5vw));
@@ -78,6 +70,173 @@
   font-weight: 200;
   margin-bottom: 1em;
   min-height: 1.5em;
+}
+
+.statusModal {
+  background-color: transparent;
+  border: none;
+  color: rgb(var(--foreground-rgb));
+}
+
+.statusModal::backdrop {
+  background-color: rgb(var(--background-rgb), 0.8);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+.statusModal:focus {
+  outline: none;
+}
+
+.modalContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.loadingIndicator,
+.statusIcon {
+  height: 5em;
+  margin-bottom: 1em;
+  width: 5em;
+}
+
+.loadingIndicator {
+  align-items: center;
+  display: flex;
+}
+
+.spinner {
+  animation: spinner 5s infinite;
+  box-shadow:
+    -1em -1em 0 0.5em,
+    -1em -1em 0 0.5em,
+    -1em -1em 0 0.5em,
+    -1em -1em 0 0.5em;
+  color: rgb(var(--high-contrast-rgb));
+  height: 0.5em;
+  left: 1.5em;
+  position: relative;
+  width: 0.5em;
+}
+
+@keyframes spinner {
+  0% {
+    box-shadow:
+      -1em -1em 0 0.5em,
+      -1em -1em 0 0.5em,
+      -1em -1em 0 0.5em,
+      -1em -1em 0 0.5em;
+  }
+  8.33% {
+    box-shadow:
+      -1em -1em 0 0.5em,
+      1em -1em 0 0.5em,
+      1em -1em 0 0.5em,
+      1em -1em 0 0.5em;
+  }
+  16.66% {
+    box-shadow:
+      -1em -1em 0 0.5em,
+      1em -1em 0 0.5em,
+      1em 1em 0 0.5em,
+      1em 1em 0 0.5em;
+  }
+  24.99% {
+    box-shadow:
+      -1em -1em 0 0.5em,
+      1em -1em 0 0.5em,
+      1em 1em 0 0.5em,
+      -1em 1em 0 0.5em;
+  }
+  33.32% {
+    box-shadow:
+      -1em -1em 0 0.5em,
+      1em -1em 0 0.5em,
+      1em 1em 0 0.5em,
+      -1em -1em 0 0.5em;
+  }
+  41.65% {
+    box-shadow:
+      1em -1em 0 0.5em,
+      1em -1em 0 0.5em,
+      1em 1em 0 0.5em,
+      1em -1em 0 0.5em;
+  }
+  49.98% {
+    box-shadow:
+      1em 1em 0 0.5em,
+      1em 1em 0 0.5em,
+      1em 1em 0 0.5em,
+      1em 1em 0 0.5em;
+  }
+  58.31% {
+    box-shadow:
+      -1em 1em 0 0.5em,
+      -1em 1em 0 0.5em,
+      1em 1em 0 0.5em,
+      -1em 1em 0 0.5em;
+  }
+  66.64% {
+    box-shadow:
+      -1em -1em 0 0.5em,
+      -1em -1em 0 0.5em,
+      1em 1em 0 0.5em,
+      -1em 1em 0 0.5em;
+  }
+  74.97% {
+    box-shadow:
+      -1em -1em 0 0.5em,
+      1em -1em 0 0.5em,
+      1em 1em 0 0.5em,
+      -1em 1em 0 0.5em;
+  }
+  83.3% {
+    box-shadow:
+      -1em -1em 0 0.5em,
+      1em 1em 0 0.5em,
+      1em 1em 0 0.5em,
+      -1em 1em 0 0.5em;
+  }
+  91.63% {
+    box-shadow:
+      -1em -1em 0 0.5em,
+      -1em 1em 0 0.5em,
+      -1em 1em 0 0.5em,
+      -1em 1em 0 0.5em;
+  }
+  100% {
+    box-shadow:
+      -1em -1em 0 0.5em,
+      -1em -1em 0 0.5em,
+      -1em -1em 0 0.5em,
+      -1em -1em 0 0.5em;
+  }
+}
+
+.statusIcon {
+  position: relative;
+}
+
+.status {
+  font-family: var(--font-monarcha);
+  font-size: max(22px, calc(22px + 0.5vw));
+  font-weight: 200;
+}
+
+.signInLink,
+.backButton {
+  align-self: flex-end;
+  border: solid 0.1em rgb(var(--high-contrast-rgb));
+  border-radius: 0.2em;
+  color: rgb(var(--high-contrast-rgb));
+  font-size: max(16px, calc(16px + 0.5vw));
+  margin-top: 1em;
+  padding: 0.5em 1em;
+  text-decoration: none;
+}
+
+.backButton {
+  background-color: transparent;
 }
 
 @media (min-width: 1000px) {
