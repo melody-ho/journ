@@ -1,0 +1,88 @@
+.page {
+  display: grid;
+  grid-template: 2fr 3fr 24fr 2fr / 1fr 12fr 1fr;
+  min-height: 100vh;
+  overflow-x: clip;
+  position: relative;
+  width: max(280px, 100%);
+}
+
+.header {
+  align-items: center;
+  border-bottom: 0.05em solid rgb(var(--foreground-rgb));
+  display: flex;
+  grid-area: 2 / 2 / 3 / 3;
+  justify-content: space-between;
+  padding-bottom: 2vh;
+}
+
+.main {
+  grid-area: 3 / 2 / 4 / 3;
+}
+
+.headerLeft {
+  display: flex;
+  gap: 1em;
+}
+
+.logo {
+  height: max(6px, 10vw);
+  position: relative;
+  width: max(6px, 10vw);
+}
+
+.heading {
+  align-self: flex-end;
+  font-family: var(--font-bely-display);
+  font-size: max(12px, 6vw);
+}
+
+.accountBtn {
+  background-color: transparent;
+  border: none;
+  display: flex;
+}
+
+.accountIcon {
+  height: 10vw;
+  position: relative;
+  width: 10vw;
+}
+
+.desktopOnly {
+  display: none;
+}
+
+@media (min-width: 1000px) {
+  .page {
+    --account-icon-size: 5vw;
+    --account-menu-size: 18vw;
+    grid-template: 1fr 2fr 12fr 1fr / 1fr 12fr 1fr;
+  }
+
+  .headerLeft {
+    gap: 2em;
+  }
+
+  .logo {
+    height: 5vw;
+    width: 5vw;
+  }
+
+  .heading {
+    font-size: max(32px, calc(32px + 1vw));
+  }
+
+  .accountIcon {
+    height: var(--account-icon-size);
+    width: var(--account-icon-size);
+  }
+
+  .desktopOnly {
+    display: block;
+  }
+
+  .mobileOnly {
+    display: none;
+  }
+}

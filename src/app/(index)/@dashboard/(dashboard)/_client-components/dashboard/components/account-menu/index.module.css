@@ -1,0 +1,154 @@
+.component {
+  --mobile-padding-top: 10vh;
+  background-color: rgba(var(--low-contrast-rgb), 0.9);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  height: calc(100% - var(--mobile-padding-top));
+  padding-top: var(--mobile-padding-top);
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 70%;
+}
+
+.closeBtn,
+.menuButton {
+  background-color: transparent;
+  border: none;
+}
+
+.closeBtn,
+.items {
+  margin-left: 5vw;
+}
+
+.closeBtn {
+  aspect-ratio: 1;
+  position: relative;
+  width: min(40px, 10%);
+}
+
+.items {
+  margin-top: 15vh;
+}
+
+.item,
+.link,
+.menuButton {
+  color: rgb(var(--high-contrast-rgb));
+  font-size: max(16px, calc(16px + 0.5vw));
+  margin-left: 1vw;
+  margin-top: 2em;
+}
+
+.link {
+  text-decoration: none;
+}
+
+.menuButton {
+  padding: 0px;
+}
+
+.menuButton:hover {
+  cursor: pointer;
+}
+
+.slideIn {
+  animation: slideIn 300ms ease-in-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(70vw);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.slideOut {
+  animation: slideOut 350ms ease-in-out;
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(70vw);
+  }
+}
+
+@media (min-width: 1000px) {
+  .component {
+    animation: initial;
+    border-radius: 0.5em;
+    height: initial;
+    padding: 0.5em 1em;
+    right: initial;
+    top: initial;
+    transform: translate(
+      calc(calc(var(--account-icon-size) - var(--account-menu-size)) - 2vw),
+      0.5em
+    );
+    width: var(--account-menu-size);
+  }
+
+  .items {
+    margin: 0px;
+  }
+
+  .item,
+  .link,
+  .menuButton {
+    font-size: max(10px, calc(10px + 0.75vw));
+    margin: 0px;
+  }
+
+  .item {
+    border-bottom: 0.1em solid rgb(var(--medium-contrast-rgb));
+    padding: 1em 0px;
+  }
+
+  .lastItem {
+    border: none;
+  }
+
+  .mobileOnly {
+    display: none;
+  }
+
+  .growDown {
+    animation: growDown 300ms ease-in-out;
+    transform-origin: top center;
+  }
+
+  @keyframes growDown {
+    0% {
+      transform: scaleY(0);
+    }
+    80% {
+      transform: scaleY(1.1);
+    }
+    100% {
+      transform: scaleY(1);
+    }
+  }
+
+  .shrinkUp {
+    animation: shrinkUp 350ms ease-in-out;
+    transform-origin: top center;
+  }
+
+  @keyframes shrinkUp {
+    0% {
+      transform: scaleY(1);
+    }
+    20% {
+      transform: scaleY(1.1);
+    }
+    100% {
+      transform: scaleY(0);
+    }
+  }
+}

@@ -1,7 +1,7 @@
 "use client";
 
-import Filters from "./filters";
-import FilteredEntries from "./filtered-entries";
+import Filters from "../filters";
+import FilteredEntries from "../filtered-entries";
 import { useState } from "react";
 
 export default function Entries({ userId, userTags }) {

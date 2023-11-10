@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #ccc;
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        stroke-width: 0px;
+      }
+
+      .cls-2 {
+        fill: #333;
+      }
+
+      .cls-3 {
+        fill: #e6e6e6;
+      }
+    </style>
+  </defs>
+  <rect id="background" class="cls-3" y="0" width="1000" height="1000" rx="178.57" ry="178.57"/>
+  <g id="grid_texture">
+    <rect class="cls-1" x="170" y="170" width="320" height="320" rx="20" ry="20"/>
+    <rect class="cls-1" x="510" y="510" width="320" height="320" rx="20" ry="20"/>
+    <rect class="cls-1" x="510" y="170" width="150" height="150" rx="10" ry="10"/>
+    <rect class="cls-1" x="510" y="340" width="150" height="150" rx="10" ry="10"/>
+    <rect class="cls-1" x="680" y="340" width="150" height="150" rx="10" ry="10"/>
+    <rect class="cls-1" x="680" y="170" width="150" height="150" rx="10" ry="10"/>
+    <rect class="cls-1" x="170" y="510" width="150" height="150" rx="10" ry="10"/>
+    <rect class="cls-1" x="170" y="680" width="150" height="150" rx="10" ry="10"/>
+    <rect class="cls-1" x="340" y="680" width="150" height="150" rx="10" ry="10"/>
+    <rect class="cls-1" x="340" y="510" width="150" height="150" rx="10" ry="10"/>
+  </g>
+  <path id="letter" class="cls-2" d="m952.69,57.5h-350.46v5.62c142.5,0,142.5,68.13,142.5,219.38v496.25c0,68.75-8.12,157.5-97.5,157.5-63.75,0-99.37-48.12-99.37-107.5,0-47.5,23.12-82.5,52.5-100-6.88-86.25-61.88-123.75-123.75-123.75-74.38,0-132.5,55.63-132.5,136.88,0,161.25,209.37,200.62,303.12,200.62,236.22,0,337.01-107.31,352.77-281.98V178.57c0-46.72-17.94-89.25-47.31-121.07Z"/>
+</svg>
