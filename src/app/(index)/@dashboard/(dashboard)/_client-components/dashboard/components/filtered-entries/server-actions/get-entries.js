@@ -2,20 +2,43 @@
 
 /// imports ///
 import getS3Url from "@/(dashboard)/_helper-functions/get-s3-url";
+import { Op } from "sequelize";
 import rds from "@/database/rds";
 
 /// private ///
 const PAGINATION_LIMIT = 50;
 
 /// main ///
-export default async function getEntries(userId, checkedTags, page) {
+export default async function getEntries(
+  userId,
+  startDate,
+  endDate,
+  types,
+  tags,
+  page,
+) {
   try {
     // get entries data from RDS //
-    const offset = PAGINATION_LIMIT * (page - 1);
     let entries;
-    if (checkedTags.length === 0) {
+    // determine offset
+    const offset = PAGINATION_LIMIT * (page - 1);
+    // determine where clauses
+    const entryWhere = { userId };
+    const entriesDateFn = [];
+    if (startDate)
+      entriesDateFn.push(
+        rds.where(rds.fn("date", rds.col("Entry.createdAt")), ">=", startDate),
+      );
+    if (endDate)
+      entriesDateFn.push(
+        rds.where(rds.fn("date", rds.col("Entry.createdAt")), "<=", endDate),
+      );
+    if (entriesDateFn.length !== 0) entryWhere[Op.and] = entriesDateFn;
+    if (types.length !== 0) entryWhere.type = types;
+    // run query
+    if (tags.length === 0) {
       entries = await rds.models.Entry.findAll({
-        where: { userId },
+        where: entryWhere,
         order: [["createdAt", "ASC"]],
         offset,
         limit: PAGINATION_LIMIT,
@@ -23,11 +46,11 @@ export default async function getEntries(userId, checkedTags, page) {
       });
     } else {
       const matchedEntries = await rds.models.EntryTag.findAll({
-        include: { model: rds.models.Entry, where: { userId } },
-        where: { tagId: checkedTags },
+        include: { model: rds.models.Entry, where: entryWhere },
+        where: { tagId: tags },
         group: ["entryId"],
         attributes: { include: [[rds.fn("COUNT", "id"), "matchCount"]] },
-        having: { matchCount: checkedTags.length },
+        having: { matchCount: tags.length },
         order: [["createdAt", "ASC"]],
         offset,
         limit: PAGINATION_LIMIT,

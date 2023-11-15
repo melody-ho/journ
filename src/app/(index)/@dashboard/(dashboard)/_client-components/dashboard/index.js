@@ -16,7 +16,10 @@ export default function Dashboard({ user, userTags }) {
   const [filtersLabel, setFiltersLabel] = useState(false);
   const [filtersMenu, setFiltersMenu] = useState(false);
   const [newEntryLabel, setNewEntryLabel] = useState(false);
+  const [selectedEndDate, setSelectedEndDate] = useState(null);
+  const [selectedStartDate, setSelectedStartDate] = useState(null);
   const [selectedTags, setSelectedTags] = useState([]);
+  const [selectedTypes, setSelectedTypes] = useState([]);
   const filtersMenuModal = useRef(null);
 
   // open and close account menu //
@@ -74,6 +77,9 @@ export default function Dashboard({ user, userTags }) {
 
   // get selected filters //
   function getFilters(data) {
+    setSelectedStartDate(data.get("startDate"));
+    setSelectedEndDate(data.get("endDate"));
+    setSelectedTypes(data.getAll("type"));
     setSelectedTags(data.getAll("tags"));
   }
 
@@ -182,7 +188,13 @@ export default function Dashboard({ user, userTags }) {
           </section>
         ) : null}
         <section className={styles.entries}>
-          <FilteredEntries selectedTags={selectedTags} userId={user.id} />
+          <FilteredEntries
+            selectedEndDate={selectedEndDate}
+            selectedStartDate={selectedStartDate}
+            selectedTags={selectedTags}
+            selectedTypes={selectedTypes}
+            userId={user.id}
+          />
         </section>
       </main>
       <nav

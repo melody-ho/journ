@@ -5,7 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-export default function FilteredEntries({ selectedTags, userId }) {
+export default function FilteredEntries({
+  selectedEndDate,
+  selectedStartDate,
+  selectedTags,
+  selectedTypes,
+  userId,
+}) {
   // initialize states and refs //
   const [entries, setEntries] = useState([]);
   const [page, setPage] = useState(1);
@@ -31,7 +37,14 @@ export default function FilteredEntries({ selectedTags, userId }) {
       const observer = new IntersectionObserver(
         async (targets) => {
           if (targets[0].isIntersecting) {
-            const nextEntries = await getEntries(userId, selectedTags, page);
+            const nextEntries = await getEntries(
+              userId,
+              selectedStartDate,
+              selectedEndDate,
+              selectedTypes,
+              selectedTags,
+              page,
+            );
             if (nextEntries.length === 0) {
               setReachEnd(true);
             } else {
@@ -49,7 +62,16 @@ export default function FilteredEntries({ selectedTags, userId }) {
         if (target) observer.unobserve(target);
       };
     },
-    [selectedTags, entries, observerTarget, page, userId],
+    [
+      entries,
+      observerTarget,
+      page,
+      selectedEndDate,
+      selectedStartDate,
+      selectedTags,
+      selectedTypes,
+      userId,
+    ],
   );
 
   return (
