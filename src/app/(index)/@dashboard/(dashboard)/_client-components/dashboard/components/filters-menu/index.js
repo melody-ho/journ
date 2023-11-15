@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 
-export default function Filters({ passFilters, userTags }) {
+export default function FiltesMenu({ passFilters, userTags }) {
   const formRef = useRef(null);
 
   function updateFilters() {

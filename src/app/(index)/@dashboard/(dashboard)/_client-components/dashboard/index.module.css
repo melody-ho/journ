@@ -37,16 +37,48 @@
   font-size: max(12px, 6vw);
 }
 
-.accountBtn {
+.accountBtn,
+.entriesMenuItem {
   background-color: transparent;
   border: none;
   display: flex;
+}
+
+.accountBtn:hover,
+.entriesMenuItem:hover {
+  cursor: pointer;
 }
 
 .accountIcon {
   height: 10vw;
   position: relative;
   width: 10vw;
+}
+
+.entriesMenu {
+  column-gap: 0.25em;
+  display: flex;
+  margin: 1em 0;
+}
+
+.entriesMenuItem {
+  align-items: center;
+  color: rgb(var(--foreground-rgb));
+  column-gap: 0.25em;
+  padding: 0;
+  text-decoration: none;
+}
+
+.entriesMenuIcon {
+  height: 8vw;
+  position: relative;
+  width: 8vw;
+}
+
+.entriesMenuLabel {
+  font-family: var(--font-monarcha);
+  font-size: max(16px, calc(16px + 1vw));
+  margin-right: 0.5em;
 }
 
 .desktopOnly {
@@ -76,6 +108,33 @@
   .accountIcon {
     height: var(--account-icon-size);
     width: var(--account-icon-size);
+  }
+
+  .entriesMenuItem {
+    column-gap: 0.2em;
+  }
+
+  .entriesMenuIcon {
+    height: 4vw;
+    width: 4vw;
+  }
+
+  .entriesMenuLabel {
+    display: none;
+  }
+
+  .entriesMenuLabelShow {
+    animation: revealLabel 0.5s 1 ease-in-out;
+    display: block;
+  }
+
+  @keyframes revealLabel {
+    from {
+      opacity: 0%;
+    }
+    to {
+      opacity: 100%;
+    }
   }
 
   .desktopOnly {

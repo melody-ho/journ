@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
-export default function FilteredEntries({ checkedTags, userId }) {
+export default function FilteredEntries({ selectedTags, userId }) {
   // initialize states and refs //
   const [entries, setEntries] = useState([]);
   const [page, setPage] = useState(1);
@@ -19,7 +19,7 @@ export default function FilteredEntries({ checkedTags, userId }) {
       setPage(1);
       setReachEnd(false);
     },
-    [checkedTags],
+    [selectedTags],
   );
 
   // configure intersection observer to retrieve next entries when they're in view //
@@ -31,7 +31,7 @@ export default function FilteredEntries({ checkedTags, userId }) {
       const observer = new IntersectionObserver(
         async (targets) => {
           if (targets[0].isIntersecting) {
-            const nextEntries = await getEntries(userId, checkedTags, page);
+            const nextEntries = await getEntries(userId, selectedTags, page);
             if (nextEntries.length === 0) {
               setReachEnd(true);
             } else {
@@ -49,7 +49,7 @@ export default function FilteredEntries({ checkedTags, userId }) {
         if (target) observer.unobserve(target);
       };
     },
-    [checkedTags, entries, observerTarget, page, userId],
+    [selectedTags, entries, observerTarget, page, userId],
   );
 
   return (

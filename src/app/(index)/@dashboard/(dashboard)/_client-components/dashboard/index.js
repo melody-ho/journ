@@ -1,16 +1,25 @@
 "use client";
 
 import AccountMenu from "./components/account-menu";
-import Entries from "../entries";
+import FilteredEntries from "./components/filtered-entries";
+import FiltersMenu from "./components/filters-menu";
+import Link from "next/link";
 import styles from "./index.module.css";
 import ThemedImage from "@/app/_helper-components/themed-image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const ACCOUNT_MENU_CLOSE_DURATION = 300;
 
 export default function Dashboard({ user, userTags }) {
+  // initialize states and refs //
   const [accountMenu, setAccountMenu] = useState(false);
+  const [filtersLabel, setFiltersLabel] = useState(false);
+  const [filtersMenu, setFiltersMenu] = useState(false);
+  const [newEntryLabel, setNewEntryLabel] = useState(false);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const filtersMenuModal = useRef(null);
 
+  // open and close account menu //
   function toggleAccountMenu() {
     setAccountMenu(!accountMenu);
   }
@@ -22,14 +31,58 @@ export default function Dashboard({ user, userTags }) {
     }, ACCOUNT_MENU_CLOSE_DURATION);
   }
 
+  // show and hide entry menu labels //
+  function showFiltersLabel() {
+    setFiltersLabel(true);
+  }
+
+  function hideFiltersLabel() {
+    setFiltersLabel(false);
+  }
+
+  function showNewEntryLabel() {
+    setNewEntryLabel(true);
+  }
+
+  function hideNewEntryLabel() {
+    setNewEntryLabel(false);
+  }
+
+  // open and close filters menu //
+  function showFiltersMenu() {
+    setFiltersMenu(true);
+  }
+
+  useEffect(
+    function openFiltersModal() {
+      if (filtersMenuModal.current) {
+        filtersMenuModal.current.close();
+        filtersMenuModal.current.showModal();
+      }
+    },
+    [filtersMenu],
+  );
+
+  function closeFiltersMenu() {
+    setFiltersMenu(false);
+  }
+
+  // helper function for clicking outside popups to close //
   function preventClose(e) {
     e.stopPropagation(e);
+  }
+
+  // get selected filters //
+  function getFilters(data) {
+    setSelectedTags(data.getAll("tags"));
   }
 
   return (
     <div
       className={styles.page}
-      onClick={accountMenu ? closeAccountMenu : null}
+      onClick={
+        accountMenu ? closeAccountMenu : filtersMenu ? closeFiltersMenu : null
+      }
     >
       <header className={styles.header}>
         <div className={styles.headerLeft}>
@@ -67,8 +120,70 @@ export default function Dashboard({ user, userTags }) {
           </nav>
         </div>
       </header>
-      <main className={styles.main}>
-        <Entries userId={user.id} userTags={userTags} />
+      <main className={styles.main} inert={accountMenu ? "" : null}>
+        <nav>
+          <ul className={styles.entriesMenu}>
+            <li>
+              <button
+                className={styles.entriesMenuItem}
+                onClick={showFiltersMenu}
+                onMouseEnter={showFiltersLabel}
+                onMouseLeave={hideFiltersLabel}
+                type="button"
+              >
+                <div className={styles.entriesMenuIcon}>
+                  <ThemedImage
+                    alt="Filters Icon"
+                    imageName="filters-icon"
+                    position="center"
+                  />
+                </div>
+                <p
+                  className={`${styles.entriesMenuLabel} ${
+                    filtersLabel ? styles.entriesMenuLabelShow : null
+                  }`}
+                >
+                  filters
+                </p>
+              </button>
+            </li>
+            <li>
+              <Link
+                className={styles.entriesMenuItem}
+                href="./new-entry"
+                onMouseEnter={showNewEntryLabel}
+                onMouseLeave={hideNewEntryLabel}
+              >
+                <div className={styles.entriesMenuIcon}>
+                  <ThemedImage
+                    alt="Add Icon"
+                    imageName="add-icon"
+                    position="center"
+                  />
+                </div>
+                <p
+                  className={`${styles.entriesMenuLabel} ${
+                    newEntryLabel ? styles.entriesMenuLabelShow : null
+                  }`}
+                >
+                  new entry
+                </p>
+              </Link>
+            </li>
+          </ul>
+        </nav>
+        {filtersMenu ? (
+          <section>
+            <dialog onCancel={closeFiltersMenu} ref={filtersMenuModal}>
+              <div onClick={preventClose}>
+                <FiltersMenu passFilters={getFilters} userTags={userTags} />{" "}
+              </div>
+            </dialog>
+          </section>
+        ) : null}
+        <section className={styles.entries}>
+          <FilteredEntries selectedTags={selectedTags} userId={user.id} />
+        </section>
       </main>
       <nav
         className={styles.mobileOnly}
