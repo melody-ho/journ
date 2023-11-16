@@ -24,6 +24,7 @@ async function getUserTags(userId) {
         where: { id: userId },
         attributes: [],
       },
+      order: [["name", "ASC"]],
       raw: true,
     });
   } catch (error) {
