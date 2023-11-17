@@ -17,7 +17,7 @@ export default async function updateChanges(formData) {
     // update entry tags //
     const tags = JSON.parse(formData.get("tags"));
     await cleanUpTags(entryId);
-    tags.forEach(async (tag) => {
+    for (const tag of tags) {
       const [tagData, created] = await rds.models.Tag.findOrCreate({
         where: { name: tag },
       });
@@ -28,7 +28,7 @@ export default async function updateChanges(formData) {
         entryId,
         tagId: tagData.id,
       });
-    });
+    }
   } catch (error) {
     // TO DO: error handling //
   }

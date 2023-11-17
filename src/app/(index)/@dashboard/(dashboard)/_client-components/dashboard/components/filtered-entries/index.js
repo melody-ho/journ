@@ -1,8 +1,10 @@
 "use client";
 
+import EntryModal from "./components/entry-modal";
 import getEntries from "./server-actions/get-entries";
+import { getEntryWithoutTags } from "@/(dashboard)/_helper-functions/get-entry";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 export default function FilteredEntries({
@@ -12,8 +14,13 @@ export default function FilteredEntries({
   selectedTypes,
   userId,
 }) {
+  // initialize router //
+  const router = useRouter();
+
   // initialize states and refs //
   const [entries, setEntries] = useState([]);
+  const [entryModal, setEntryModal] = useState(null);
+  const [entryToUpdate, setEntryToUpdate] = useState(null);
   const [page, setPage] = useState(1);
   const [reachEnd, setReachEnd] = useState(false);
   const observerTarget = useRef(null);
@@ -74,47 +81,102 @@ export default function FilteredEntries({
     ],
   );
 
+  // render entry modal when entry is clicked //
+  function renderEntryModal(id) {
+    setEntryModal(id);
+  }
+
+  // remove entry modal when modal is closed //
+  function removeEntryModal() {
+    setEntryModal(null);
+  }
+
+  // update entry in feed and tags in filters menu when edited //
+  function updateFeed(entryId) {
+    router.refresh();
+    setEntryToUpdate(entryId);
+  }
+  useEffect(
+    function updateEntries() {
+      async function updateEntry() {
+        const updatedEntry = await getEntryWithoutTags(entryToUpdate);
+        const newEntries = entries.map((entry) => {
+          if (entry.id === entryToUpdate) {
+            return updatedEntry;
+          } else {
+            return entry;
+          }
+        });
+        setEntries(newEntries);
+        setEntryToUpdate(null);
+      }
+      if (entryToUpdate) updateEntry();
+    },
+    [entries, entryToUpdate, router],
+  );
+
+  // remove entry in feed and update tags in filters menu when deleted //
+  function removeFromFeed(entryId) {
+    router.refresh();
+    const newEntries = entries.filter((entry) => entry.id !== entryId);
+    setEntries(newEntries);
+  }
+
   return (
-    <section>
-      {entries.map((entry) => {
-        if (entry.type === "text") {
-          return (
-            <Link href={`/entry/${entry.id}`} key={entry.id}>
-              <p>{entry.content}</p>
-            </Link>
-          );
-        } else if (entry.type === "image") {
-          return (
-            <Link href={`/entry/${entry.id}`} key={entry.id}>
-              <Image
-                alt={
-                  entry.content
-                    ? entry.content
-                    : "The user did not provide a caption for this image."
-                }
-                height="100"
-                src={entry.srcUrl}
-                width="100"
-              />
-              <p>{entry.content}</p>
-            </Link>
-          );
-        } else {
-          return (
-            <Link href={`/entry/${entry.id}`} key={entry.id}>
-              <video autoPlay loop muted src={entry.srcUrl}></video>
-              <p>{entry.content}</p>
-            </Link>
-          );
-        }
-      })}
-      {reachEnd ? null : (
-        <div
-          aria-hidden="true"
-          ref={observerTarget}
-          style={{ height: 50 }}
-        ></div>
-      )}
-    </section>
+    <>
+      <section>
+        {entries.map((entry) => {
+          if (entry.type === "text") {
+            return (
+              <button
+                key={entry.id}
+                onClick={() => renderEntryModal(entry.id)}
+                type="button"
+              >
+                <p>{entry.content}</p>
+              </button>
+            );
+          } else if (entry.type === "image") {
+            return (
+              <button key={entry.id} onClick={() => renderEntryModal(entry.id)}>
+                <Image
+                  alt={
+                    entry.content
+                      ? entry.content
+                      : "The user did not provide a caption for this image."
+                  }
+                  height="100"
+                  src={entry.srcUrl}
+                  width="100"
+                />
+                <p>{entry.content}</p>
+              </button>
+            );
+          } else {
+            return (
+              <button key={entry.id} onClick={() => renderEntryModal(entry.id)}>
+                <video autoPlay loop muted src={entry.srcUrl}></video>
+                <p>{entry.content}</p>
+              </button>
+            );
+          }
+        })}
+        {reachEnd ? null : (
+          <div
+            aria-hidden="true"
+            ref={observerTarget}
+            style={{ height: 50 }}
+          ></div>
+        )}
+      </section>
+      {entryModal ? (
+        <EntryModal
+          id={entryModal}
+          removeFromFeed={removeFromFeed}
+          removeModal={removeEntryModal}
+          updateFeed={updateFeed}
+        />
+      ) : null}
+    </>
   );
 }

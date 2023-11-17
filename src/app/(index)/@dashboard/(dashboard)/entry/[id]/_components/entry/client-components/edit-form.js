@@ -4,7 +4,7 @@ import deleteEntry from "./server-actions/delete-entry";
 import updateChanges from "./server-actions/update-changes";
 import { useRef, useState } from "react";
 
-export default function EditForm({ entry }) {
+export default function EditForm({ entry, removeFromFeed, updateFeed }) {
   const [editable, setEditable] = useState(false);
   const [content, setContent] = useState(entry.content);
   const [tags, setTags] = useState([...entry.tags]);
@@ -30,13 +30,19 @@ export default function EditForm({ entry }) {
     setTags((tags) => tags.filter((tag) => tag !== deleted));
   }
 
-  function saveChanges(e) {
+  async function saveChanges(e) {
     e.preventDefault();
     const formData = new FormData(formEl.current);
     formData.append("id", entry.id);
     formData.append("userId", entry.userId);
     formData.append("tags", JSON.stringify(tags));
-    updateChanges(formData);
+    await updateChanges(formData);
+    if (updateFeed) updateFeed(entry.id);
+  }
+
+  async function handleDelete(id) {
+    await deleteEntry(id);
+    if (removeFromFeed) removeFromFeed(entry.id);
   }
 
   return (
@@ -77,7 +83,7 @@ export default function EditForm({ entry }) {
       <button onClick={enableEdit} type="button">
         edit
       </button>
-      <button onClick={() => deleteEntry(entry.id)} type="button">
+      <button onClick={() => handleDelete(entry.id)} type="button">
         delete
       </button>
     </>
