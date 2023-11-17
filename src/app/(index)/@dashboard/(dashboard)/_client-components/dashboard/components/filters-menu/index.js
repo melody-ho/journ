@@ -2,23 +2,52 @@
 
 import { useRef, useState } from "react";
 
-export default function FiltesMenu({ passFilters, userTags }) {
+export default function FiltesMenu({
+  passFilters,
+  previousEndDate,
+  previousStartDate,
+  previousTags,
+  previousTypes,
+  userTags,
+}) {
   // initialize states and refs //
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [selectedTagIds, setSelectedTagIds] = useState([]);
+  const [startDate, setStartDate] = useState(previousStartDate);
+  const [endDate, setEndDate] = useState(previousEndDate);
+  const [selectedTypes, setSelectedTypes] = useState([...previousTypes]);
+  const [selectedTagIds, setSelectedTagIds] = useState([...previousTags]);
   const [matchedTags, setMatchedTags] = useState([...userTags]);
   const formRef = useRef(null);
   const startDateInput = useRef(null);
   const endDateInput = useRef(null);
+  const tagSearchInput = useRef(null);
 
   // define event handlers //
+  function clearFilters() {
+    setStartDate(null);
+    setEndDate(null);
+    setSelectedTypes([]);
+    setSelectedTagIds([]);
+    setMatchedTags([...userTags]);
+    tagSearchInput.current.value = "";
+  }
+
   function updateStartDate() {
     setStartDate(startDateInput.current.value);
   }
 
   function updateEndDate() {
     setEndDate(endDateInput.current.value);
+  }
+
+  function updateSelectedTypes(e) {
+    if (e.target.checked) {
+      setSelectedTypes((selectedTypes) => [...selectedTypes, e.target.value]);
+    } else {
+      const newSelectedTypes = selectedTypes.filter(
+        (selectedTypes) => selectedTypes !== e.target.value,
+      );
+      setSelectedTypes(newSelectedTypes);
+    }
   }
 
   function updateSelectedTagIds(e) {
@@ -52,6 +81,9 @@ export default function FiltesMenu({ passFilters, userTags }) {
   return (
     <form onSubmit={applyFilters} ref={formRef}>
       <h1>Filters</h1>
+      <button onClick={clearFilters} type="button">
+        Clear
+      </button>
       <fieldset>
         <h2>Date</h2>
         <div>
@@ -63,6 +95,7 @@ export default function FiltesMenu({ passFilters, userTags }) {
             onChange={updateStartDate}
             ref={startDateInput}
             type="date"
+            value={startDate ? startDate : ""}
           />
         </div>
         <div>
@@ -74,21 +107,43 @@ export default function FiltesMenu({ passFilters, userTags }) {
             onChange={updateEndDate}
             ref={endDateInput}
             type="date"
+            value={endDate ? endDate : ""}
           />
         </div>
       </fieldset>
       <fieldset>
         <h2>Type</h2>
         <div>
-          <input id="text" name="type" type="checkbox" value="text" />
+          <input
+            checked={selectedTypes.includes("text")}
+            id="text"
+            name="type"
+            onChange={updateSelectedTypes}
+            type="checkbox"
+            value="text"
+          />
           <label htmlFor="text">text</label>
         </div>
         <div>
-          <input id="image" name="type" type="checkbox" value="image" />
+          <input
+            checked={selectedTypes.includes("image")}
+            id="image"
+            name="type"
+            onChange={updateSelectedTypes}
+            type="checkbox"
+            value="image"
+          />
           <label htmlFor="image">image</label>
         </div>
         <div>
-          <input id="video" name="type" type="checkbox" value="video" />
+          <input
+            checked={selectedTypes.includes("video")}
+            id="video"
+            name="type"
+            onChange={updateSelectedTypes}
+            type="checkbox"
+            value="video"
+          />
           <label htmlFor="video">video</label>
         </div>
       </fieldset>
@@ -118,7 +173,12 @@ export default function FiltesMenu({ passFilters, userTags }) {
           <h3>Other Tags</h3>
           <div>
             <label htmlFor="tagSearch">Search tags:</label>
-            <input id="tagSearch" onChange={updateMatchedTags} type="search" />
+            <input
+              id="tagSearch"
+              onChange={updateMatchedTags}
+              ref={tagSearchInput}
+              type="search"
+            />
           </div>
           {matchedTags.map((matchedTag) => {
             if (!selectedTagIds.includes(matchedTag.id)) {

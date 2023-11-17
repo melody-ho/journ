@@ -182,7 +182,14 @@ export default function Dashboard({ user, userTags }) {
           <section>
             <dialog onCancel={closeFiltersMenu} ref={filtersMenuModal}>
               <div onClick={preventClose}>
-                <FiltersMenu passFilters={getFilters} userTags={userTags} />{" "}
+                <FiltersMenu
+                  passFilters={getFilters}
+                  previousEndDate={selectedEndDate}
+                  previousStartDate={selectedStartDate}
+                  previousTags={selectedTags}
+                  previousTypes={selectedTypes}
+                  userTags={userTags}
+                />{" "}
               </div>
             </dialog>
           </section>
