@@ -21,6 +21,7 @@ export default function FilteredEntries({
   const [entries, setEntries] = useState([]);
   const [entryModal, setEntryModal] = useState(null);
   const [entryToUpdate, setEntryToUpdate] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [reachEnd, setReachEnd] = useState(false);
   const observerTarget = useRef(null);
@@ -44,6 +45,7 @@ export default function FilteredEntries({
       const observer = new IntersectionObserver(
         async (targets) => {
           if (targets[0].isIntersecting) {
+            setLoading(true);
             const nextEntries = await getEntries(
               userId,
               selectedStartDate,
@@ -58,6 +60,7 @@ export default function FilteredEntries({
               setEntries((entries) => [...entries, ...nextEntries]);
               setPage((prevPage) => prevPage + 1);
             }
+            setLoading(false);
           }
         },
         { threshold: 0 },
@@ -161,7 +164,15 @@ export default function FilteredEntries({
             );
           }
         })}
-        {reachEnd ? null : (
+        {loading ? (
+          <div>
+            <p>loading...</p>
+          </div>
+        ) : reachEnd ? (
+          <div>
+            <p>end</p>
+          </div>
+        ) : (
           <div
             aria-hidden="true"
             ref={observerTarget}
