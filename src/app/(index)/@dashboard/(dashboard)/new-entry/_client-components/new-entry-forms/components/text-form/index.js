@@ -1,7 +1,7 @@
 "use client";
 
 import addTextEntry from "./server-actions/add-text-entry";
-import TagForm from "../tag-form";
+import TagForm from "../helper-components/tag-form";
 import { useRef } from "react";
 
 export default function TextForm({ user }) {
