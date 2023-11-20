@@ -4,7 +4,15 @@ import deleteEntry from "./server-actions/delete-entry";
 import updateChanges from "./server-actions/update-changes";
 import { useRef, useState } from "react";
 
-export default function EditForm({ entry, removeFromFeed, updateFeed }) {
+export default function EditForm({
+  entry,
+  removeFromFeed,
+  setDeleted,
+  setDeleting,
+  setEntry,
+  setUpdating,
+  updateFeed,
+}) {
   const [editable, setEditable] = useState(false);
   const [content, setContent] = useState(entry.content);
   const [tags, setTags] = useState([...entry.tags]);
@@ -31,6 +39,7 @@ export default function EditForm({ entry, removeFromFeed, updateFeed }) {
   }
 
   async function saveChanges(e) {
+    setUpdating(true);
     e.preventDefault();
     const formData = new FormData(formEl.current);
     formData.append("id", entry.id);
@@ -38,11 +47,16 @@ export default function EditForm({ entry, removeFromFeed, updateFeed }) {
     formData.append("tags", JSON.stringify(tags));
     await updateChanges(formData);
     if (updateFeed) updateFeed(entry.id);
+    setEntry(null);
+    setUpdating(false);
   }
 
   async function handleDelete(id) {
+    setDeleting(true);
     await deleteEntry(id);
     if (removeFromFeed) removeFromFeed(entry.id);
+    setDeleted(true);
+    setDeleting(false);
   }
 
   return (

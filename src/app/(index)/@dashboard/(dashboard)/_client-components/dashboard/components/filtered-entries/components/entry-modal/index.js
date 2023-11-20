@@ -11,6 +11,9 @@ export default function EntryModal({
 }) {
   // initialize states and refs //
   const [entry, setEntry] = useState(null);
+  const [deleted, setDeleted] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [updating, setUpdating] = useState(false);
   const modal = useRef(null);
 
   // open modal when rendered //
@@ -31,18 +34,35 @@ export default function EntryModal({
         const data = await getEntryWithTags(id);
         setEntry(data);
       }
-      try {
-        getData();
-      } catch (error) {
-        // TO DO: error handling //
+      if (!entry) {
+        try {
+          getData();
+        } catch (error) {
+          // TO DO: error handling //
+        }
       }
     },
-    [id],
+    [entry, id],
   );
 
+  // close modal on cancel if not updating or deleting //
+  function handleCancel(e) {
+    if (updating || deleting) {
+      e.preventDefault();
+    } else {
+      removeModal();
+    }
+  }
+
   return (
-    <dialog onCancel={removeModal} ref={modal}>
-      {entry ? (
+    <dialog onCancel={handleCancel} ref={modal}>
+      {updating ? (
+        <p>updating...</p>
+      ) : deleting ? (
+        <p>deleting...</p>
+      ) : deleted ? (
+        <p>deleted</p>
+      ) : entry ? (
         <>
           {entry.type === "image" ? (
             <Image
@@ -61,6 +81,10 @@ export default function EntryModal({
           <EditForm
             entry={entry}
             removeFromFeed={removeFromFeed}
+            setDeleted={setDeleted}
+            setDeleting={setDeleting}
+            setEntry={setEntry}
+            setUpdating={setUpdating}
             updateFeed={updateFeed}
           />
         </>
