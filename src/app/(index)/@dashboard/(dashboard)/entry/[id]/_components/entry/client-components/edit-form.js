@@ -2,6 +2,7 @@
 
 import deleteEntry from "./server-actions/delete-entry";
 import updateChanges from "./server-actions/update-changes";
+import { v4 as uuidv4 } from "uuid";
 import { useRef, useState } from "react";
 
 export default function EditForm({
@@ -78,7 +79,7 @@ export default function EditForm({
         </div>
         <ul>
           {tags.map((tag) => (
-            <li key={crypto.randomUUID()}>
+            <li key={uuidv4()}>
               {tag}
               <button
                 hidden={!editable}

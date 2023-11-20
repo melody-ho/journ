@@ -2,6 +2,7 @@
 
 import handleUpload from "./server-actions/handle-upload";
 import Image from "next/image";
+import { v4 as uuidv4 } from "uuid";
 import { useEffect, useRef, useState } from "react";
 
 export default function ImageVideoForm({ user }) {
@@ -87,7 +88,7 @@ export default function ImageVideoForm({ user }) {
       const file = files[i];
       if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
         const url = URL.createObjectURL(file);
-        file.index = crypto.randomUUID();
+        file.index = uuidv4();
         file.source = url;
         if (file.type.startsWith("image/")) {
           setImages((images) => [...images, file]);
