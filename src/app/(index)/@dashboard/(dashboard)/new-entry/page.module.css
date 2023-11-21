@@ -1,0 +1,38 @@
+.page {
+  display: grid;
+  grid-template: 1fr 1fr 11fr 1fr / 1fr 10fr 1fr;
+  min-height: 100vh;
+}
+
+.header {
+  align-items: flex-end;
+  column-gap: max(10px, 1vh);
+  display: flex;
+  grid-area: 2 / 2 / 3 / 3;
+}
+
+.main {
+  grid-area: 3 / 2 / 4 / 3;
+}
+
+.logo {
+  height: max(40px, 4vh);
+  position: relative;
+  width: max(40px, 4vh);
+}
+
+.heading {
+  font-family: var(--font-bely-display);
+  font-size: max(26px, calc(26px + 1vw));
+}
+
+@media (min-width: 1000px) {
+  .header {
+    column-gap: max(20px, 2vh);
+  }
+
+  .logo {
+    height: max(50px, 5vh);
+    width: max(50px, 5vh);
+  }
+}

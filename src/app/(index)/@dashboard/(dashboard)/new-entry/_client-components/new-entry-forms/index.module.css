@@ -1,0 +1,39 @@
+.component {
+  display: grid;
+  grid-template-rows: 1fr 9fr;
+  margin-top: max(20px, 2vh);
+  min-height: 100%;
+  row-gap: max(20px, 2vh);
+}
+
+.tabs {
+  align-items: flex-end;
+  column-gap: 5vw;
+  display: flex;
+  grid-row: 1 / 2;
+}
+
+.form {
+  grid-row: 2 / 3;
+}
+
+.tab {
+  background-color: transparent;
+  border: none;
+  border-bottom: 0.075em solid rgba(var(--high-contrast-rgb), 0);
+  color: rgba(var(--foreground-rgb), 0.6);
+  font-family: var(--font-monarcha);
+  font-size: max(18px, calc(18px + 1vw));
+  padding: 0 0.25em;
+  transition: border-bottom-color 0.25s ease-in;
+}
+
+.inactiveTab:hover {
+  border-bottom-color: rgba(var(--high-contrast-rgb), 0.25);
+  cursor: pointer;
+}
+
+.activeTab {
+  border-bottom-color: rgba(var(--high-contrast-rgb), 1);
+  color: rgba(var(--foreground-rgb), 1);
+}
