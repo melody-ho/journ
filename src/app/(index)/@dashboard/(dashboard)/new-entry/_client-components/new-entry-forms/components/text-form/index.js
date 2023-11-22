@@ -2,6 +2,7 @@
 
 import addTextEntry from "./server-actions/add-text-entry";
 import getUserTags from "@/(dashboard)/_helper-functions/get-user-tags";
+import styles from "./index.module.css";
 import TagDropdown from "../helper-components/tag-dropdown";
 import { useEffect, useRef, useState } from "react";
 
@@ -45,12 +46,24 @@ export default function TextForm({ user }) {
 
   return (
     <>
-      <h2>Text</h2>
       <form ref={textForm}>
-        <label htmlFor="text">Text</label>
-        <textarea id="text" name="text"></textarea>
+        <h2 className={styles.visuallyHidden}>New Text Entry</h2>
+        <div className={styles.textField}>
+          <label className={styles.textFieldLabel} htmlFor="text">
+            Write something:
+          </label>
+          <textarea
+            className={styles.textFieldInput}
+            id="text"
+            name="text"
+          ></textarea>
+        </div>
         <TagDropdown passEntryTags={getEntryTags} userTags={userTags} />
-        <button onClick={submitEntry}>Add entry</button>
+        <div className={styles.submitBtnWrapper}>
+          <button className={styles.submitBtn} onClick={submitEntry}>
+            Add entry
+          </button>
+        </div>
       </form>
     </>
   );
