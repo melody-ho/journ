@@ -1,0 +1,123 @@
+.fieldset {
+  border: none;
+  padding: 0;
+}
+
+.tagsField {
+  align-items: center;
+  display: flex;
+  font-size: max(16px, calc(16px + 0.5vw));
+  gap: 0.5em;
+  margin-top: 0.025em;
+}
+
+.dropdownContainer {
+  position: relative;
+}
+
+.dropdownToggle {
+  align-items: center;
+  background-color: rgb(var(--low-contrast-rgb));
+  border: 0.025em solid rgb(var(--foreground-rgb));
+  border-radius: 2px;
+  color: rgb(var(--high-contrast-rgb));
+  display: flex;
+  font-size: max(16px, calc(16px + 0.5vw));
+  justify-content: space-between;
+  padding: 0.2em 0.5em;
+  width: max(200px, 15vw);
+}
+
+.countIndicator {
+  font-size: max(8px, calc(8px + 0.5vw));
+  font-weight: 200;
+}
+
+.dropdown {
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  background-color: rgba(var(--low-contrast-rgb), 0.8);
+  border: 0.02em solid rgb(var(--high-contrast-rgb));
+  border-top: none;
+  font-size: max(10px, calc(10px + 0.5vw));
+  max-height: 250px;
+  overflow: auto;
+  position: absolute;
+  width: 100%;
+}
+
+.searchBar {
+  left: 0;
+  position: sticky;
+  top: 0;
+}
+
+.dropdownSection {
+  border-bottom: 0.02em solid rgb(var(--high-contrast-rgb));
+  padding: 0.5em;
+}
+
+.lastSection {
+  border: none;
+}
+
+.searchInput {
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  background-color: rgba(var(--foreground-rgb), 0.8);
+  border: none;
+  border-radius: 0;
+  box-sizing: border-box;
+  color: rgb(var(--background-rgb));
+  font-size: max(10px, calc(10px + 0.5vw));
+  padding: 0.25em;
+  width: 100%;
+}
+
+.searchInput::placeholder {
+  font-style: italic;
+  font-weight: 200;
+}
+
+.searchInput:focus {
+  outline: none;
+}
+
+.dropdownSectionLabel,
+.noneIndicator {
+  font-size: max(8px, calc(8px + 0.5vw));
+  font-style: italic;
+  font-weight: 200;
+}
+
+.noneIndicator {
+  color: rgb(var(--high-contrast-rgb));
+}
+
+.loadingIndicator {
+  font-style: italic;
+}
+
+.addNewBtn {
+  background-color: rgb(var(--low-contrast-rgb));
+  border: 0.025em solid rgb(var(--high-contrast-rgb));
+  border-radius: 0.25em;
+  color: rgb(var(--high-contrast-rgb));
+  font-size: max(10px, calc(10px + 0.5vw));
+  margin-top: 0.25em;
+  padding: 0.5em;
+}
+
+.addNewBtn:hover {
+  cursor: pointer;
+}
+
+.addNewSubLabel {
+  font-size: max(8px, calc(8px + 0.5vw));
+  font-weight: 200;
+}
+
+.visuallyHidden {
+  font-size: 0;
+  padding: 0;
+}

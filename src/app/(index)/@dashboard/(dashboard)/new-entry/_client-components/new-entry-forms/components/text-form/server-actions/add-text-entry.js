@@ -5,7 +5,7 @@ import rds from "@/database/rds";
 export default async function addTextEntry(formData) {
   const content = formData.get("text");
   const userId = formData.get("user");
-  const tagNames = formData.getAll("tags");
+  const tagNames = JSON.parse(formData.get("tags"));
   try {
     const entry = await rds.models.Entry.create({
       type: "text",
