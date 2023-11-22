@@ -121,19 +121,27 @@ export default function ImageVideoForm({ user }) {
   // prepare then hand data to server action when submit button is clicked //
   async function submitData(e) {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("user", user);
-    const indexes = [];
+    const entriesData = {};
+    entriesData.indexes = [];
+    entriesData.captions = {};
+    entriesData.files = {};
     captionRefs.current.forEach((ref, index) => {
-      indexes.push(index);
-      formData.append(`captions[${index}]`, ref.value);
+      entriesData.indexes.push(index);
+      entriesData.captions[index] = ref.value;
     });
-    formData.append("indexes", indexes);
     const files = [...images, ...videos];
     files.forEach((file) => {
-      formData.append(`files[${file.index}]`, file);
+      entriesData.files[file.index] = file;
     });
-    await handleUpload(formData);
+    for (let i = 0; i < entriesData.indexes.length; i += 1) {
+      const index = entriesData.indexes[i];
+      const entryData = new FormData();
+      entryData.append("user", user);
+      entryData.append("file", entriesData.files[index]);
+      entryData.append("caption", entriesData.captions[index]);
+      await handleUpload(entryData);
+      console.log(`Uploaded: ${index}`);
+    }
   }
 
   return (
