@@ -14,6 +14,7 @@ export default function ImageVideoForm({ user }) {
   const [imagePreviews, setImagePreviews] = useState([]);
   const [videoPreviews, setVideoPreviews] = useState([]);
   const [userTags, setUserTags] = useState(null);
+  const [tagsForAll, setTagsForAll] = useState([]);
   const [tagsData, setTagsData] = useState(new Map());
   const captionRefs = useRef(new Map());
   const tagRefs = useRef(new Map());
@@ -35,6 +36,11 @@ export default function ImageVideoForm({ user }) {
     },
     [user, userTags],
   );
+
+  // update tags for all when changed //
+  const updateTagsForAll = useCallback((tags) => {
+    setTagsForAll([...tags]);
+  }, []);
 
   // define factory function for managing tags data //
   const manageTagData = useCallback(() => {
@@ -86,6 +92,7 @@ export default function ImageVideoForm({ user }) {
             >
               <TagDropdown
                 passEntryTags={tagData.updateEntryTags}
+                preSelectedTags={tagsForAll}
                 userTags={userTags}
               />
             </div>
@@ -97,7 +104,7 @@ export default function ImageVideoForm({ user }) {
       });
       return newPreviews;
     },
-    [manageTagData, userTags],
+    [manageTagData, tagsForAll, userTags],
   );
 
   // update DOM when list of images changes //
@@ -224,6 +231,7 @@ export default function ImageVideoForm({ user }) {
           <section
             hidden={imagePreviews.length === 0 && videoPreviews.length === 0}
           >
+            <TagDropdown passEntryTags={updateTagsForAll} userTags={userTags} />
             {<ul>{imagePreviews}</ul>}
             {<ul>{videoPreviews}</ul>}
           </section>

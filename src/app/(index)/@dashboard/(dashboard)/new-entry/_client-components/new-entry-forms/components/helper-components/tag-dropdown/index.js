@@ -1,16 +1,31 @@
 "use client";
 
 import styles from "./index.module.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 
-export default function TagDropdown({ passEntryTags, userTags }) {
+export default function TagDropdown({
+  passEntryTags,
+  preSelectedTags = null,
+  userTags,
+}) {
   // initialize states and refs //
   const [dropdown, setDropdown] = useState(false);
   const [entryTags, setEntryTags] = useState([]);
   const [matchedTags, setMatchedTags] = useState([]);
   const [newTags, setNewTags] = useState([]);
+  const [preSelected, dispatchPreSelected] = useReducer(
+    preSelectedReducer,
+    preSelectedTags !== null ? { prev: [], curr: [...preSelectedTags] } : null,
+  );
   const [selectedTags, setSelectedTags] = useState([]);
   const tagSearchRef = useRef(null);
+
+  // define reducers //
+  function preSelectedReducer(preSelected, action) {
+    const prev = [...preSelected.curr];
+    const curr = [...action.newPreSelected];
+    return { prev, curr };
+  }
 
   // initialize matched tags //
   useEffect(
@@ -35,6 +50,58 @@ export default function TagDropdown({ passEntryTags, userTags }) {
       passEntryTags([...entryTags]);
     },
     [entryTags, passEntryTags],
+  );
+
+  // update new and selected tags when preselected tags change //
+  useEffect(
+    function updatePreSelectedTags() {
+      if (preSelectedTags !== null) {
+        const newPreSelected = [...preSelectedTags];
+        dispatchPreSelected({ newPreSelected });
+      }
+    },
+    [dispatchPreSelected, preSelectedTags],
+  );
+
+  useEffect(
+    function applyNewPreSelected() {
+      if (preSelected !== null) {
+        const userTagsNames = userTags
+          ? userTags.map((userTag) => userTag.name)
+          : [];
+        const added = preSelected.curr.filter(
+          (tag) => !preSelected.prev.includes(tag),
+        );
+        const removed = preSelected.prev.filter(
+          (tag) => !preSelected.curr.includes(tag),
+        );
+        if (added.length > 0) {
+          added.forEach((tag) => {
+            if (userTagsNames.includes(tag)) {
+              setSelectedTags((selectedTags) =>
+                selectedTags.includes(tag)
+                  ? [...selectedTags]
+                  : [...selectedTags, tag],
+              );
+            } else if (!userTagsNames.includes(tag)) {
+              setNewTags((newTags) =>
+                newTags.includes(tag) ? [...newTags] : [...newTags, tag].sort(),
+              );
+            }
+          });
+        } else if (removed.length > 0) {
+          setSelectedTags((selectedTags) =>
+            selectedTags.filter(
+              (selectedTag) => !removed.includes(selectedTag),
+            ),
+          );
+          setNewTags((newTags) =>
+            newTags.filter((newTag) => !removed.includes(newTag)),
+          );
+        }
+      }
+    },
+    [preSelected, userTags],
   );
 
   // define event handlers //
