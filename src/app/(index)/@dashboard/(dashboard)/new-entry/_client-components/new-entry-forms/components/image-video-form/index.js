@@ -48,36 +48,40 @@ export default function ImageVideoForm({ user }) {
     return { updateEntryTags, getEntryTags };
   }, []);
 
-  // update DOM when list of images changes //
-  useEffect(
-    function updateImagePreviews() {
-      function deleteImage(index) {
-        const newImages = images.filter((image) => image.index !== index);
+  // create image/video previews //
+  const createPreviews = useCallback(
+    (type, entries, setEntries) => {
+      function deleteEntry(index) {
+        const newEntries = entries.filter((entry) => entry.index !== index);
         setTagsData((tagsData) => {
           tagsData.delete(index);
           return tagsData;
         });
-        setImages(newImages);
+        setEntries(newEntries);
       }
-      const newPreviews = images.map((image) => {
+      const newPreviews = entries.map((entry) => {
         const tagData = manageTagData();
-        setTagsData((tagsData) => tagsData.set(image.index, tagData));
+        setTagsData((tagsData) => tagsData.set(entry.index, tagData));
         return (
-          <li key={image.index}>
-            <Image
-              alt={`preview of ${image.name}`}
-              height="100"
-              src={image.source}
-              width="100"
-            />
+          <li key={entry.index}>
+            {type === "image" ? (
+              <Image
+                alt={`preview of ${entry.name}`}
+                height="100"
+                src={entry.source}
+                width="100"
+              />
+            ) : (
+              <video autoPlay loop muted src={entry.source}></video>
+            )}
             <textarea
               ref={(ref) => {
-                captionRefs.current.set(image.index, ref);
+                captionRefs.current.set(entry.index, ref);
               }}
             ></textarea>
             <div
               ref={(ref) => {
-                tagRefs.current.set(image.index, ref);
+                tagRefs.current.set(entry.index, ref);
               }}
             >
               <TagDropdown
@@ -85,58 +89,33 @@ export default function ImageVideoForm({ user }) {
                 userTags={userTags}
               />
             </div>
-            <button onClick={() => deleteImage(image.index)} type="button">
+            <button onClick={() => deleteEntry(entry.index)} type="button">
               Delete
             </button>
           </li>
         );
       });
+      return newPreviews;
+    },
+    [manageTagData, userTags],
+  );
+
+  // update DOM when list of images changes //
+  useEffect(
+    function updateImagePreviews() {
+      const newPreviews = createPreviews("image", images, setImages);
       setImagePreviews(newPreviews);
     },
-    [images, manageTagData, userTags],
+    [createPreviews, images],
   );
 
   // update DOM when list of videos changes //
   useEffect(
     function updateVideoPreviews() {
-      function deleteVideo(index) {
-        const newVideos = videos.filter((video) => video.index !== index);
-        setTagsData((tagsData) => {
-          tagsData.delete(index);
-          return tagsData;
-        });
-        setVideos(newVideos);
-      }
-      const newPreviews = videos.map((video) => {
-        const tagData = manageTagData();
-        setTagsData((tagsData) => tagsData.set(video.index, tagData));
-        return (
-          <li key={video.index}>
-            <video autoPlay loop muted src={video.source}></video>
-            <textarea
-              ref={(ref) => {
-                captionRefs.current.set(video.index, ref);
-              }}
-            ></textarea>
-            <div
-              ref={(ref) => {
-                tagRefs.current.set(video.index, ref);
-              }}
-            >
-              <TagDropdown
-                passEntryTags={tagData.updateEntryTags}
-                userTags={userTags}
-              />
-            </div>
-            <button onClick={() => deleteVideo(video.index)} type="button">
-              Delete
-            </button>
-          </li>
-        );
-      });
+      const newPreviews = createPreviews("video", videos, setVideos);
       setVideoPreviews(newPreviews);
     },
-    [manageTagData, userTags, videos],
+    [createPreviews, videos],
   );
 
   // remove caption input ref if an image/video is removed //
