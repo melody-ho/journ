@@ -163,7 +163,7 @@ export default function TagDropdown({
               {dropdown ? "▲" : "▼"}
             </button>
             {dropdown ? (
-              <div className={`${styles.dropdown}`}>
+              <div className={styles.dropdown}>
                 {userTags !== null ? (
                   <>
                     <div className={styles.searchBar}>
