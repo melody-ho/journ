@@ -18,6 +18,7 @@ export default function TagDropdown({
     preSelectedTags !== null ? { prev: [], curr: [...preSelectedTags] } : null,
   );
   const [selectedTags, setSelectedTags] = useState([]);
+  const dropdownRef = useRef(null);
   const tagSearchRef = useRef(null);
 
   // define reducers //
@@ -106,8 +107,18 @@ export default function TagDropdown({
 
   // define event handlers //
   function toggleDropDown() {
+    if (!dropdown) {
+      window.addEventListener("click", handleClickOut);
+    }
     setDropdown(!dropdown);
     setMatchedTags(userTags ? [...userTags] : []);
+  }
+
+  function handleClickOut(e) {
+    if (!dropdownRef.current.contains(e.target)) {
+      setDropdown(false);
+      window.removeEventListener("click", handleClickOut);
+    }
   }
 
   function updateMatchedTags(e) {
@@ -150,7 +161,7 @@ export default function TagDropdown({
         <legend className={styles.visuallyHidden}>Tags</legend>
         <div className={styles.tagsField}>
           <p aria-hidden={true}>Tags:</p>
-          <div className={styles.dropdownContainer}>
+          <div className={styles.dropdownContainer} ref={dropdownRef}>
             <button
               className={styles.dropdownToggle}
               onClick={toggleDropDown}
