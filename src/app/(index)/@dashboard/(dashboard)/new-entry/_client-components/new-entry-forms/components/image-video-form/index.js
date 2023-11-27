@@ -3,6 +3,7 @@
 import getUserTags from "@/(dashboard)/_helper-functions/get-user-tags";
 import handleUpload from "./server-actions/handle-upload";
 import Image from "next/image";
+import styles from "./index.module.css";
 import TagDropdown from "../helper-components/tag-dropdown";
 import { v4 as uuidv4 } from "uuid";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -213,31 +214,54 @@ export default function ImageVideoForm({ user }) {
   }
 
   return (
-    <>
-      <h2>Images and Videos</h2>
-      <form>
-        <div onDragOver={handleDragOver} onDrop={handleFileDrop}>
-          <section>
-            <label htmlFor="files">Add images/videos</label>
-            <input
-              accept="image/*, video/*"
-              id="files"
-              multiple
-              name="files"
-              onChange={handleFileInput}
-              type="file"
-            ></input>
-          </section>
-          <section
-            hidden={imagePreviews.length === 0 && videoPreviews.length === 0}
+    <form>
+      <h2 className={styles.visuallyHidden}>New Image/Video Entries</h2>
+      <div className={styles.bottomMargin}>
+        <label
+          aria-label="Choose image/video files"
+          className={`${styles.addBtn} ${styles.labelFont}`}
+          htmlFor="files"
+        >
+          Add...
+        </label>
+        <input
+          accept="image/*, video/*"
+          className={styles.hidden}
+          id="files"
+          multiple
+          name="files"
+          onChange={handleFileInput}
+          type="file"
+        ></input>
+      </div>
+      <div
+        className={`${styles.dragDropArea} ${styles.bottomMargin}`}
+        onDragOver={handleDragOver}
+        onDrop={handleFileDrop}
+      >
+        {imagePreviews.length === 0 && videoPreviews.length === 0 ? (
+          <div
+            aria-label="Drag and drop files to add"
+            className={styles.emptyDragDrop}
           >
+            <p className={styles.labelFont}>or drag and drop...</p>
+          </div>
+        ) : (
+          <section>
             <TagDropdown passEntryTags={updateTagsForAll} userTags={userTags} />
             {<ul>{imagePreviews}</ul>}
             {<ul>{videoPreviews}</ul>}
           </section>
-          <button onClick={submitData}>Upload</button>
-        </div>
-      </form>
-    </>
+        )}
+      </div>
+      <div className={styles.alignRight}>
+        <button
+          className={`${styles.uploadBtn} ${styles.labelFont}`}
+          onClick={submitData}
+        >
+          Upload
+        </button>
+      </div>
+    </form>
   );
 }
