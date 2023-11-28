@@ -5,6 +5,7 @@ import handleUpload from "./server-actions/handle-upload";
 import Image from "next/image";
 import styles from "./index.module.css";
 import TagDropdown from "../helper-components/tag-dropdown";
+import ThemedImage from "@/app/_helper-components/themed-image";
 import { v4 as uuidv4 } from "uuid";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -70,36 +71,63 @@ export default function ImageVideoForm({ user }) {
         const tagData = manageTagData();
         setTagsData((tagsData) => tagsData.set(entry.index, tagData));
         return (
-          <li key={entry.index}>
-            {type === "image" ? (
-              <Image
-                alt={`preview of ${entry.name}`}
-                height="100"
-                src={entry.source}
-                width="100"
-              />
-            ) : (
-              <video autoPlay loop muted src={entry.source}></video>
-            )}
-            <textarea
-              ref={(ref) => {
-                captionRefs.current.set(entry.index, ref);
-              }}
-            ></textarea>
-            <div
-              ref={(ref) => {
-                tagRefs.current.set(entry.index, ref);
-              }}
-            >
-              <TagDropdown
-                instruction="Add tags"
-                passEntryTags={tagData.updateEntryTags}
-                preSelectedTags={tagsForAll}
-                userTags={userTags}
-              />
+          <li className={styles.entry} key={entry.index}>
+            <div className={styles.entryContent}>
+              {type === "image" ? (
+                <div className={styles.imagePreviewContainer}>
+                  <Image
+                    alt={`preview of ${entry.name}`}
+                    className={styles.imagePreview}
+                    fill={true}
+                    src={entry.source}
+                  />
+                </div>
+              ) : (
+                <video
+                  autoPlay
+                  className={styles.videoPreview}
+                  loop
+                  muted
+                  playsInline
+                  src={entry.source}
+                ></video>
+              )}
+              <div className={styles.entryCaptionTags}>
+                <textarea
+                  aria-label="caption"
+                  className={styles.captionInput}
+                  placeholder="caption..."
+                  ref={(ref) => {
+                    captionRefs.current.set(entry.index, ref);
+                  }}
+                ></textarea>
+                <div
+                  ref={(ref) => {
+                    tagRefs.current.set(entry.index, ref);
+                  }}
+                >
+                  <TagDropdown
+                    instruction="Add tags"
+                    passEntryTags={tagData.updateEntryTags}
+                    preSelectedTags={tagsForAll}
+                    userTags={userTags}
+                  />
+                </div>
+              </div>
             </div>
-            <button onClick={() => deleteEntry(entry.index)} type="button">
-              Delete
+            <button
+              aria-label="delete entry"
+              className={styles.deleteBtn}
+              onClick={() => deleteEntry(entry.index)}
+              type="button"
+            >
+              <div className={styles.deleteImgWrapper}>
+                <ThemedImage
+                  alt="delete icon"
+                  imageName="delete-icon"
+                  position="center"
+                />
+              </div>
             </button>
           </li>
         );
@@ -217,7 +245,7 @@ export default function ImageVideoForm({ user }) {
   return (
     <form>
       <h2 className={styles.visuallyHidden}>New Image/Video Entries</h2>
-      <div className={styles.bottomMargin}>
+      <div className={`${styles.addFilesField} ${styles.bottomMargin}`}>
         <label
           aria-label="Choose image/video files"
           className={`${styles.addBtn} ${styles.labelFont}`}
@@ -249,8 +277,13 @@ export default function ImageVideoForm({ user }) {
           </div>
         ) : (
           <section>
-            <div>
-              <p>Tag all:</p>
+            <div className={styles.tagAllField}>
+              <p className={`${styles.tagAllFieldLabel} ${styles.mobileOnly}`}>
+                tag all
+              </p>
+              <p className={`${styles.tagAllFieldLabel} ${styles.desktopOnly}`}>
+                Tag all:{" "}
+              </p>
               <TagDropdown
                 instruction="Add tags to all"
                 passEntryTags={updateTagsForAll}

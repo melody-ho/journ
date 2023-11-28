@@ -8,17 +8,22 @@
   font-weight: 600;
 }
 
+.addFilesField {
+  width: max-content;
+}
+
 .addBtn {
   border: 0.1em solid rgb(var(--foreground-rgb));
   border-radius: 0.25em;
+  display: block;
   padding: 0.1em 1.2em;
 }
 
 .dragDropArea {
   background-color: rgb(var(--low-contrast-rgb));
-  height: max(450px, 55vh);
+  border-radius: 0.2em;
+  min-height: max(450px, 55vh);
   min-width: 300px;
-  overflow: auto;
 }
 
 .emptyDragDrop {
@@ -50,8 +55,160 @@
   font-size: 0;
 }
 
+.tagAllField {
+  padding: 2em 1em;
+}
+
+.tagAllFieldLabel {
+  font-size: max(12px, calc(12px + 1vw));
+  font-style: italic;
+  font-weight: 200;
+}
+
+.entry {
+  border-top: 0.05em solid rgb(var(--high-contrast-rgb));
+  column-gap: 1em;
+  display: grid;
+  grid-template-columns: 6fr 1fr;
+  margin: 0 1em;
+  padding: 2em 0;
+}
+
+.imagePreviewContainer,
+.videoPreview,
+.captionInput {
+  width: 90%;
+}
+
+.imagePreviewContainer,
+.videoPreview {
+  aspect-ratio: 1;
+  background-color: rgb(var(--medium-contrast-rgb));
+  margin-bottom: 0.5em;
+  position: relative;
+}
+
+.imagePreview,
+.videoPreview {
+  object-fit: contain;
+}
+
+.captionInput,
+.captionInput::placeholder {
+  font-family: var(--font-muli);
+  font-size: max(12px, calc(12px + 0.5vw));
+  font-weight: 200;
+}
+
+.captionInput {
+  aspect-ratio: 3 / 1;
+  background-color: transparent;
+  border: 0.05em solid rgb(var(--high-contrast-rgb));
+  border-radius: 0.1em;
+  box-sizing: border-box;
+  color: rgb(var(--foreground-rgb));
+  margin-bottom: 0.5em;
+  padding: 0.25em;
+  resize: none;
+}
+
+.captionInput::placeholder {
+  color: rgb(var(--high-contrast-rgb));
+  font-style: italic;
+}
+
+.captionInput:focus {
+  outline: 0.25em solid rgb(var(--medium-contrast-rgb));
+}
+
+.deleteBtn {
+  align-self: center;
+  aspect-ratio: 1;
+  background-color: transparent;
+  border: none;
+  display: flex;
+  justify-content: center;
+}
+
+.deleteBtn:hover {
+  cursor: pointer;
+}
+
+.deleteImgWrapper {
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  position: relative;
+  width: max(40px, 100%);
+}
+
+.desktopOnly {
+  display: none;
+}
+
+@media (min-width: 500px) {
+  .desktopOnly {
+    display: initial;
+  }
+
+  .tagAllField {
+    align-items: center;
+    display: flex;
+    gap: 0.5em;
+    padding: 2em;
+  }
+
+  .entryContent {
+    padding-left: 1em;
+  }
+
+  .imagePreviewContainer,
+  .captionInput {
+    width: 75%;
+  }
+
+  .deleteImgWrapper {
+    width: max(40px, 80%);
+  }
+
+  .mobileOnly {
+    display: none;
+  }
+}
+
+@media (min-width: 700px) {
+  .entry {
+    column-gap: 2em;
+    grid-template-columns: 12fr 1fr;
+  }
+
+  .entryContent {
+    column-gap: 1em;
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+  }
+
+  .imagePreviewContainer,
+  .captionInput {
+    width: 100%;
+  }
+}
+
 @media (min-width: 1000px) {
   .labelFont {
     font-size: max(16px, calc(16px + 0.5vw));
+  }
+
+  .entry {
+    grid-template-columns: 19fr 1fr;
+  }
+
+  .entryContent {
+    grid-template-columns: 1fr 3fr;
+  }
+
+  .entryCaptionTags {
+    column-gap: 1em;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
   }
 }
