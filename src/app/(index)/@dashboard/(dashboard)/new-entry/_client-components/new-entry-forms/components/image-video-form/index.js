@@ -92,6 +92,7 @@ export default function ImageVideoForm({ user }) {
               }}
             >
               <TagDropdown
+                instruction="Add tags"
                 passEntryTags={tagData.updateEntryTags}
                 preSelectedTags={tagsForAll}
                 userTags={userTags}
@@ -248,7 +249,14 @@ export default function ImageVideoForm({ user }) {
           </div>
         ) : (
           <section>
-            <TagDropdown passEntryTags={updateTagsForAll} userTags={userTags} />
+            <div>
+              <p>Tag all:</p>
+              <TagDropdown
+                instruction="Add tags to all"
+                passEntryTags={updateTagsForAll}
+                userTags={userTags}
+              />
+            </div>
             {<ul>{imagePreviews}</ul>}
             {<ul>{videoPreviews}</ul>}
           </section>

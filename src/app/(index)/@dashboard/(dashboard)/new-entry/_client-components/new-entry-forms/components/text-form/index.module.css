@@ -4,7 +4,8 @@
   margin-bottom: max(40px, 5vh);
 }
 
-.textFieldLabel {
+.textFieldLabel,
+.tagsFieldLabel {
   font-size: max(16px, calc(16px + 0.5vw));
 }
 
@@ -24,6 +25,12 @@
 
 .textFieldInput:focus {
   outline: 0.25em solid rgb(var(--medium-contrast-rgb));
+}
+
+.tagsField {
+  align-items: center;
+  display: flex;
+  gap: 0.5em;
 }
 
 .submitBtnWrapper {

@@ -58,7 +58,14 @@ export default function TextForm({ user }) {
             name="text"
           ></textarea>
         </div>
-        <TagDropdown passEntryTags={getEntryTags} userTags={userTags} />
+        <div className={styles.tagsField}>
+          <p className={styles.tagsFieldLabel}>Tags:</p>
+          <TagDropdown
+            instruction="Add tags"
+            passEntryTags={getEntryTags}
+            userTags={userTags}
+          />
+        </div>
         <div className={styles.submitBtnWrapper}>
           <button className={styles.submitBtn} onClick={submitEntry}>
             Add entry

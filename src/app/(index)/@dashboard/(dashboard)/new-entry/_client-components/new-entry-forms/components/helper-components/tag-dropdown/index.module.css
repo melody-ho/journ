@@ -1,13 +1,11 @@
 .fieldset {
   border: none;
+  margin: 0;
   padding: 0;
 }
 
 .tagsField {
-  align-items: center;
   display: flex;
-  font-size: max(16px, calc(16px + 0.5vw));
-  gap: 0.5em;
   margin-top: 0.025em;
 }
 

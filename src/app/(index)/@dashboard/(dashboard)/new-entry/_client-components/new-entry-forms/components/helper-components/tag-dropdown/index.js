@@ -4,6 +4,7 @@ import styles from "./index.module.css";
 import { useEffect, useReducer, useRef, useState } from "react";
 
 export default function TagDropdown({
+  instruction,
   passEntryTags,
   preSelectedTags = null,
   userTags,
@@ -160,14 +161,13 @@ export default function TagDropdown({
       <fieldset className={styles.fieldset}>
         <legend className={styles.visuallyHidden}>Tags</legend>
         <div className={styles.tagsField}>
-          <p aria-hidden={true}>Tags:</p>
           <div className={styles.dropdownContainer} ref={dropdownRef}>
             <button
               className={styles.dropdownToggle}
               onClick={toggleDropDown}
               type="button"
             >
-              <span className={styles.visuallyHidden}>Add tags</span>
+              <span className={styles.visuallyHidden}>{instruction}</span>
               <span
                 className={styles.countIndicator}
               >{`${entryTags.length} tag(s) selected `}</span>
