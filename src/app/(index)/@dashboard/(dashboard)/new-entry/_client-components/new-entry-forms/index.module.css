@@ -1,9 +1,8 @@
 .component {
   display: grid;
-  grid-template-rows: 1fr 9fr;
+  grid-template-rows: 60px 1fr;
   margin-top: max(20px, 2vh);
-  min-height: 100%;
-  row-gap: max(20px, 2vh);
+  row-gap: 45px;
 }
 
 .tabs {

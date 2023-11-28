@@ -1,6 +1,6 @@
 .page {
   display: grid;
-  grid-template: 1fr 1fr 11fr 1fr / 1fr 10fr 1fr;
+  grid-template: 30px 60px 1fr 30px / 1fr 10fr 1fr;
   min-height: 100vh;
 }
 
@@ -24,6 +24,12 @@
 .heading {
   font-family: var(--font-bely-display);
   font-size: max(26px, calc(26px + 1vw));
+}
+
+@media (min-width: 600px) {
+  .page {
+    grid-template-rows: 60px 60px 1fr 60px;
+  }
 }
 
 @media (min-width: 1000px) {
