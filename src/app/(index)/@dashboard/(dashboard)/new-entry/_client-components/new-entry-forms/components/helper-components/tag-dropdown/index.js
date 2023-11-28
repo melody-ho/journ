@@ -107,7 +107,7 @@ export default function TagDropdown({
   );
 
   // define event handlers //
-  function toggleDropDown() {
+  function toggleDropdown() {
     if (!dropdown) {
       window.addEventListener("click", handleClickOut);
     }
@@ -157,14 +157,14 @@ export default function TagDropdown({
   }
 
   return (
-    <div>
+    <>
       <fieldset className={styles.fieldset}>
         <legend className={styles.visuallyHidden}>Tags</legend>
         <div className={styles.tagsField}>
           <div className={styles.dropdownContainer} ref={dropdownRef}>
             <button
               className={styles.dropdownToggle}
-              onClick={toggleDropDown}
+              onClick={toggleDropdown}
               type="button"
             >
               <span className={styles.visuallyHidden}>{instruction}</span>
@@ -285,6 +285,6 @@ export default function TagDropdown({
           </div>
         </div>
       </fieldset>
-    </div>
+    </>
   );
 }
