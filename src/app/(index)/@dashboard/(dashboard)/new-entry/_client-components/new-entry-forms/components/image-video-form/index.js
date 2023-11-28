@@ -298,6 +298,7 @@ export default function ImageVideoForm({ user }) {
       <div className={styles.alignRight}>
         <button
           className={`${styles.uploadBtn} ${styles.labelFont}`}
+          disabled={images.length === 0 && videos.length === 0}
           onClick={submitData}
         >
           Upload

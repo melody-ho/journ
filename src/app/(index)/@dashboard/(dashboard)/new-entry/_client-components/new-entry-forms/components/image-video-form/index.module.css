@@ -46,6 +46,11 @@
   padding: 0.5em 2em;
 }
 
+.uploadBtn:disabled {
+  background-color: rgba(var(--high-contrast-rgb), 0.8);
+  color: rgba(var(--background-rgb), 0.2);
+}
+
 .hidden {
   display: none;
   opacity: 0;

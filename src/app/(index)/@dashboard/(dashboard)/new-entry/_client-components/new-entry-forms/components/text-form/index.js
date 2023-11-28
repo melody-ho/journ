@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 export default function TextForm({ user }) {
   // initialize states and refs //
   const [userTags, setUserTags] = useState(null);
+  const [textInputValue, setTextInputValue] = useState("");
   const textForm = useRef(null);
 
   // get user tags from database//
@@ -28,6 +29,11 @@ export default function TextForm({ user }) {
     },
     [user, userTags],
   );
+
+  // update text input value when changed //
+  function updateTextInputValue(e) {
+    setTextInputValue(e.target.value);
+  }
 
   // update selected tags when changed in tag dropdown //
   let tags = [];
@@ -56,6 +62,7 @@ export default function TextForm({ user }) {
             className={styles.textFieldInput}
             id="text"
             name="text"
+            onChange={updateTextInputValue}
           ></textarea>
         </div>
         <div className={styles.tagsField}>
@@ -67,7 +74,11 @@ export default function TextForm({ user }) {
           />
         </div>
         <div className={styles.submitBtnWrapper}>
-          <button className={styles.submitBtn} onClick={submitEntry}>
+          <button
+            className={styles.submitBtn}
+            disabled={textInputValue === ""}
+            onClick={submitEntry}
+          >
             Add entry
           </button>
         </div>

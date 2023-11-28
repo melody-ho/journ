@@ -43,11 +43,16 @@
   background-color: rgb(var(--high-contrast-rgb));
   border: none;
   border-radius: 0.5em;
-  color: rgb(var(--low-contrast-rgb));
+  color: rgb(var(--background-rgb));
   font-family: var(--font-monarcha);
   font-size: max(12px, calc(12px + 1vw));
   font-weight: 600;
   padding: 0.5em 1.5em;
+}
+
+.submitBtn:disabled {
+  background-color: rgba(var(--high-contrast-rgb), 0.8);
+  color: rgba(var(--background-rgb), 0.2);
 }
 
 .visuallyHidden {
