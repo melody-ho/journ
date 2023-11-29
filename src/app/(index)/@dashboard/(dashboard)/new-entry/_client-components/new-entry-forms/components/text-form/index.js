@@ -2,15 +2,19 @@
 
 import addTextEntry from "./server-actions/add-text-entry";
 import getUserTags from "@/(dashboard)/_helper-functions/get-user-tags";
+import StatusModal from "../helper-components/status-modal";
 import styles from "./index.module.css";
 import TagDropdown from "../helper-components/tag-dropdown";
 import { useEffect, useRef, useState } from "react";
 
 export default function TextForm({ user }) {
   // initialize states and refs //
-  const [userTags, setUserTags] = useState(null);
+  const [resetTagDropdown, setResetTagDropdown] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null);
   const [textInputValue, setTextInputValue] = useState("");
+  const [userTags, setUserTags] = useState(null);
   const textForm = useRef(null);
+  const textInput = useRef(null);
 
   // get user tags from database//
   useEffect(
@@ -30,6 +34,11 @@ export default function TextForm({ user }) {
     [user, userTags],
   );
 
+  // update tag dropdown reset state after reset is complete //
+  function confirmTagDropdownReset() {
+    setResetTagDropdown(false);
+  }
+
   // update text input value when changed //
   function updateTextInputValue(e) {
     setTextInputValue(e.target.value);
@@ -43,12 +52,36 @@ export default function TextForm({ user }) {
 
   // add new text entry when form is submitted//
   async function submitEntry(e) {
+    setSubmitStatus("loading");
     e.preventDefault();
     const formData = new FormData(textForm.current);
     formData.append("user", user);
     formData.append("tags", JSON.stringify(tags));
-    await addTextEntry(formData);
+    const status = await addTextEntry(formData);
+    setSubmitStatus(status);
   }
+
+  // reset submit status if user chooses to try again on error //
+  function retry() {
+    setSubmitStatus(null);
+  }
+
+  // reset form if user chooses to add another //
+  function resetForm() {
+    setResetTagDropdown(true);
+    textInput.current.value = "";
+    setTextInputValue("");
+    setSubmitStatus(null);
+  }
+
+  useEffect(
+    function refetchUserTags() {
+      if (resetTagDropdown) {
+        setUserTags(null);
+      }
+    },
+    [resetTagDropdown],
+  );
 
   return (
     <>
@@ -63,13 +96,16 @@ export default function TextForm({ user }) {
             id="text"
             name="text"
             onChange={updateTextInputValue}
+            ref={textInput}
           ></textarea>
         </div>
         <div className={styles.tagsField}>
           <p className={styles.tagsFieldLabel}>Tags:</p>
           <TagDropdown
+            confirmReset={confirmTagDropdownReset}
             instruction="Add tags"
             passEntryTags={getEntryTags}
+            reset={resetTagDropdown}
             userTags={userTags}
           />
         </div>
@@ -83,6 +119,13 @@ export default function TextForm({ user }) {
           </button>
         </div>
       </form>
+      {submitStatus ? (
+        <StatusModal
+          resetForm={resetForm}
+          retry={retry}
+          status={submitStatus}
+        />
+      ) : null}
     </>
   );
 }

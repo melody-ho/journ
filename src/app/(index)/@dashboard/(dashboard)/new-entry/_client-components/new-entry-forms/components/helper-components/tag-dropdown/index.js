@@ -4,9 +4,11 @@ import styles from "./index.module.css";
 import { useEffect, useReducer, useRef, useState } from "react";
 
 export default function TagDropdown({
+  confirmReset = null,
   instruction,
   passEntryTags,
   preSelectedTags = null,
+  reset = false,
   userTags,
 }) {
   // initialize states and refs //
@@ -28,6 +30,21 @@ export default function TagDropdown({
     const curr = [...action.newPreSelected];
     return { prev, curr };
   }
+
+  // reset dropdown if passed reset: true //
+  useEffect(
+    function resetDropdown() {
+      if (reset) {
+        setDropdown(false);
+        setEntryTags([]);
+        setMatchedTags([]);
+        setNewTags([]);
+        setSelectedTags([]);
+        confirmReset();
+      }
+    },
+    [confirmReset, reset],
+  );
 
   // initialize matched tags //
   useEffect(
