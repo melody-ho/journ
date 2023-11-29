@@ -8,6 +8,7 @@ export default function TagDropdown({
   instruction,
   passEntryTags,
   preSelectedTags = null,
+  readOnly = false,
   reset = false,
   userTags,
 }) {
@@ -181,6 +182,7 @@ export default function TagDropdown({
           <div className={styles.dropdownContainer} ref={dropdownRef}>
             <button
               className={styles.dropdownToggle}
+              disabled={readOnly}
               onClick={toggleDropdown}
               type="button"
             >

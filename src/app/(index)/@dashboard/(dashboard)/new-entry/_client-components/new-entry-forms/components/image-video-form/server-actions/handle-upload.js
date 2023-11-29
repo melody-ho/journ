@@ -2,6 +2,7 @@
 
 /// imports ///
 import rds from "@/database/rds";
+import { revalidatePath } from "next/cache";
 import s3 from "@/database/s3";
 import { Upload } from "@aws-sdk/lib-storage";
 
@@ -52,7 +53,10 @@ export default async function handleUpload(entryData) {
       console.log(progress);
     });
     await upload.done();
+    revalidatePath("/");
+    return "success";
   } catch (error) {
     // TO DO: error handling //
+    return "error";
   }
 }
