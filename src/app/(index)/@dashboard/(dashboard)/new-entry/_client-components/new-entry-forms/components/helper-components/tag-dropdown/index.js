@@ -59,14 +59,7 @@ export default function TagDropdown({
     [userTags],
   );
 
-  // update and pass entry tags when changed //
-  useEffect(
-    function updateEntryTags() {
-      setEntryTags([...newTags, ...selectedTags]);
-    },
-    [newTags, selectedTags],
-  );
-
+  // pass entry tags when changed //
   useEffect(
     function passUpdatedTags() {
       passEntryTags([...entryTags]);
@@ -74,7 +67,26 @@ export default function TagDropdown({
     [entryTags, passEntryTags],
   );
 
-  // update new and selected tags when preselected tags change //
+  // update new and selected tags when entry tags or user tags change //
+  useEffect(
+    function updateNewAndSelected() {
+      const userTagsNames = userTags.map((userTag) => userTag.name);
+      const updatedNew = [];
+      const updatedSelected = [];
+      for (const entryTag of entryTags) {
+        if (userTagsNames.includes(entryTag)) {
+          updatedSelected.push(entryTag);
+        } else {
+          updatedNew.push(entryTag);
+        }
+      }
+      setNewTags(updatedNew);
+      setSelectedTags(updatedSelected);
+    },
+    [entryTags, userTags],
+  );
+
+  // update entry tags when preselected tags change //
   useEffect(
     function updatePreSelectedTags() {
       if (preSelectedTags !== null) {
@@ -88,9 +100,6 @@ export default function TagDropdown({
   useEffect(
     function applyNewPreSelected() {
       if (preSelected !== null) {
-        const userTagsNames = userTags
-          ? userTags.map((userTag) => userTag.name)
-          : [];
         const added = preSelected.curr.filter(
           (tag) => !preSelected.prev.includes(tag),
         );
@@ -99,31 +108,16 @@ export default function TagDropdown({
         );
         if (added.length > 0) {
           added.forEach((tag) => {
-            if (userTagsNames.includes(tag)) {
-              setSelectedTags((selectedTags) =>
-                selectedTags.includes(tag)
-                  ? [...selectedTags]
-                  : [...selectedTags, tag],
-              );
-            } else if (!userTagsNames.includes(tag)) {
-              setNewTags((newTags) =>
-                newTags.includes(tag) ? [...newTags] : [...newTags, tag].sort(),
-              );
-            }
+            setEntryTags((entryTags) => [...entryTags, tag].sort());
           });
         } else if (removed.length > 0) {
-          setSelectedTags((selectedTags) =>
-            selectedTags.filter(
-              (selectedTag) => !removed.includes(selectedTag),
-            ),
-          );
-          setNewTags((newTags) =>
-            newTags.filter((newTag) => !removed.includes(newTag)),
+          setEntryTags((entryTags) =>
+            entryTags.filter((entryTag) => !removed.includes(entryTag)),
           );
         }
       }
     },
-    [preSelected, userTags],
+    [preSelected],
   );
 
   // define event handlers //
@@ -150,30 +144,25 @@ export default function TagDropdown({
     setMatchedTags(newMatchedTags);
   }
 
-  function updateSelectedTags(e) {
-    if (e.target.checked) {
-      setSelectedTags([...selectedTags, e.target.value]);
-    } else {
-      const newSelectedTags = selectedTags.filter(
-        (selectedTag) => selectedTag !== e.target.value,
-      );
-      setSelectedTags(newSelectedTags);
-    }
+  function addSelectedTag(e) {
+    const updatedEntryTags = [...entryTags, e.target.value];
+    updatedEntryTags.sort();
+    setEntryTags(updatedEntryTags);
   }
 
   function addNewTag(tagName) {
-    const updatedNewTags = [...newTags, tagName];
-    updatedNewTags.sort();
-    setNewTags(updatedNewTags);
+    const updatedEntryTags = [...entryTags, tagName];
+    updatedEntryTags.sort();
+    setEntryTags(updatedEntryTags);
     tagSearchRef.current.value = "";
     setMatchedTags(userTags ? [...userTags] : []);
   }
 
-  function removeFromNewTags(e) {
-    const updatedNewTags = newTags.filter(
-      (newTag) => newTag !== e.target.value,
+  function removeTag(e) {
+    const updatedEntryTags = entryTags.filter(
+      (entryTag) => entryTag !== e.target.value,
     );
-    setNewTags(updatedNewTags);
+    setEntryTags(updatedEntryTags);
   }
 
   return (
@@ -242,7 +231,7 @@ export default function TagDropdown({
                               checked
                               dropdown={dropdownId.current}
                               id={newTag}
-                              onChange={removeFromNewTags}
+                              onChange={removeTag}
                               type="checkbox"
                               value={newTag}
                             />
@@ -274,30 +263,28 @@ export default function TagDropdown({
                         selected
                       </p>
                       {selectedTags.length !== 0 ? (
-                        userTags.map((userTag) => {
-                          if (selectedTags.includes(userTag.name)) {
-                            return (
-                              <div
+                        selectedTags.map((selectedTag) => {
+                          return (
+                            <div
+                              dropdown={dropdownId.current}
+                              key={selectedTag}
+                            >
+                              <input
+                                checked
                                 dropdown={dropdownId.current}
-                                key={userTag.name}
+                                id={selectedTag}
+                                onChange={removeTag}
+                                type="checkbox"
+                                value={selectedTag}
+                              />
+                              <label
+                                dropdown={dropdownId.current}
+                                htmlFor={selectedTag}
                               >
-                                <input
-                                  checked
-                                  dropdown={dropdownId.current}
-                                  id={userTag.name}
-                                  onChange={updateSelectedTags}
-                                  type="checkbox"
-                                  value={userTag.name}
-                                />
-                                <label
-                                  dropdown={dropdownId.current}
-                                  htmlFor={userTag.name}
-                                >
-                                  {userTag.name}
-                                </label>
-                              </div>
-                            );
-                          }
+                                {selectedTag}
+                              </label>
+                            </div>
+                          );
                         })
                       ) : (
                         <p
@@ -329,7 +316,7 @@ export default function TagDropdown({
                                 <input
                                   dropdown={dropdownId.current}
                                   id={matchedTag.name}
-                                  onChange={updateSelectedTags}
+                                  onChange={addSelectedTag}
                                   type="checkbox"
                                   value={matchedTag.name}
                                 />
