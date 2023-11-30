@@ -14,8 +14,12 @@ export default function StatusModal({ resetForm, retry, status }) {
     [modal],
   );
 
+  function handleCancel(e) {
+    e.preventDefault();
+  }
+
   return (
-    <dialog ref={modal}>
+    <dialog onCancel={handleCancel} ref={modal}>
       {status === "uploading" ? null : status === "loading" ? (
         <p>Adding new entry...</p>
       ) : status === "success" ? (
