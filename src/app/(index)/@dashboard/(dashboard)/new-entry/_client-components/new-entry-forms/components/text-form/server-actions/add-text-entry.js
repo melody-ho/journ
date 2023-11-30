@@ -14,7 +14,7 @@ export default async function addTextEntry(formData) {
       content,
       userId,
     });
-    tagNames.forEach(async (tagName) => {
+    for (const tagName of tagNames) {
       const [tag, created] = await rds.models.Tag.findOrCreate({
         where: { name: tagName },
       });
@@ -25,7 +25,7 @@ export default async function addTextEntry(formData) {
         entryId: entry.id,
         tagId: tag.id,
       });
-    });
+    }
     revalidatePath("/");
     return "success";
   } catch (error) {

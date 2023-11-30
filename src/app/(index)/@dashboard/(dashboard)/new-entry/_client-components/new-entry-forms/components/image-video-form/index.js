@@ -1,22 +1,24 @@
 "use client";
 
-import getUserTags from "@/(dashboard)/_helper-functions/get-user-tags";
 import handleUpload from "./server-actions/handle-upload";
 import Image from "next/image";
 import StatusModal from "../helper-components/status-modal";
 import styles from "./index.module.css";
 import TagDropdown from "../helper-components/tag-dropdown";
 import ThemedImage from "@/app/_helper-components/themed-image";
+import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export default function ImageVideoForm({ user }) {
+export default function ImageVideoForm({ user, userTags }) {
+  // initialize router //
+  const router = useRouter();
+
   // initialize states and refs //
   const [images, setImages] = useState([]);
   const [videos, setVideos] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [videoPreviews, setVideoPreviews] = useState([]);
-  const [userTags, setUserTags] = useState(null);
   const [tagsForAll, setTagsForAll] = useState([]);
   const [tagsData, setTagsData] = useState(new Map());
   const [uploading, setUploading] = useState(false);
@@ -24,24 +26,6 @@ export default function ImageVideoForm({ user }) {
   const [overallStatus, setOverallStatus] = useState(null);
   const captionRefs = useRef(new Map());
   const tagRefs = useRef(new Map());
-
-  // get user tags from database //
-  useEffect(
-    function getUserTagData() {
-      async function getData() {
-        const userTags = await getUserTags(user);
-        setUserTags(userTags ? userTags : []);
-      }
-      if (userTags === null) {
-        try {
-          getData();
-        } catch (error) {
-          // TO DO: error handling //
-        }
-      }
-    },
-    [user, userTags],
-  );
 
   // update tags for all when changed //
   const updateTagsForAll = useCallback((tags) => {
@@ -291,6 +275,8 @@ export default function ImageVideoForm({ user }) {
         }
       }
     }
+    // revalidate user tags data
+    router.refresh();
     // update overall status
     if (!error) {
       setOverallStatus("success");
@@ -311,7 +297,6 @@ export default function ImageVideoForm({ user }) {
     setVideos([]);
     setImagePreviews([]);
     setVideoPreviews([]);
-    setUserTags(null);
     setTagsForAll([]);
     setTagsData(new Map());
     setUploading(false);

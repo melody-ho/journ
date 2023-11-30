@@ -1,38 +1,22 @@
 "use client";
 
 import addTextEntry from "./server-actions/add-text-entry";
-import getUserTags from "@/(dashboard)/_helper-functions/get-user-tags";
 import StatusModal from "../helper-components/status-modal";
 import styles from "./index.module.css";
 import TagDropdown from "../helper-components/tag-dropdown";
-import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 
-export default function TextForm({ user }) {
+export default function TextForm({ user, userTags }) {
+  // initialize router //
+  const router = useRouter();
+
   // initialize states and refs //
   const [resetTagDropdown, setResetTagDropdown] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
   const [textInputValue, setTextInputValue] = useState("");
-  const [userTags, setUserTags] = useState(null);
   const textForm = useRef(null);
   const textInput = useRef(null);
-
-  // get user tags from database//
-  useEffect(
-    function getUserTagData() {
-      async function getData() {
-        const userTags = await getUserTags(user);
-        setUserTags(userTags ? userTags : []);
-      }
-      if (userTags === null) {
-        try {
-          getData();
-        } catch (error) {
-          // TO DO: error handling //
-        }
-      }
-    },
-    [user, userTags],
-  );
 
   // update tag dropdown reset state after reset is complete //
   function confirmTagDropdownReset() {
@@ -58,6 +42,7 @@ export default function TextForm({ user }) {
     formData.append("user", user);
     formData.append("tags", JSON.stringify(tags));
     const status = await addTextEntry(formData);
+    router.refresh();
     setSubmitStatus(status);
   }
 
@@ -73,15 +58,6 @@ export default function TextForm({ user }) {
     setTextInputValue("");
     setSubmitStatus(null);
   }
-
-  useEffect(
-    function refetchUserTags() {
-      if (resetTagDropdown) {
-        setUserTags(null);
-      }
-    },
-    [resetTagDropdown],
-  );
 
   return (
     <>

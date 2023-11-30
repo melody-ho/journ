@@ -5,7 +5,7 @@ import styles from "./index.module.css";
 import TextForm from "./components/text-form";
 import { useState } from "react";
 
-export default function NewEntryForms({ user }) {
+export default function NewEntryForms({ user, userTags }) {
   const [formShown, setFormShown] = useState("text");
 
   function showTextForm() {
@@ -39,10 +39,10 @@ export default function NewEntryForms({ user }) {
         </button>
       </nav>
       <section className={styles.form} hidden={formShown !== "text"}>
-        <TextForm user={user} />
+        <TextForm user={user} userTags={userTags} />
       </section>
       <section className={styles.form} hidden={formShown !== "imageVideo"}>
-        <ImageVideoForm user={user} />
+        <ImageVideoForm user={user} userTags={userTags} />
       </section>
     </div>
   );

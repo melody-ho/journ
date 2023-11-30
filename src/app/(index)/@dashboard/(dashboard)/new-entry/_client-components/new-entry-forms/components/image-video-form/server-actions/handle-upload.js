@@ -27,7 +27,7 @@ export default async function handleUpload(entryData) {
   const type = file.type.startsWith("image/") ? "image" : "video";
   try {
     const entryId = await addEntry(userId, type, caption);
-    tagNames.forEach(async (tagName) => {
+    for (const tagName of tagNames) {
       const [tag, created] = await rds.models.Tag.findOrCreate({
         where: { name: tagName },
       });
@@ -38,7 +38,7 @@ export default async function handleUpload(entryData) {
         entryId,
         tagId: tag.id,
       });
-    });
+    }
     const key = `${userId}/${type}s/${entryId}`;
     const upload = new Upload({
       client: s3,
