@@ -1,6 +1,7 @@
 "use client";
 
 import styles from "./index.module.css";
+import { v4 as uuidv4 } from "uuid";
 import { useEffect, useReducer, useRef, useState } from "react";
 
 export default function TagDropdown({
@@ -22,6 +23,7 @@ export default function TagDropdown({
     preSelectedTags !== null ? { prev: [], curr: [...preSelectedTags] } : null,
   );
   const [selectedTags, setSelectedTags] = useState([]);
+  const dropdownId = useRef(uuidv4());
   const dropdownRef = useRef(null);
   const tagSearchRef = useRef(null);
 
@@ -134,7 +136,7 @@ export default function TagDropdown({
   }
 
   function handleClickOut(e) {
-    if (!dropdownRef.current.contains(e.target)) {
+    if (e.target.getAttribute("dropdown") !== dropdownId.current) {
       setDropdown(false);
       window.removeEventListener("click", handleClickOut);
     }
@@ -179,32 +181,43 @@ export default function TagDropdown({
       <fieldset className={styles.fieldset}>
         <legend className={styles.visuallyHidden}>Tags</legend>
         <div className={styles.tagsField}>
-          <div className={styles.dropdownContainer} ref={dropdownRef}>
+          <div
+            className={styles.dropdownContainer}
+            dropdown={dropdownId.current}
+            ref={dropdownRef}
+          >
             <button
               className={styles.dropdownToggle}
               disabled={readOnly}
+              dropdown={dropdownId.current}
               onClick={toggleDropdown}
               type="button"
             >
               <span className={styles.visuallyHidden}>{instruction}</span>
               <span
                 className={styles.countIndicator}
+                dropdown={dropdownId.current}
               >{`${entryTags.length} tag(s) selected `}</span>
               {dropdown ? "▲" : "▼"}
             </button>
             {dropdown ? (
-              <div className={styles.dropdown}>
+              <div className={styles.dropdown} dropdown={dropdownId.current}>
                 {userTags !== null ? (
                   <>
-                    <div className={styles.searchBar}>
+                    <div
+                      className={styles.searchBar}
+                      dropdown={dropdownId.current}
+                    >
                       <label
                         className={styles.visuallyHidden}
+                        dropdown={dropdownId.current}
                         htmlFor="searchTags"
                       >
                         Search tags:
                       </label>
                       <input
                         className={styles.searchInput}
+                        dropdown={dropdownId.current}
                         id="searchTags"
                         onChange={updateMatchedTags}
                         placeholder="Search tags..."
@@ -212,40 +225,74 @@ export default function TagDropdown({
                         type="text"
                       ></input>
                     </div>
-                    <div className={styles.dropdownSection}>
-                      <p className={styles.dropdownSectionLabel}>new</p>
+                    <div
+                      className={styles.dropdownSection}
+                      dropdown={dropdownId.current}
+                    >
+                      <p
+                        className={styles.dropdownSectionLabel}
+                        dropdown={dropdownId.current}
+                      >
+                        new
+                      </p>
                       {newTags.length !== 0 ? (
                         newTags.map((newTag) => (
-                          <div key={newTag}>
+                          <div dropdown={dropdownId.current} key={newTag}>
                             <input
                               checked
+                              dropdown={dropdownId.current}
                               id={newTag}
                               onChange={removeFromNewTags}
                               type="checkbox"
                               value={newTag}
                             />
-                            <label htmlFor={newTag}>{newTag}</label>
+                            <label
+                              dropdown={dropdownId.current}
+                              htmlFor={newTag}
+                            >
+                              {newTag}
+                            </label>
                           </div>
                         ))
                       ) : (
-                        <p className={styles.noneIndicator}>none</p>
+                        <p
+                          className={styles.noneIndicator}
+                          dropdown={dropdownId.current}
+                        >
+                          none
+                        </p>
                       )}
                     </div>
-                    <div className={styles.dropdownSection}>
-                      <p className={styles.dropdownSectionLabel}>selected</p>
+                    <div
+                      className={styles.dropdownSection}
+                      dropdown={dropdownId.current}
+                    >
+                      <p
+                        className={styles.dropdownSectionLabel}
+                        dropdown={dropdownId.current}
+                      >
+                        selected
+                      </p>
                       {selectedTags.length !== 0 ? (
                         userTags.map((userTag) => {
                           if (selectedTags.includes(userTag.name)) {
                             return (
-                              <div key={userTag.name}>
+                              <div
+                                dropdown={dropdownId.current}
+                                key={userTag.name}
+                              >
                                 <input
                                   checked
+                                  dropdown={dropdownId.current}
                                   id={userTag.name}
                                   onChange={updateSelectedTags}
                                   type="checkbox"
                                   value={userTag.name}
                                 />
-                                <label htmlFor={userTag.name}>
+                                <label
+                                  dropdown={dropdownId.current}
+                                  htmlFor={userTag.name}
+                                >
                                   {userTag.name}
                                 </label>
                               </div>
@@ -253,25 +300,43 @@ export default function TagDropdown({
                           }
                         })
                       ) : (
-                        <p className={styles.noneIndicator}>none</p>
+                        <p
+                          className={styles.noneIndicator}
+                          dropdown={dropdownId.current}
+                        >
+                          none
+                        </p>
                       )}
                     </div>
                     <div
                       className={`${styles.dropdownSection} ${styles.lastSection}`}
+                      dropdown={dropdownId.current}
                     >
-                      <p className={styles.dropdownSectionLabel}>more</p>
+                      <p
+                        className={styles.dropdownSectionLabel}
+                        dropdown={dropdownId.current}
+                      >
+                        more
+                      </p>
                       {matchedTags.length !== 0 ? (
                         matchedTags.map((matchedTag) => {
                           if (!selectedTags.includes(matchedTag.name)) {
                             return (
-                              <div key={matchedTag.name}>
+                              <div
+                                dropdown={dropdownId.current}
+                                key={matchedTag.name}
+                              >
                                 <input
+                                  dropdown={dropdownId.current}
                                   id={matchedTag.name}
                                   onChange={updateSelectedTags}
                                   type="checkbox"
                                   value={matchedTag.name}
                                 />
-                                <label htmlFor={matchedTag.name}>
+                                <label
+                                  dropdown={dropdownId.current}
+                                  htmlFor={matchedTag.name}
+                                >
                                   {matchedTag.name}
                                 </label>
                               </div>
@@ -283,21 +348,35 @@ export default function TagDropdown({
                         !newTags.includes(tagSearchRef.current.value) ? (
                         <button
                           className={styles.addNewBtn}
+                          dropdown={dropdownId.current}
                           onClick={() => addNewTag(tagSearchRef.current.value)}
                           type="button"
                         >
-                          <span className={styles.addNewSubLabel}>
+                          <span
+                            className={styles.addNewSubLabel}
+                            dropdown={dropdownId.current}
+                          >
                             Create tag:{" "}
                           </span>
                           {tagSearchRef.current.value}
                         </button>
                       ) : (
-                        <p className={styles.noneIndicator}>none</p>
+                        <p
+                          className={styles.noneIndicator}
+                          dropdown={dropdownId.current}
+                        >
+                          none
+                        </p>
                       )}
                     </div>
                   </>
                 ) : (
-                  <p className={styles.loadingIndicator}>loading...</p>
+                  <p
+                    className={styles.loadingIndicator}
+                    dropdown={dropdownId.current}
+                  >
+                    loading...
+                  </p>
                 )}
               </div>
             ) : null}
