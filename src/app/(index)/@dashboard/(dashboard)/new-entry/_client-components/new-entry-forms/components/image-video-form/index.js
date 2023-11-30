@@ -228,6 +228,8 @@ export default function ImageVideoForm({ user, userTags }) {
 
   // prepare then hand data to server action when submit button is clicked //
   async function submitData(e) {
+    // make page inert
+    setOverallStatus("uploading");
     // remove error statuses if retry attempt
     uploadStatuses.forEach((value, key) => {
       if (value === "error") {
@@ -375,7 +377,9 @@ export default function ImageVideoForm({ user, userTags }) {
         </div>
       </form>
       {overallStatus ? (
-        overallStatus === "success" ? (
+        overallStatus === "uploading" ? (
+          <StatusModal status="uploading" />
+        ) : overallStatus === "success" ? (
           <StatusModal resetForm={resetForm} status="success" />
         ) : (
           <StatusModal retry={retry} status="error" />

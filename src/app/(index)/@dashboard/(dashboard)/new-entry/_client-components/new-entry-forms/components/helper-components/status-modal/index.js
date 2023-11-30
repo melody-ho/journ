@@ -16,7 +16,7 @@ export default function StatusModal({ resetForm, retry, status }) {
 
   return (
     <dialog ref={modal}>
-      {status === "loading" ? (
+      {status === "uploading" ? null : status === "loading" ? (
         <p>Adding new entry...</p>
       ) : status === "success" ? (
         <div>
