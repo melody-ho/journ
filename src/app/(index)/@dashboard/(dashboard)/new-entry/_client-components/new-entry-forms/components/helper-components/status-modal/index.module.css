@@ -1,0 +1,108 @@
+.modal {
+  background-color: transparent;
+  border: none;
+  color: rgb(var(--foreground-rgb));
+  overflow: auto;
+  padding: 0;
+}
+
+.modal.opaqueBackdrop::backdrop {
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  background-color: rgba(var(--background-rgb), 0.8);
+}
+
+.modal.transparentBackdrop::backdrop {
+  background-color: rgba(var(--background-rgb), 0.2);
+}
+
+.modal:focus {
+  outline: none;
+}
+
+.modalContent {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.loader {
+  animation: rotate 1s linear infinite;
+  aspect-ratio: 1;
+  background: rgb(var(--high-contrast-rgb));
+  margin: 1.5em;
+  width: 3em;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg) scale(0.2);
+    border-radius: 10%;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.5);
+    border-radius: 50%;
+  }
+  100% {
+    transform: rotate(360deg) scale(0.2);
+    border-radius: 10%;
+  }
+}
+
+.errorIconContainer,
+.successIconContainer {
+  aspect-ratio: 1;
+  position: relative;
+  width: 5em;
+}
+
+.statusMessage {
+  font-family: var(--font-monarcha);
+  font-size: max(18px, calc(18px + 1vw));
+}
+
+.errorAction,
+.successActions {
+  margin-top: 2em;
+}
+
+.errorAction {
+  align-self: stretch;
+}
+
+.successActions {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25em;
+}
+
+.callToAction {
+  font-family: var(--font-muli);
+}
+
+.button {
+  background-color: rgb(var(--high-contrast-rgb));
+  border: none;
+  border-radius: 0.2em;
+  color: rgb(var(--low-contrast-rgb));
+  font-size: max(12px, calc(12px + 0.5vw));
+  font-weight: 600;
+  padding: 0.5em 1em;
+}
+
+.button:hover {
+  cursor: pointer;
+}
+
+.link {
+  align-self: center;
+  color: rgb(var(--high-contrast-rgb));
+  font-size: max(11px, calc(11px + 0.5vw));
+  font-style: italic;
+}
+
+.visuallyHidden {
+  font-size: 0;
+  opacity: 0;
+}

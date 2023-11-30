@@ -36,7 +36,7 @@ export default function TextForm({ user, userTags }) {
 
   // add new text entry when form is submitted//
   async function submitEntry(e) {
-    setSubmitStatus("loading");
+    setSubmitStatus("adding");
     e.preventDefault();
     const formData = new FormData(textForm.current);
     formData.append("user", user);

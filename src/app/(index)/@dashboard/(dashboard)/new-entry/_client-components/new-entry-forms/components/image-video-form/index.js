@@ -281,7 +281,8 @@ export default function ImageVideoForm({ user, userTags }) {
     router.refresh();
     // update overall status
     if (!error) {
-      setOverallStatus("success");
+      if (entriesData.indexes.length === 1) setOverallStatus("success");
+      if (entriesData.indexes.length > 1) setOverallStatus("success multiple");
     } else {
       setOverallStatus("error");
     }
@@ -379,10 +380,10 @@ export default function ImageVideoForm({ user, userTags }) {
       {overallStatus ? (
         overallStatus === "uploading" ? (
           <StatusModal status="uploading" />
-        ) : overallStatus === "success" ? (
-          <StatusModal resetForm={resetForm} status="success" />
-        ) : (
+        ) : overallStatus === "error" ? (
           <StatusModal retry={retry} status="error" />
+        ) : (
+          <StatusModal resetForm={resetForm} status={overallStatus} />
         )
       ) : null}
     </>

@@ -1,4 +1,6 @@
 import Link from "next/link";
+import styles from "./index.module.css";
+import ThemedImage from "@/app/_helper-components/themed-image";
 import { useEffect, useRef } from "react";
 
 export default function StatusModal({ resetForm, retry, status }) {
@@ -19,25 +21,68 @@ export default function StatusModal({ resetForm, retry, status }) {
   }
 
   return (
-    <dialog onCancel={handleCancel} ref={modal}>
-      {status === "uploading" ? null : status === "loading" ? (
-        <p>Adding new entry...</p>
-      ) : status === "success" ? (
-        <div>
-          <p>Entry added!</p>
-          <Link href="/">Back to dashboard</Link>
-          <button onClick={resetForm} type="button">
-            Add more
-          </button>
+    <dialog
+      className={`${styles.modal} ${
+        status !== "uploading"
+          ? styles.opaqueBackdrop
+          : styles.transparentBackdrop
+      }`}
+      onCancel={handleCancel}
+      ref={modal}
+    >
+      {status === "uploading" ? (
+        <p className={styles.visuallyHidden}>
+          Adding image/video entry/entries
+        </p>
+      ) : status === "adding" ? (
+        <div className={styles.modalContent}>
+          <div className={styles.loader}></div>
+          <p className={styles.statusMessage}>Adding new entry</p>
         </div>
       ) : status === "error" ? (
-        <div>
-          <p>An error occured.</p>
-          <button onClick={retry} type="button">
+        <div className={styles.modalContent}>
+          <div className={styles.errorIconContainer}>
+            <ThemedImage
+              alt="error icon"
+              imageName="sad-icon"
+              position="center"
+            />
+          </div>
+          <p className={styles.statusMessage}>An error occured.</p>
+          <button
+            className={`${styles.button} ${styles.callToAction} ${styles.errorAction}`}
+            onClick={retry}
+            type="button"
+          >
             Try again
           </button>
         </div>
-      ) : null}
+      ) : (
+        <div className={styles.modalContent}>
+          <div className={styles.successIconContainer}>
+            <ThemedImage
+              alt="success icon"
+              imageName="success-icon"
+              position="center"
+            />
+          </div>
+          <p className={styles.statusMessage}>
+            {status === "success" ? "Entry added!" : "Entries added!"}
+          </p>
+          <div className={styles.successActions}>
+            <button
+              className={`${styles.button} ${styles.callToAction}`}
+              onClick={resetForm}
+              type="button"
+            >
+              Add more
+            </button>
+            <Link className={`${styles.link} ${styles.callToAction}`} href="/">
+              or back to dashboard
+            </Link>
+          </div>
+        </div>
+      )}
     </dialog>
   );
 }
