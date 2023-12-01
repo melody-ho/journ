@@ -85,7 +85,11 @@ export default function ImageVideoForm({ user, userTags }) {
                   aria-label="caption"
                   className={styles.captionInput}
                   placeholder="caption..."
-                  readOnly={uploading}
+                  readOnly={
+                    uploading ||
+                    (uploadStatuses.has(entry.index) &&
+                      uploadStatuses.get(entry.index) === "success")
+                  }
                   ref={(ref) => {
                     captionRefs.current.set(entry.index, ref);
                   }}
@@ -99,7 +103,11 @@ export default function ImageVideoForm({ user, userTags }) {
                     instruction="Add tags"
                     passEntryTags={tagData.updateEntryTags}
                     preSelectedTags={tagsForAll}
-                    readOnly={uploading}
+                    readOnly={
+                      uploading ||
+                      (uploadStatuses.has(entry.index) &&
+                        uploadStatuses.get(entry.index) === "success")
+                    }
                     userTags={userTags}
                   />
                 </div>
@@ -107,26 +115,74 @@ export default function ImageVideoForm({ user, userTags }) {
             </div>
             {uploadStatuses.has(entry.index) ? (
               uploadStatuses.get(entry.index) === "adding" ? (
-                <p>uploading...</p>
+                // currently uploading
+                <div className={styles.uploadProgress}>
+                  <p className={styles.visuallyHidden}>uploading</p>
+                  <div className={styles.uploadingSpinner}></div>
+                </div>
               ) : uploadStatuses.get(entry.index) === "success" ? (
-                <p>uploaded</p>
+                // uploaded
+                <div className={styles.uploadStatus}>
+                  <p className={styles.visuallyHidden}>uploaded</p>
+                  <div className={styles.statusIcon}>
+                    <ThemedImage
+                      alt="success icon"
+                      imageName="success-icon"
+                      position="center"
+                    />
+                  </div>
+                </div>
               ) : uploading ? (
-                <p>error</p>
+                // error
+                <div className={styles.uploadStatus}>
+                  <p className={styles.visuallyHidden}>error</p>
+                  <div className={styles.statusIcon}>
+                    <ThemedImage
+                      alt="error icon"
+                      imageName="alert-icon"
+                      position="center"
+                    />
+                  </div>
+                </div>
               ) : (
+                // retry
                 <>
-                  <p>upload failed</p>
                   <button
                     aria-label="delete entry"
+                    className={styles.deleteBtn}
                     onClick={() => deleteEntry(entry.index)}
                     type="button"
                   >
-                    delete
+                    <div className={styles.deleteImgWrapper}>
+                      <ThemedImage
+                        alt="delete icon"
+                        imageName="delete-icon"
+                        position="center"
+                      />
+                    </div>
                   </button>
+                  <div className={styles.retryStatus}>
+                    <div className={styles.retryIcon}>
+                      <ThemedImage
+                        alt="alert icon"
+                        imageName="alert-icon"
+                        position="center"
+                      />
+                    </div>
+                    <p className={styles.retryMessage}>
+                      Failed to add, click upload to retry.
+                    </p>
+                  </div>
                 </>
               )
             ) : uploading ? (
-              <p>queued</p>
+              // queued
+              <div className={styles.uploadProgress}>
+                <p className={styles.visuallyHidden}>queued</p>
+                <div className={styles.queueIndicator}></div>
+              </div>
             ) : (
+              // default
               <button
                 aria-label="delete entry"
                 className={styles.deleteBtn}
@@ -358,7 +414,7 @@ export default function ImageVideoForm({ user, userTags }) {
                 <TagDropdown
                   instruction="Add tags to all"
                   passEntryTags={updateTagsForAll}
-                  readOnly={uploading}
+                  readOnly={uploading || uploadStatuses.size > 0}
                   userTags={userTags}
                 />
               </div>
