@@ -81,6 +81,35 @@
   margin-right: 0.5em;
 }
 
+.filtersMenuModal {
+  background-color: rgb(var(--background-rgb));
+  border: none;
+  border-radius: 0.25em;
+  box-shadow: 0px 0px 6px 2px rgb(var(--medium-contrast-rgb));
+  color: rgb(var(--foreground-rgb));
+  padding: 0;
+}
+
+.filtersMenuModalWrapper {
+  padding: 1em;
+}
+
+.filtersMenuModal::backdrop {
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  background-color: rgba(var(--low-contrast-rgb), 0.6);
+}
+
+.filtersMenuModalCloseBtn {
+  background-color: transparent;
+  border: none;
+  height: 40px;
+  margin-left: 1em;
+  margin-top: 1em;
+  position: relative;
+  width: 40px;
+}
+
 .desktopOnly {
   display: none;
 }

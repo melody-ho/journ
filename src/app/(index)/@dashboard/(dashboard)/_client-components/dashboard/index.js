@@ -180,8 +180,27 @@ export default function Dashboard({ user, userTags }) {
         </nav>
         {filtersMenu ? (
           <section>
-            <dialog onCancel={closeFiltersMenu} ref={filtersMenuModal}>
-              <div onClick={preventClose}>
+            <dialog
+              className={styles.filtersMenuModal}
+              onCancel={closeFiltersMenu}
+              ref={filtersMenuModal}
+            >
+              <div
+                className={styles.filtersMenuModalWrapper}
+                onClick={preventClose}
+              >
+                <button
+                  aria-label="Close filters menu"
+                  className={styles.filtersMenuModalCloseBtn}
+                  onClick={closeFiltersMenu}
+                  type="button"
+                >
+                  <ThemedImage
+                    alt="close icon"
+                    imageName="close-icon"
+                    position="center"
+                  />
+                </button>
                 <FiltersMenu
                   passFilters={getFilters}
                   previousEndDate={selectedEndDate}
@@ -189,7 +208,7 @@ export default function Dashboard({ user, userTags }) {
                   previousTags={selectedTags}
                   previousTypes={selectedTypes}
                   userTags={userTags}
-                />{" "}
+                />
               </div>
             </dialog>
           </section>

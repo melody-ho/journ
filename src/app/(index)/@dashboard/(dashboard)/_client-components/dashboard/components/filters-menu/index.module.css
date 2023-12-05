@@ -1,0 +1,248 @@
+.component {
+  --input-font-size: max(14px, calc(14px + 0.5vw));
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  padding: 1em;
+}
+
+.mainHeading {
+  font-family: var(--font-bely-display);
+  font-size: max(26px, calc(26px + 0.5vw));
+}
+
+.clearBtn,
+.dateInput,
+.searchInput {
+  font-family: var(--font-muli);
+}
+
+.clearBtn {
+  background-color: transparent;
+  border: 0.1em solid rgb(var(--high-contrast-rgb));
+  border-radius: 0.2em;
+  color: rgb(var(--high-contrast-rgb));
+  font-size: max(16px, calc(16px + 0.5vw));
+  font-style: italic;
+  margin-top: 1.5em;
+  padding: 0.25em 0.5em;
+}
+
+.fieldset {
+  border: none;
+  margin-top: 1.25em;
+  padding: 0;
+}
+
+.visuallyHiddenLegend {
+  font-size: 0;
+  opacity: 0;
+  padding: 0;
+}
+
+.fieldsetHeading {
+  font-family: var(--font-monarcha);
+  font-size: max(20px, calc(20px + 0.5vw));
+  font-weight: 600;
+}
+
+.dateFields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5vh;
+}
+
+.dateField {
+  align-items: center;
+  display: flex;
+  gap: 0.25em;
+}
+
+.dateLabel {
+  font-size: var(--input-font-size);
+  font-style: italic;
+}
+
+.dateInput {
+  font-size: var(--input-font-size);
+}
+
+.checkboxItems {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+  margin-top: 0.5em;
+}
+
+.checkboxItem {
+  align-items: center;
+  display: flex;
+  font-size: var(--input-font-size);
+  gap: 0.2em;
+}
+
+.hiddenCheckbox {
+  cursor: pointer;
+  height: 0;
+  margin: 0;
+  opacity: 0;
+  position: absolute;
+  width: 0;
+}
+
+.checkboxIcon {
+  align-self: start;
+  border-radius: 0.2em;
+  flex-shrink: 0;
+  height: 1.5em;
+  position: relative;
+  width: 1.5em;
+}
+
+.hiddenCheckbox:focus + .checkboxIcon {
+  outline: 0.2em solid rgba(var(--high-contrast-rgb), 0.6);
+  outline-offset: -0.2em;
+}
+
+.tagsField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+  margin-top: 0.25em;
+}
+
+.tagsSection,
+.tagsSectionToggle,
+.tagsSectionItems {
+  font-size: max(12px, calc(12px + 0.5vw));
+}
+
+.tagsSection {
+  width: 60vw;
+}
+
+.tagsSectionToggle {
+  align-items: center;
+  background-color: transparent;
+  border: none;
+  color: rgb(var(--high-contrast-rgb));
+  display: flex;
+  gap: 0.1em;
+  padding: 0;
+}
+
+.tagsSectionToggleIcon {
+  height: 1.5em;
+  position: relative;
+  transition: transform 0.2s ease-out;
+  width: 1.5em;
+}
+
+.tagsSectionToggleIcon.expanded {
+  transform: rotate(90deg);
+}
+
+.tagsSectionHeading {
+  font-style: italic;
+  font-weight: 200;
+  margin-bottom: 0.1em;
+}
+
+.tagsSectionItems {
+  margin-left: 0.75em;
+  margin-top: 0.1em;
+}
+
+.collapsedTagsSection {
+  display: none;
+}
+
+.tagsCheckboxItem {
+  border-left: 0.02em solid rgb(var(--high-contrast-rgb));
+  padding-bottom: 0.2em;
+  padding-left: 0.6em;
+  word-break: break-all;
+}
+
+.noneIndicator {
+  font-style: italic;
+  font-weight: 200;
+  margin-top: 0.2em;
+  padding-left: 1em;
+}
+
+.visuallyHiddenLabel {
+  font-size: 0;
+}
+
+.searchInput {
+  background-color: rgb(var(--low-contrast-rgb));
+  border: 0.05em solid rgb(var(--high-contrast-rgb));
+  border-radius: 0.1em;
+  color: rgb(var(--foreground-rgb));
+  font-size: var(--input-font-size);
+  margin-bottom: 0.2em;
+  padding: 0.25em;
+}
+
+.searchInput::placeholder {
+  font-style: italic;
+  font-weight: 200;
+}
+
+.applyBtnWrapper {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.applyBtn {
+  background-color: rgb(var(--foreground-rgb));
+  border: none;
+  border-radius: 0.25em;
+  color: rgb(var(--background-rgb));
+  font-family: var(--font-monarcha);
+  font-size: max(18px, calc(18px + 0.5vw));
+  font-weight: 600;
+  margin-top: 2em;
+  min-width: max-content;
+  padding: 0.5em 1em;
+}
+
+@media (min-width: 500px) {
+  .mainHeading {
+    font-size: max(32px, calc(32px + 0.5vw));
+  }
+
+  .fieldset {
+    margin-top: 1.75em;
+  }
+
+  .dateFields {
+    flex-direction: initial;
+    gap: 3em;
+    margin-top: 0.1em;
+  }
+
+  .dateField {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.02em;
+  }
+
+  .typesCheckboxItems {
+    flex-direction: initial;
+    gap: 3em;
+  }
+
+  .applyBtn {
+    margin-top: 2.75em;
+  }
+}
+
+@media (min-width: 1000px) {
+  .tagsSection {
+    width: 50vw;
+  }
+}
