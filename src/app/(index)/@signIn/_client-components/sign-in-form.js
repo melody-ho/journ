@@ -10,6 +10,10 @@ import {
 } from "react-dom";
 import { useEffect, useRef, useState } from "react";
 
+/// constants ///
+// duration of delay for posting form data to ensure success message is shown //
+const POST_DELAY = 200;
+
 /// children components ///
 function FormFields({ status }) {
   // client-side validation //
@@ -90,7 +94,9 @@ export default function SignInForm() {
       if (formState === "success") {
         form.current.action = "./sign-in";
         form.current.method = "post";
-        form.current.submit();
+        setTimeout(function submit() {
+          form.current.submit();
+        }, POST_DELAY);
       }
     },
     [formState],
