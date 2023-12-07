@@ -18,11 +18,7 @@ export default function AccountMenu({ animateOut, close }) {
           onClick={close}
           type="button"
         >
-          <ThemedImage
-            alt="Close Icon"
-            imageName="close-icon"
-            position="left"
-          />
+          <ThemedImage alt="Close Icon" imageName="close-icon" />
         </button>
         <ul className={styles.items}>
           <li className={styles.item}>

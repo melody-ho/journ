@@ -13,7 +13,7 @@ export default async function NewEntry() {
     <div className={styles.page}>
       <header className={styles.header}>
         <div className={styles.logo}>
-          <ThemedImage alt="Journ Logo" imageName="logo" position="center" />
+          <ThemedImage alt="Journ Logo" imageName="logo" />
         </div>
         <h1 className={styles.heading}>New Entry</h1>
       </header>

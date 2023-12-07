@@ -42,11 +42,7 @@ export default function StatusModal({ resetForm, retry, status }) {
       ) : status === "error" ? (
         <div className={styles.modalContent}>
           <div className={styles.errorIconContainer}>
-            <ThemedImage
-              alt="error icon"
-              imageName="sad-icon"
-              position="center"
-            />
+            <ThemedImage alt="error icon" imageName="sad-icon" />
           </div>
           <p className={styles.statusMessage}>An error occured.</p>
           <button
@@ -60,11 +56,7 @@ export default function StatusModal({ resetForm, retry, status }) {
       ) : (
         <div className={styles.modalContent}>
           <div className={styles.successIconContainer}>
-            <ThemedImage
-              alt="success icon"
-              imageName="success-icon"
-              position="center"
-            />
+            <ThemedImage alt="success icon" imageName="success-icon" />
           </div>
           <p className={styles.statusMessage}>
             {status === "success" ? "Entry added!" : "Entries added!"}

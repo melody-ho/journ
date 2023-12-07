@@ -10,12 +10,12 @@ export default function SignIn() {
         <div
           className={`${styles.logotypeImageContainer} ${styles.desktopOnly}`}
         >
-          <ThemedImage alt="Journ" imageName="logotype" position="left" />
+          <ThemedImage alt="Journ" imageName="logotype" />
         </div>
         <div
           className={`${styles.logotypeImageContainer} ${styles.mobileOnly}`}
         >
-          <ThemedImage alt="Journ" imageName="logotype" position="center" />
+          <ThemedImage alt="Journ" imageName="logotype" />
         </div>
       </header>
       <main className={styles.main}>

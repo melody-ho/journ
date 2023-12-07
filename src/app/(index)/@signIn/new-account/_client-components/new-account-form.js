@@ -291,11 +291,7 @@ function FormFields({ status }) {
             <>
               <div className={styles.modalContent}>
                 <div className={styles.statusIcon}>
-                  <ThemedImage
-                    alt="success icon"
-                    imageName="success-icon"
-                    position="center"
-                  />
+                  <ThemedImage alt="success icon" imageName="success-icon" />
                 </div>
                 <p className={styles.status}>Success! Welcome to Journ.</p>
                 <Link className={styles.signInLink} href="/">
@@ -307,11 +303,7 @@ function FormFields({ status }) {
             <>
               <div className={styles.modalContent}>
                 <div className={styles.statusIcon}>
-                  <ThemedImage
-                    alt="sad face icon"
-                    imageName="sad-icon"
-                    position="center"
-                  />
+                  <ThemedImage alt="sad face icon" imageName="sad-icon" />
                 </div>
                 <p className={styles.status}>Oh no! An error occurred.</p>
                 <button

@@ -6,11 +6,7 @@ export default function NewAccount() {
   return (
     <div className={styles.page}>
       <header className={styles.logotype}>
-        <ThemedImage
-          alt="Journ Logotype"
-          imageName="logotype"
-          position="left"
-        />
+        <ThemedImage alt="Journ Logotype" imageName="logotype" />
       </header>
       <main className={styles.main}>
         <h1 className={styles.heading}>New Account</h1>

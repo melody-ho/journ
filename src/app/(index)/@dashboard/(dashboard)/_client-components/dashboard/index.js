@@ -93,7 +93,7 @@ export default function Dashboard({ user, userTags }) {
       <header className={styles.header}>
         <div className={styles.headerLeft}>
           <div className={styles.logo}>
-            <ThemedImage alt="Journ Logo" imageName="logo" position="left" />
+            <ThemedImage alt="Journ Logo" imageName="logo" />
           </div>
           <h1 className={styles.heading}>{`${user.firstName}'s Journ`}</h1>
         </div>
@@ -105,11 +105,7 @@ export default function Dashboard({ user, userTags }) {
             type="button"
           >
             <div className={styles.accountIcon}>
-              <ThemedImage
-                alt="Account Icon"
-                imageName="account-icon"
-                position="center"
-              />
+              <ThemedImage alt="Account Icon" imageName="account-icon" />
             </div>
           </button>
           <nav
@@ -138,11 +134,7 @@ export default function Dashboard({ user, userTags }) {
                 type="button"
               >
                 <div className={styles.entriesMenuIcon}>
-                  <ThemedImage
-                    alt="Filters Icon"
-                    imageName="filters-icon"
-                    position="center"
-                  />
+                  <ThemedImage alt="Filters Icon" imageName="filters-icon" />
                 </div>
                 <p
                   className={`${styles.entriesMenuLabel} ${
@@ -161,11 +153,7 @@ export default function Dashboard({ user, userTags }) {
                 onMouseLeave={hideNewEntryLabel}
               >
                 <div className={styles.entriesMenuIcon}>
-                  <ThemedImage
-                    alt="Add Icon"
-                    imageName="add-icon"
-                    position="center"
-                  />
+                  <ThemedImage alt="Add Icon" imageName="add-icon" />
                 </div>
                 <p
                   className={`${styles.entriesMenuLabel} ${
@@ -195,11 +183,7 @@ export default function Dashboard({ user, userTags }) {
                   onClick={closeFiltersMenu}
                   type="button"
                 >
-                  <ThemedImage
-                    alt="close icon"
-                    imageName="close-icon"
-                    position="center"
-                  />
+                  <ThemedImage alt="close icon" imageName="close-icon" />
                 </button>
                 <FiltersMenu
                   passFilters={getFilters}

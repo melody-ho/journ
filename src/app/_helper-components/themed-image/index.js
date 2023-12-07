@@ -10,8 +10,9 @@ export default function ThemedImage({ alt, imageName, position }) {
       <Image
         alt={alt}
         fill="true"
+        priority={true}
         src={`/${imageName}/light.svg`}
-        style={{ objectFit: "contain", objectPosition: position }}
+        style={{ objectFit: "contain", objectPosition: "center" }}
       />
     </picture>
   );

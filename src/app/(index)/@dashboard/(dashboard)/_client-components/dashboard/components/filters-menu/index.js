@@ -10,7 +10,6 @@ function Checkbox({ checked }) {
       <ThemedImage
         alt={checked ? "checked icon" : "unchecked icon"}
         imageName={checked ? "checked-icon" : "unchecked-icon"}
-        position="center"
       />
     </div>
   );
@@ -225,7 +224,6 @@ export default function FiltesMenu({
                 <ThemedImage
                   alt="expand/collapse icon"
                   imageName="collapse-icon"
-                  position="center"
                 />
               </div>
               <h3
@@ -281,7 +279,6 @@ export default function FiltesMenu({
                 <ThemedImage
                   alt="expand/collapse icon"
                   imageName="collapse-icon"
-                  position="center"
                 />
               </div>
               <h3 className={styles.tagsSectionHeading}>{`more (${

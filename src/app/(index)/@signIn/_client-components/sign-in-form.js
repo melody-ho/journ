@@ -112,33 +112,21 @@ export default function SignInForm() {
         {formState === "invalid" ? (
           <>
             <div className={styles.statusIcon}>
-              <ThemedImage
-                alt="alert icon"
-                imageName="alert-icon"
-                position="center"
-              />
+              <ThemedImage alt="alert icon" imageName="alert-icon" />
             </div>
             <p className={styles.statusMessage}>Invalid credentials.</p>
           </>
         ) : formState === "error" ? (
           <>
             <div className={styles.statusIcon}>
-              <ThemedImage
-                alt="sad face icon"
-                imageName="sad-icon"
-                position="center"
-              />
+              <ThemedImage alt="sad face icon" imageName="sad-icon" />
             </div>
             <p className={styles.statusMessage}>An error occurred.</p>
           </>
         ) : formState === "success" ? (
           <>
             <div className={styles.statusIcon}>
-              <ThemedImage
-                alt="success icon"
-                imageName="success-icon"
-                position="center"
-              />
+              <ThemedImage alt="success icon" imageName="success-icon" />
             </div>
             <p className={styles.statusMessage}>Success!</p>
           </>

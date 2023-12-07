@@ -125,11 +125,7 @@ export default function ImageVideoForm({ user, userTags }) {
                 <div className={styles.uploadStatus}>
                   <p className={styles.visuallyHidden}>uploaded</p>
                   <div className={styles.statusIcon}>
-                    <ThemedImage
-                      alt="success icon"
-                      imageName="success-icon"
-                      position="center"
-                    />
+                    <ThemedImage alt="success icon" imageName="success-icon" />
                   </div>
                 </div>
               ) : uploading ? (
@@ -137,11 +133,7 @@ export default function ImageVideoForm({ user, userTags }) {
                 <div className={styles.uploadStatus}>
                   <p className={styles.visuallyHidden}>error</p>
                   <div className={styles.statusIcon}>
-                    <ThemedImage
-                      alt="error icon"
-                      imageName="alert-icon"
-                      position="center"
-                    />
+                    <ThemedImage alt="error icon" imageName="alert-icon" />
                   </div>
                 </div>
               ) : (
@@ -154,20 +146,12 @@ export default function ImageVideoForm({ user, userTags }) {
                     type="button"
                   >
                     <div className={styles.deleteImgWrapper}>
-                      <ThemedImage
-                        alt="delete icon"
-                        imageName="delete-icon"
-                        position="center"
-                      />
+                      <ThemedImage alt="delete icon" imageName="delete-icon" />
                     </div>
                   </button>
                   <div className={styles.retryStatus}>
                     <div className={styles.retryIcon}>
-                      <ThemedImage
-                        alt="alert icon"
-                        imageName="alert-icon"
-                        position="center"
-                      />
+                      <ThemedImage alt="alert icon" imageName="alert-icon" />
                     </div>
                     <p className={styles.retryMessage}>
                       Failed to add, click upload to retry.
@@ -190,11 +174,7 @@ export default function ImageVideoForm({ user, userTags }) {
                 type="button"
               >
                 <div className={styles.deleteImgWrapper}>
-                  <ThemedImage
-                    alt="delete icon"
-                    imageName="delete-icon"
-                    position="center"
-                  />
+                  <ThemedImage alt="delete icon" imageName="delete-icon" />
                 </div>
               </button>
             )}
