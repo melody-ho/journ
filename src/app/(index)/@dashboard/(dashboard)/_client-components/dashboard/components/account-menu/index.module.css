@@ -3,7 +3,7 @@
   background-color: rgba(var(--low-contrast-rgb), 0.9);
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
-  height: calc(100% - var(--mobile-padding-top));
+  height: 100%;
   padding-top: var(--mobile-padding-top);
   position: absolute;
   right: 0;
@@ -25,7 +25,7 @@
 .closeBtn {
   aspect-ratio: 1;
   position: relative;
-  width: min(40px, 10%);
+  width: max(40px, 10%);
 }
 
 .items {
@@ -36,7 +36,7 @@
 .link,
 .menuButton {
   color: rgb(var(--high-contrast-rgb));
-  font-size: max(16px, calc(16px + 0.5vw));
+  font-size: max(18px, calc(18px + 0.5vw));
   margin-left: 1vw;
   margin-top: 2em;
 }
