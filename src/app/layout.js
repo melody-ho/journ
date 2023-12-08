@@ -19,7 +19,7 @@ for (const font of Object.values(fonts)) {
 const fontVariablesString = fontVariables.join(" ");
 
 const SplashScreenWrapper = dynamic(
-  () => import("./_client-components/splash-screen"),
+  () => import("./_splash-screen"),
   { ssr: false },
 );
 

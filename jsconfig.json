@@ -2,9 +2,12 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"],
-      "@/(authentication)/*": ["./src/app/(authentication)/*"],
-      "@/(index)/*": ["./src/app/(index)/*"],
-      "@/(dashboard)/*": ["./src/app/(index)/@dashboard/(dashboard)/*"]
+      "@/(authentication)/*": ["src/app/(api)/(authentication)/*"],
+      "@/(pages)/*": ["src/app/(pages)/*"],
+      "@/client-components/*": ["src/app/(pages)/_client-components/*"],
+      "@/helper-components/*": ["src/app/(pages)/_helper-components/*"],
+      "@/helper-functions/*": ["src/app/(pages)/_helper-functions/*"],
+      "@/server-actions/*": ["src/app/(pages)/_server-actions/*"]
     },
     "strict": true
   }
