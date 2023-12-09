@@ -134,7 +134,13 @@ export default function TagDropdown({
         );
         if (added.length > 0) {
           added.forEach((tag) => {
-            setEntryTags((entryTags) => [...entryTags, tag].sort());
+            setEntryTags((entryTags) => {
+              if (!entryTags.includes(tag)) {
+                return [...entryTags, tag].sort();
+              } else {
+                return [...entryTags];
+              }
+            });
           });
         } else if (removed.length > 0) {
           setEntryTags((entryTags) =>
