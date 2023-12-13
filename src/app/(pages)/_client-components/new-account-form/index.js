@@ -143,10 +143,7 @@ export default function NewAccountForm() {
               type="text"
             ></input>
             <p className={styles.requiredIndicator}>required</p>
-            <p
-              aria-hidden={`${firstNameMessage ? "false" : "true"}`}
-              className={styles.hint}
-            >
+            <p aria-hidden={!firstNameMessage} className={styles.hint}>
               {firstNameMessage ? firstNameMessage : ""}
             </p>
           </li>
@@ -187,9 +184,7 @@ export default function NewAccountForm() {
             ></input>
             <p className={styles.requiredIndicator}>required</p>
             <p
-              aria-hidden={`${
-                usernameMessage || usernameUnavailable ? "false" : "true"
-              }`}
+              aria-hidden={!usernameMessage && !usernameUnavailable}
               className={styles.hint}
             >
               {usernameMessage
@@ -214,10 +209,7 @@ export default function NewAccountForm() {
               type="password"
             ></input>
             <p className={styles.requiredIndicator}>required</p>
-            <p
-              aria-hidden={`${passwordMessage ? "false" : "true"}`}
-              className={styles.hint}
-            >
+            <p aria-hidden={!passwordMessage} className={styles.hint}>
               {passwordMessage ? passwordMessage : ""}
             </p>
           </li>
@@ -236,10 +228,7 @@ export default function NewAccountForm() {
               type="password"
             ></input>
             <p className={styles.requiredIndicator}>required</p>
-            <p
-              aria-hidden={`${confirmPasswordMessage ? "false" : "true"}`}
-              className={styles.hint}
-            >
+            <p aria-hidden={!confirmPasswordMessage} className={styles.hint}>
               {confirmPasswordMessage ? confirmPasswordMessage : ""}
             </p>
           </li>
