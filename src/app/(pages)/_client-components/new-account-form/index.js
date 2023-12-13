@@ -1,25 +1,19 @@
 "use client";
 
-/// imports ///
 import checkUsername from "@/server-actions/check-username";
 import createUser from "@/server-actions/create-user";
 import debounce from "lodash.debounce";
 import Link from "next/link";
 import styles from "./index.module.css";
 import ThemedImage from "@/helper-components/themed-image";
+import { experimental_useFormState as useFormState } from "react-dom";
 import z from "zod";
-import {
-  experimental_useFormState as useFormState,
-  experimental_useFormStatus as useFormStatus,
-} from "react-dom";
 import { useEffect, useRef, useState } from "react";
 
-/// children components ///
-function FormFields({ status }) {
+export default function NewAccountForm() {
   // client-side form validation //
   // first name
   const [firstName, setfirstName] = useState("");
-  const [firstNameStatus, setFirstNameStatus] = useState("valid");
   const [firstNameMessage, setFirstNameMessage] = useState(null);
   const firstNameSchema = z
     .string()
@@ -28,16 +22,13 @@ function FormFields({ status }) {
     setfirstName(e.target.value);
     try {
       firstNameSchema.parse(e.target.value);
-      setFirstNameStatus("valid");
       setFirstNameMessage(null);
     } catch (error) {
-      setFirstNameStatus("invalid");
       setFirstNameMessage(error.issues[0].message);
     }
   }
   // username
   const [username, setUsername] = useState("");
-  const [usernameStatus, setUsernameStatus] = useState("valid");
   const [usernameMessage, setUsernameMessage] = useState(null);
   const [usernameUnavailable, checkUsernameAvailability] = useFormState(
     checkUsername,
@@ -54,30 +45,24 @@ function FormFields({ status }) {
     setUsername(e.target.value);
     try {
       userNameSchema.parse(e.target.value);
-      setUsernameStatus("valid");
       setUsernameMessage(null);
     } catch (error) {
-      setUsernameStatus("invalid");
       setUsernameMessage(error.issues[0].message);
     }
     checkUsernameAvailability(e.target.value);
   }
-  const debouncedHandleUsernameChange = debounce(handleUsernameChange, 250);
+  const debouncedHandleUsernameChange = debounce(handleUsernameChange, 200);
   // password
   const passwordField = useRef(null);
   const [password, setPassword] = useState("");
-  const [passwordStatus, setPasswordStatus] = useState("valid");
   const [passwordMessage, setPasswordMessage] = useState(null);
   const confirmPasswordField = useRef(null);
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [confirmPasswordStatus, setConfirmPasswordStatus] = useState("valid");
   const [confirmPasswordMessage, setConfirmPasswordMessage] = useState(null);
   function matchPasswords() {
     if (passwordField.current.value === confirmPasswordField.current.value) {
-      setConfirmPasswordStatus("valid");
       setConfirmPasswordMessage(null);
     } else {
-      setConfirmPasswordStatus("invalid");
       setConfirmPasswordMessage("Passwords do not match.");
     }
   }
@@ -89,14 +74,11 @@ function FormFields({ status }) {
     setPassword(e.target.value);
     try {
       passwordSchema.parse(e.target.value);
-      setPasswordStatus("valid");
       setPasswordMessage(null);
     } catch (error) {
-      setPasswordStatus("invalid");
       setPasswordMessage(error.issues[0].message);
     }
     if (e.target.value === "" && confirmPasswordField.current.value === "") {
-      setConfirmPasswordStatus("valid");
       setConfirmPasswordMessage(null);
     }
     if (confirmPasswordField.current.value !== "") {
@@ -108,10 +90,21 @@ function FormFields({ status }) {
     matchPasswords();
   }
 
-  // pending status initialization //
-  const { pending } = useFormStatus();
+  // form submission //
+  // initialize states and refs
+  const newAccountFormRef = useRef(null);
+  const [submissionState, setSubmissionState] = useState(null);
+  // declare submission handler
+  async function handleCreateAccount(e) {
+    e.preventDefault();
+    setSubmissionState("pending");
+    const formData = new FormData(newAccountFormRef.current);
+    const newState = await createUser(formData);
+    setSubmissionState(newState);
+  }
 
-  // show account creation status //
+  // account creation status modal //
+  // show status modal when rendered
   const statusModal = useRef(null);
   useEffect(function openModal() {
     if (statusModal.current) {
@@ -119,17 +112,17 @@ function FormFields({ status }) {
       statusModal.current.showModal();
     }
   });
-
+  // declare status modal handlers
   function handleCancel(e) {
     e.preventDefault();
   }
-
-  function closeModal() {
+  function handleRetry() {
+    setSubmissionState(null);
     statusModal.current.close();
   }
 
   return (
-    <>
+    <form className={styles.form} ref={newAccountFormRef}>
       <section className={styles.nameSection}>
         <h2 className={styles.sectionHeading}>What should we call you?</h2>
         <h3 className={styles.sectionSubheading}>
@@ -141,12 +134,12 @@ function FormFields({ status }) {
               first name
             </label>
             <input
-              className={`${firstNameStatus} ${styles.inputField}`}
+              className={styles.inputField}
               id="first-name"
               name="firstName"
               onBlur={handleChangeFirstName}
               onChange={handleChangeFirstName}
-              readOnly={pending}
+              readOnly={submissionState}
               type="text"
             ></input>
             <p className={styles.requiredIndicator}>required</p>
@@ -165,7 +158,7 @@ function FormFields({ status }) {
               className={styles.inputField}
               id="last-name"
               name="lastName"
-              readOnly={pending}
+              readOnly={submissionState}
               type="text"
             ></input>
           </li>
@@ -184,14 +177,12 @@ function FormFields({ status }) {
               username
             </label>
             <input
-              className={`${usernameUnavailable ? "invalid" : usernameStatus} ${
-                styles.inputField
-              }`}
+              className={styles.inputField}
               id="username"
               name="username"
               onBlur={debouncedHandleUsernameChange}
               onChange={debouncedHandleUsernameChange}
-              readOnly={pending}
+              readOnly={submissionState}
               type="text"
             ></input>
             <p className={styles.requiredIndicator}>required</p>
@@ -213,12 +204,12 @@ function FormFields({ status }) {
               password
             </label>
             <input
-              className={`${passwordStatus} ${styles.inputField}`}
+              className={styles.inputField}
               id="password"
               name="password"
               onBlur={handlePasswordChange}
               onChange={handlePasswordChange}
-              readOnly={pending}
+              readOnly={submissionState}
               ref={passwordField}
               type="password"
             ></input>
@@ -235,12 +226,12 @@ function FormFields({ status }) {
               confirm password
             </label>
             <input
-              className={`${confirmPasswordStatus} ${styles.inputField}`}
+              className={styles.inputField}
               id="confirm-password"
               name="confirmPassword"
               onBlur={handleConfirmPasswordChange}
               onChange={handleConfirmPasswordChange}
-              readOnly={pending}
+              readOnly={submissionState}
               ref={confirmPasswordField}
               type="password"
             ></input>
@@ -266,19 +257,19 @@ function FormFields({ status }) {
           usernameUnavailable ||
           passwordMessage ||
           confirmPasswordMessage ||
-          pending ||
-          status
+          submissionState
         }
+        onClick={handleCreateAccount}
       >
         Create account
       </button>
-      {pending || status ? (
+      {submissionState ? (
         <dialog
           className={styles.statusModal}
           onCancel={handleCancel}
           ref={statusModal}
         >
-          {pending ? (
+          {submissionState === "pending" ? (
             <>
               <div className={styles.modalContent}>
                 <div className={styles.loadingIndicator}>
@@ -287,7 +278,7 @@ function FormFields({ status }) {
                 <p className={styles.status}>Creating account...</p>
               </div>
             </>
-          ) : status === "success" ? (
+          ) : submissionState === "success" ? (
             <>
               <div className={styles.modalContent}>
                 <div className={styles.statusIcon}>
@@ -308,7 +299,7 @@ function FormFields({ status }) {
                 <p className={styles.status}>Oh no! An error occurred.</p>
                 <button
                   className={styles.backButton}
-                  onClick={closeModal}
+                  onClick={handleRetry}
                   type="button"
                 >
                   Try again ➜
@@ -318,18 +309,6 @@ function FormFields({ status }) {
           )}
         </dialog>
       ) : null}
-    </>
-  );
-}
-
-/// main component ///
-export default function NewAccountForm() {
-  // initialize submission status //
-  const [formState, formAction] = useFormState(createUser, null);
-
-  return (
-    <form action={formAction} className={styles.form}>
-      <FormFields status={formState} />
     </form>
   );
 }
