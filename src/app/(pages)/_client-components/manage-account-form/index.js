@@ -2,6 +2,7 @@
 
 import checkEditedUsername from "@/server-actions/check-edited-username";
 import debounce from "lodash.debounce";
+import Link from "next/link";
 import updateUser from "@/server-actions/update-user";
 import { experimental_useFormState as useFormState } from "react-dom";
 import z from "zod";
@@ -190,11 +191,43 @@ export default function ManageAccountForm({ userData }) {
 
   // handle submit //
   const manageAccountFormRef = useRef(null);
-  function handleSaveChanges(e) {
+  const [submissionState, setSubmissionState] = useState(null);
+  async function handleSaveChanges(e) {
     e.preventDefault();
+    setSubmissionState("pending");
     const formData = new FormData(manageAccountFormRef.current);
     formData.append("userId", userData.id);
-    updateUser(formData);
+    const newState = await updateUser(formData);
+    setSubmissionState(newState);
+  }
+
+  // handle status modal //
+  const statusModalRef = useRef(null);
+  // show when rendered
+  useEffect(function openModal() {
+    if (statusModalRef.current) {
+      statusModalRef.current.close();
+      statusModalRef.current.showModal();
+    }
+  });
+  // define handlers
+  function handleCancel(e) {
+    e.preventDefault();
+  }
+  function handleBackToManageAccount() {
+    setSubmissionState(null);
+    handleCancelEdit();
+    statusModalRef.current.close();
+  }
+  function handleRetry() {
+    setSubmissionState(null);
+    setNewPassword("");
+    setNewPwdMessage(null);
+    setConfirmNewPwd("");
+    setConfirmNewPwdMessage(null);
+    setCurrentPassword("");
+    setCurrentPwdMessage(null);
+    statusModalRef.current.close();
   }
 
   return (
@@ -329,6 +362,37 @@ export default function ManageAccountForm({ userData }) {
           Save
         </button>
       </form>
+      {submissionState ? (
+        <dialog onCancel={handleCancel} ref={statusModalRef}>
+          {submissionState === "pending" ? (
+            <>
+              <p>Updating account...</p>
+            </>
+          ) : submissionState === "success" ? (
+            <>
+              <p>Success!</p>
+              <Link href="/">Dashboard</Link>
+              <button onClick={handleBackToManageAccount} type="button">
+                Manage Account
+              </button>
+            </>
+          ) : submissionState === "invalid" ? (
+            <>
+              <p>Your current password was incorrect.</p>
+              <button onClick={handleRetry} type="button">
+                Try again.
+              </button>
+            </>
+          ) : (
+            <>
+              <p>An error occurred.</p>
+              <button onClick={handleRetry} type="button">
+                Try again.
+              </button>
+            </>
+          )}
+        </dialog>
+      ) : null}
     </>
   );
 }

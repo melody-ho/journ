@@ -3,6 +3,7 @@
 /// Imports ///
 import argon2 from "argon2";
 import rds from "@/database/rds";
+import { revalidatePath } from "next/cache";
 import z from "zod";
 
 /// Private ///
@@ -61,8 +62,9 @@ export default async function updateUser(formData) {
         // update password
         user.password = passwordHash;
       }
-      // save changes
+      // apply changes
       await user.save();
+      revalidatePath("/");
       return "success";
     } catch (error) {
       // handle update errors
