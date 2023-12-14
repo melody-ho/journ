@@ -1,7 +1,7 @@
 import Link from "next/link";
-import SignInForm from "../_client-components/sign-in-form";
+import SignInForm from "@/client-components/sign-in-form";
 import styles from "./page.module.css";
-import ThemedImage from "@/app/(pages)/_helper-components/themed-image";
+import ThemedImage from "@/helper-components/themed-image";
 
 export default function SignIn() {
   return (

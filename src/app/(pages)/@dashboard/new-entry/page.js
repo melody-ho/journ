@@ -1,9 +1,9 @@
-import getUserId from "@/app/(pages)/_helper-functions/get-user-id";
-import getUserTags from "../../_server-actions/get-user-tags";
+import getUserId from "@/helper-functions/get-user-id";
+import getUserTags from "@/server-actions/get-user-tags";
 import { headers } from "next/headers";
-import NewEntryForms from "../../_client-components/new-entry-forms";
+import NewEntryForms from "@/client-components/new-entry-forms";
 import styles from "./page.module.css";
-import ThemedImage from "@/app/(pages)/_helper-components/themed-image";
+import ThemedImage from "@/helper-components/themed-image";
 
 export default async function NewEntry() {
   const user = await getUserId(headers());

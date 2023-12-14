@@ -1,6 +1,6 @@
-import Dashboard from "../_client-components/dashboard";
-import getUser from "../_helper-functions/get-user";
-import getUserTags from "../_server-actions/get-user-tags";
+import Dashboard from "@/client-components/dashboard";
+import getUser from "@/helper-functions/get-user";
+import getUserTags from "@/server-actions/get-user-tags";
 
 export default async function Home() {
   const user = await getUser();

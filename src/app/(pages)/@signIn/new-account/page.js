@@ -1,6 +1,6 @@
-import NewAccountForm from "../../_client-components/new-account-form";
+import NewAccountForm from "@/client-components/new-account-form";
 import styles from "./page.module.css";
-import ThemedImage from "@/app/(pages)/_helper-components/themed-image";
+import ThemedImage from "@/helper-components/themed-image";
 
 export default function NewAccount() {
   return (
