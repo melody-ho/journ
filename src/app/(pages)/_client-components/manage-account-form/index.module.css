@@ -27,8 +27,8 @@
 .tertiaryBtn {
   background-color: transparent;
   border: none;
-  border-bottom: 0.05em solid rgb(var(--foreground-rgb));
-  color: rgb(var(--foreground-rgb));
+  border-bottom: 0.05em solid rgb(var(--high-contrast-rgb));
+  color: rgb(var(--high-contrast-rgb));
   font-family: var(--font-monarcha);
   font-size: max(14px, calc(14px + 1vw));
   font-style: italic;
@@ -81,6 +81,12 @@
   color: rgb(var(--high-contrast-rgb));
   font-size: max(16px, calc(16px + 0.5vw));
   padding: 0.5em;
+}
+
+.inputField:disabled {
+  border: 0.025em solid rgba(var(--foreground-rgb), 0.8);
+  color: rgba(var(--high-contrast-rgb), 0.8);
+  opacity: 1;
 }
 
 .requiredIndicator {
