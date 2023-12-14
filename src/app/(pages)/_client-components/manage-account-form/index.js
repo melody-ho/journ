@@ -3,6 +3,7 @@
 import checkEditedUsername from "@/server-actions/check-edited-username";
 import debounce from "lodash.debounce";
 import Link from "next/link";
+import styles from "./index.module.css";
 import updateUser from "@/server-actions/update-user";
 import { experimental_useFormState as useFormState } from "react-dom";
 import z from "zod";
@@ -118,13 +119,17 @@ export default function ManageAccountForm({ userData }) {
   }
   useEffect(
     function updateNewPwd() {
-      newPwdInputRef.current.value = newPassword;
+      if (newPwdInputRef.current) {
+        newPwdInputRef.current.value = newPassword;
+      }
     },
     [newPassword],
   );
   useEffect(
     function updateConfirmNewPwd() {
-      confirmNewPwdInputRef.current.value = confirmNewPwd;
+      if (confirmNewPwdInputRef.current) {
+        confirmNewPwdInputRef.current.value = confirmNewPwd;
+      }
     },
     [confirmNewPwd],
   );
@@ -146,7 +151,9 @@ export default function ManageAccountForm({ userData }) {
   }
   useEffect(
     function updateCurrentPwd() {
-      currentPwdInputRef.current.value = currentPassword;
+      if (currentPwdInputRef.current) {
+        currentPwdInputRef.current.value = currentPassword;
+      }
     },
     [currentPassword],
   );
@@ -232,15 +239,30 @@ export default function ManageAccountForm({ userData }) {
 
   return (
     <>
-      <button hidden={edit} onClick={enableEdit} type="button">
-        Edit
-      </button>
       <form ref={manageAccountFormRef}>
-        <section>
-          <ul>
-            <li>
-              <label htmlFor="first-name">First Name</label>
+        {!edit ? (
+          <button
+            className={`${styles.secondaryBtn} ${styles.editBtn}`}
+            onClick={enableEdit}
+            type="button"
+          >
+            Edit
+          </button>
+        ) : null}
+        <section className={styles.nameSection}>
+          <h2 className={styles.sectionHeading}>Your display name.</h2>
+          <h3 className={styles.sectionSubheading}>
+            This is what we call you.
+          </h3>
+          <ul className={styles.formFields}>
+            <li
+              className={`${styles.formField} ${!edit ? styles.readOnly : ""}`}
+            >
+              <label className={styles.inputLabel} htmlFor="first-name">
+                first name
+              </label>
               <input
+                className={styles.inputField}
                 disabled={!edit}
                 id="first-name"
                 name="firstName"
@@ -248,14 +270,25 @@ export default function ManageAccountForm({ userData }) {
                 ref={firstNameInputRef}
                 type="text"
               ></input>
-              <p aria-hidden={!edit}>{edit ? "required" : ""}</p>
-              <p aria-hidden={!firstNameMessage}>
-                {firstNameMessage ? firstNameMessage : ""}
-              </p>
+              {edit ? (
+                <>
+                  <p aria-hidden={!edit} className={styles.requiredIndicator}>
+                    {edit ? "required" : ""}
+                  </p>
+                  <p aria-hidden={!firstNameMessage} className={styles.hint}>
+                    {firstNameMessage ? firstNameMessage : ""}
+                  </p>
+                </>
+              ) : null}
             </li>
-            <li>
-              <label htmlFor="last-name">Last Name</label>
+            <li
+              className={`${styles.formField} ${!edit ? styles.readOnly : ""}`}
+            >
+              <label className={styles.inputLabel} htmlFor="last-name">
+                last name
+              </label>
               <input
+                className={styles.inputField}
                 disabled={!edit}
                 id="last-name"
                 name="lastName"
@@ -264,103 +297,176 @@ export default function ManageAccountForm({ userData }) {
                 type="text"
               ></input>
             </li>
-            <li>
-              <label htmlFor="username">Username</label>
+          </ul>
+        </section>
+        <section className={styles.usernamePwdSection}>
+          <h2 className={styles.sectionHeading}>Your credentials.</h2>
+          <h3 className={styles.sectionSubheading}>
+            This is what you use to sign in.
+          </h3>
+          <ul className={styles.formFields}>
+            <li
+              className={`${styles.formField} ${!edit ? styles.readOnly : ""}`}
+            >
+              <label className={styles.inputLabel} htmlFor="username">
+                username
+              </label>
               <input
+                className={styles.inputField}
                 disabled={!edit}
                 id="username"
                 name="username"
                 onBlur={debouncedHandleUsernameChange}
                 onChange={debouncedHandleUsernameChange}
-                type="text"
                 ref={usernameInputRef}
+                type="text"
               ></input>
-              <p aria-hidden={!edit}>{edit ? "required" : ""}</p>
-              <p aria-hidden={!usernameMessage && !usernameUnavailable}>
-                {usernameMessage
-                  ? usernameMessage
-                  : usernameUnavailable
-                  ? usernameUnavailable
-                  : ""}
-              </p>
+              {edit ? (
+                <>
+                  <p aria-hidden={!edit} className={styles.requiredIndicator}>
+                    {edit ? "required" : ""}
+                  </p>
+                  <p
+                    aria-hidden={!usernameMessage && !usernameUnavailable}
+                    className={styles.hint}
+                  >
+                    {usernameMessage
+                      ? usernameMessage
+                      : usernameUnavailable
+                      ? usernameUnavailable
+                      : ""}
+                  </p>
+                </>
+              ) : null}
             </li>
+            {edit ? (
+              <li
+                className={
+                  editPassword
+                    ? styles.disablePwdEditWrapper
+                    : styles.enablePwdEditWrapper
+                }
+              >
+                <button
+                  className={`${styles.tertiaryBtn} ${
+                    editPassword
+                      ? styles.disablePwdEditBtn
+                      : styles.enablePwdEditBtn
+                  }`}
+                  onClick={
+                    editPassword ? cancelPasswordChange : enablePasswordChange
+                  }
+                  type="button"
+                >
+                  {editPassword ? "Cancel password change" : "Change password"}
+                </button>
+              </li>
+            ) : null}
+            {editPassword ? (
+              <>
+                <li className={styles.formField}>
+                  <label className={styles.inputLabel} htmlFor="new-password">
+                    new password
+                  </label>
+                  <input
+                    className={styles.inputField}
+                    id="new-password"
+                    name="newPassword"
+                    onBlur={handleNewPwdChange}
+                    onChange={handleNewPwdChange}
+                    ref={newPwdInputRef}
+                    type="password"
+                  ></input>
+                  <p className={styles.requiredIndicator}>required</p>
+                  <p aria-hidden={!newPwdMessage} className={styles.hint}>
+                    {newPwdMessage ? newPwdMessage : ""}
+                  </p>
+                </li>
+                <li className={styles.formField}>
+                  <label
+                    className={styles.inputLabel}
+                    htmlFor="confirm-new-password"
+                  >
+                    confirm new password
+                  </label>
+                  <input
+                    className={styles.inputField}
+                    id="confirm-new-password"
+                    name="confirmNewPassword"
+                    onBlur={handleConfirmNewPwdChange}
+                    onChange={handleConfirmNewPwdChange}
+                    ref={confirmNewPwdInputRef}
+                    type="password"
+                  ></input>
+                  <p className={styles.requiredIndicator}>required</p>
+                  <p
+                    aria-hidden={!confirmNewPwdMessage}
+                    className={styles.hint}
+                  >
+                    {confirmNewPwdMessage ? confirmNewPwdMessage : ""}
+                  </p>
+                </li>
+              </>
+            ) : null}
           </ul>
         </section>
-        <section hidden={!edit}>
-          <button
-            onClick={editPassword ? cancelPasswordChange : enablePasswordChange}
-            type="button"
-          >
-            {editPassword ? "Cancel Password Change" : "Change Password"}
-          </button>
-          <ul hidden={!editPassword}>
-            <li>
-              <label htmlFor="new-password">New Password</label>
-              <input
-                id="new-password"
-                name="newPassword"
-                onBlur={handleNewPwdChange}
-                onChange={handleNewPwdChange}
-                ref={newPwdInputRef}
-                type="password"
-              ></input>
-              <p>required</p>
-              <p aria-hidden={!newPwdMessage}>
-                {newPwdMessage ? newPwdMessage : ""}
-              </p>
-            </li>
-            <li>
-              <label htmlFor="confirm-new-password">Confirm New Password</label>
-              <input
-                id="confirm-new-password"
-                name="confirmNewPassword"
-                onBlur={handleConfirmNewPwdChange}
-                onChange={handleConfirmNewPwdChange}
-                ref={confirmNewPwdInputRef}
-                type="password"
-              ></input>
-              <p>required</p>
-              <p aria-hidden={!confirmNewPwdMessage}>
-                {confirmNewPwdMessage ? confirmNewPwdMessage : ""}
-              </p>
-            </li>
-          </ul>
-        </section>
-        <section hidden={!edit}>
-          <label htmlFor="current-password">Current Password</label>
-          <input
-            id="current-password"
-            name="currentPassword"
-            onChange={handleCurrentPwdChange}
-            ref={currentPwdInputRef}
-            type="password"
-          ></input>
-          <p>required</p>
-          <p aria-hidden={!currenPwdMessage}>
-            {currenPwdMessage ? currenPwdMessage : ""}
-          </p>
-        </section>
-        <button hidden={!edit} onClick={handleCancelEdit} type="button">
-          Cancel
-        </button>
-        <button
-          disabled={
-            !firstName ||
-            !username ||
-            (editPassword && !newPassword) ||
-            (editPassword && !confirmNewPwd) ||
-            !currentPassword ||
-            firstNameMessage ||
-            usernameMessage ||
-            usernameUnavailable ||
-            newPwdMessage ||
-            confirmNewPwdMessage ||
-            currenPwdMessage
-          }
-          onClick={handleSaveChanges}
-        >
-          Save
-        </button>
+        {edit ? (
+          <section className={styles.currentPwdSection}>
+            <h2 className={styles.sectionHeading}>Authorize account change.</h2>
+            <h3 className={styles.sectionSubheading}>
+              Enter your current password to authorize changes.
+            </h3>
+            <div className={styles.formFields}>
+              <div className={styles.formField}>
+                <label className={styles.inputLabel} htmlFor="current-password">
+                  current password
+                </label>
+                <input
+                  className={styles.inputField}
+                  id="current-password"
+                  name="currentPassword"
+                  onChange={handleCurrentPwdChange}
+                  ref={currentPwdInputRef}
+                  type="password"
+                ></input>
+                <p className={styles.requiredIndicator}>required</p>
+                <p aria-hidden={!currenPwdMessage} className={styles.hint}>
+                  {currenPwdMessage ? currenPwdMessage : ""}
+                </p>
+              </div>
+            </div>
+          </section>
+        ) : null}
+        {edit ? (
+          <div className={styles.formBtns}>
+            <button
+              className={`${styles.secondaryBtn} ${styles.cancelBtn}`}
+              onClick={handleCancelEdit}
+              type="button"
+            >
+              Cancel
+            </button>
+            <button
+              className={styles.primaryBtn}
+              disabled={
+                !firstName ||
+                !username ||
+                (editPassword && !newPassword) ||
+                (editPassword && !confirmNewPwd) ||
+                !currentPassword ||
+                firstNameMessage ||
+                usernameMessage ||
+                usernameUnavailable ||
+                newPwdMessage ||
+                confirmNewPwdMessage ||
+                currenPwdMessage
+              }
+              onClick={handleSaveChanges}
+            >
+              Save
+            </button>
+          </div>
+        ) : null}
       </form>
       {submissionState ? (
         <dialog onCancel={handleCancel} ref={statusModalRef}>

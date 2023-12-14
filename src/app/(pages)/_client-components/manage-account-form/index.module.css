@@ -1,0 +1,143 @@
+.primaryBtn {
+  background-color: rgb(var(--high-contrast-rgb));
+  border: none;
+  border-radius: 0.25em;
+  color: rgb(var(--background-rgb));
+  font-family: var(--font-monarcha);
+  font-size: max(18px, calc(18px + 0.5vw));
+  font-weight: 600;
+  padding: 0.5em 1em;
+}
+
+.primaryBtn:disabled {
+  background-color: rgba(var(--high-contrast-rgb), 0.8);
+  color: rgba(var(--background-rgb), 0.2);
+}
+
+.secondaryBtn {
+  background-color: transparent;
+  border: 0.075em solid rgb(var(--foreground-rgb));
+  border-radius: 0.25em;
+  color: rgb(var(--foreground-rgb));
+  font-family: var(--font-monarcha);
+  font-size: max(16px, calc(16px + 1vw));
+  padding: 0.2em 0.8em;
+}
+
+.tertiaryBtn {
+  background-color: transparent;
+  border: none;
+  border-bottom: 0.05em solid rgb(var(--foreground-rgb));
+  color: rgb(var(--foreground-rgb));
+  font-family: var(--font-monarcha);
+  font-size: max(14px, calc(14px + 1vw));
+  font-style: italic;
+  font-weight: 200;
+}
+
+.editBtn {
+  margin-bottom: 2em;
+}
+
+.nameSection,
+.enablePwdEditWrapper {
+  margin-bottom: 5em;
+}
+
+.usernamePwdSection {
+  margin-bottom: 3.5em;
+}
+
+.sectionHeading {
+  font-family: var(--font-monarcha);
+  font-size: max(16px, calc(16px + 0.5vw));
+  margin-bottom: 0.5em;
+}
+
+.sectionSubheading {
+  font-size: max(10px, calc(10px + 0.5vw));
+  font-weight: 200;
+  margin-bottom: 1em;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+}
+
+.formField.readOnly {
+  margin-bottom: 1.5em;
+}
+
+.inputLabel {
+  font-size: max(12px, calc(12px + 0.5vw));
+  font-weight: 200;
+}
+
+.inputField {
+  background-color: rgb(var(--low-contrast-rgb));
+  border: 0.05em solid rgb(var(--foreground-rgb));
+  border-radius: 0.2em;
+  color: rgb(var(--high-contrast-rgb));
+  font-size: max(16px, calc(16px + 0.5vw));
+  padding: 0.5em;
+}
+
+.requiredIndicator {
+  align-self: flex-end;
+  font-size: max(8px, calc(8px + 0.5vw));
+  font-weight: 200;
+}
+
+.hint {
+  color: rgb(var(--high-contrast-rgb));
+  font-size: max(10px, calc(10px + 1vw));
+  font-style: italic;
+  font-weight: 200;
+  margin-bottom: 1em;
+  min-height: 1.5em;
+}
+
+.enablePwdEditBtn,
+.disablePwdEditBtn {
+  padding: 0 0.05em;
+}
+
+.disablePwdEditBtn {
+  margin-bottom: 1em;
+}
+
+.formBtns {
+  display: flex;
+  gap: 5vw;
+}
+
+.cancelBtn {
+  font-style: italic;
+  font-weight: 200;
+}
+
+@media (min-width: 1000px) {
+  .nameSection {
+    margin-bottom: 2em;
+  }
+
+  .formFields {
+    column-gap: 5vw;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .enablePwdEditWrapper {
+    margin-bottom: 0;
+  }
+
+  .enablePwdEditWrapper,
+  .disablePwdEditWrapper {
+    margin-top: 2em;
+  }
+
+  .formBtns {
+    gap: 2vw;
+  }
+}
