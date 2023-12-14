@@ -4,6 +4,7 @@ import checkEditedUsername from "@/server-actions/check-edited-username";
 import debounce from "lodash.debounce";
 import Link from "next/link";
 import styles from "./index.module.css";
+import ThemedImage from "@/helper-components/themed-image";
 import updateUser from "@/server-actions/update-user";
 import { experimental_useFormState as useFormState } from "react-dom";
 import z from "zod";
@@ -469,33 +470,67 @@ export default function ManageAccountForm({ userData }) {
         ) : null}
       </form>
       {submissionState ? (
-        <dialog onCancel={handleCancel} ref={statusModalRef}>
+        <dialog
+          className={styles.statusModal}
+          onCancel={handleCancel}
+          ref={statusModalRef}
+        >
           {submissionState === "pending" ? (
-            <>
-              <p>Updating account...</p>
-            </>
+            <div className={styles.modalContent}>
+              <div className={styles.loadingIndicator}>
+                <div className={styles.spinner}></div>
+              </div>
+              <p className={styles.status}>Updating account...</p>
+            </div>
           ) : submissionState === "success" ? (
-            <>
-              <p>Success!</p>
-              <Link href="/">Dashboard</Link>
-              <button onClick={handleBackToManageAccount} type="button">
-                Manage Account
-              </button>
-            </>
+            <div className={styles.modalContent}>
+              <div className={styles.statusIcon}>
+                <ThemedImage alt="success icon" imageName="success-icon" />
+              </div>
+              <p className={styles.status}>Account updated!</p>
+              <div className={styles.ctaWrapper}>
+                <Link className={styles.primaryCta} href="/">
+                  Go to dashboard
+                </Link>
+                <button
+                  className={styles.secondaryCta}
+                  onClick={handleBackToManageAccount}
+                  type="button"
+                >
+                  Stay in manage account
+                </button>
+              </div>
+            </div>
           ) : submissionState === "invalid" ? (
-            <>
-              <p>Your current password was incorrect.</p>
-              <button onClick={handleRetry} type="button">
-                Try again.
+            <div className={styles.modalContent}>
+              <div className={styles.statusIcon}>
+                <ThemedImage alt="alert icon" imageName="alert-icon" />
+              </div>
+              <p className={styles.status}>
+                Your current password was incorrect.
+              </p>
+              <button
+                className={styles.singleCta}
+                onClick={handleRetry}
+                type="button"
+              >
+                Try again
               </button>
-            </>
+            </div>
           ) : (
-            <>
-              <p>An error occurred.</p>
-              <button onClick={handleRetry} type="button">
-                Try again.
+            <div className={styles.modalContent}>
+              <div className={styles.statusIcon}>
+                <ThemedImage alt="sad face icon" imageName="sad-icon" />
+              </div>
+              <p className={styles.status}>Oh no! An error occurred.</p>
+              <button
+                className={styles.singleCta}
+                onClick={handleRetry}
+                type="button"
+              >
+                Try again
               </button>
-            </>
+            </div>
           )}
         </dialog>
       ) : null}
