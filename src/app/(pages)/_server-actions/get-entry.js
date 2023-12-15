@@ -20,6 +20,6 @@ export async function getEntryWithTags(id) {
     include: { model: rds.models.Tag, attributes: ["name"] },
     raw: true,
   });
-  entry.tags = tagDataList.map((tagData) => tagData["Tag.name"]);
+  entry.tags = tagDataList.map((tagData) => tagData["Tag.name"]).sort();
   return entry;
 }
