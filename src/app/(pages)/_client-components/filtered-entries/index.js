@@ -13,6 +13,7 @@ export default function FilteredEntries({
   selectedTags,
   selectedTypes,
   userId,
+  userTags,
 }) {
   // initialize router //
   const router = useRouter();
@@ -186,6 +187,7 @@ export default function FilteredEntries({
           removeFromFeed={removeFromFeed}
           removeModal={removeEntryModal}
           updateFeed={updateFeed}
+          userTags={userTags}
         />
       ) : null}
     </>

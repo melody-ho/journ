@@ -204,6 +204,7 @@ export default function Dashboard({ user, userTags }) {
             selectedTags={selectedTags}
             selectedTypes={selectedTypes}
             userId={user.id}
+            userTags={userTags}
           />
         </section>
       </main>

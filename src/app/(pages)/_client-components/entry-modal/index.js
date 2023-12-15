@@ -8,6 +8,7 @@ export default function EntryModal({
   removeFromFeed,
   removeModal,
   updateFeed,
+  userTags,
 }) {
   // initialize states and refs //
   const [entry, setEntry] = useState(null);
@@ -86,6 +87,7 @@ export default function EntryModal({
             setEntry={setEntry}
             setUpdating={setUpdating}
             updateFeed={updateFeed}
+            userTags={userTags}
           />
         </>
       ) : (
