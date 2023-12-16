@@ -1,0 +1,63 @@
+.entryModal {
+  background-color: rgb(var(--low-contrast-rgb));
+  border: none;
+  border-radius: 0.2em;
+  box-shadow: 0px 0px 5px 3px rgb(var(--medium-contrast-rgb));
+  color: rgb(var(--foreground-rgb));
+  font-size: max(12px, calc(12px + 0.5vw));
+}
+
+.entryModal::backdrop {
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  background-color: rgba(var(--background-rgb), 0.2);
+}
+
+.textEntryIconContainer {
+  height: max(35px, 2em);
+  position: relative;
+  top: 0.75em;
+  width: max(35px, 2em);
+  z-index: 1;
+}
+
+.imageWrapper,
+.videoWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: max(5px, 1vh);
+  width: max(250px, 80vw);
+}
+
+.imageContainer,
+.videoContainer {
+  background-color: rgba(var(--medium-contrast-rgb));
+  height: max(250px, min(80vw, 60vh));
+  width: max(250px, min(80vw, 60vh));
+}
+
+.imageContainer {
+  position: relative;
+}
+
+.image {
+  object-fit: contain;
+}
+
+.video {
+  height: 100%;
+  width: 100%;
+}
+
+@media (min-width: 1000px) {
+  .imageWrapper,
+  .videoWrapper {
+    width: 60vw;
+  }
+
+  .imageContainer,
+  .videoContainer {
+    height: max(250px, min(60vw, 75vh));
+    width: max(250px, min(60vw, 75vh));
+  }
+}

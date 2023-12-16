@@ -1,6 +1,8 @@
 import EditEntryForm from "@/client-components/edit-entry-form";
 import { getEntryWithTags } from "@/server-actions/get-entry";
 import Image from "next/image";
+import styles from "./index.module.css";
+import ThemedImage from "@/helper-components/themed-image";
 import { useEffect, useRef, useState } from "react";
 
 export default function EntryModal({
@@ -56,7 +58,7 @@ export default function EntryModal({
   }
 
   return (
-    <dialog onCancel={handleCancel} ref={modal}>
+    <dialog className={styles.entryModal} onCancel={handleCancel} ref={modal}>
       {updating ? (
         <p>updating...</p>
       ) : deleting ? (
@@ -65,19 +67,38 @@ export default function EntryModal({
         <p>deleted</p>
       ) : entry ? (
         <>
-          {entry.type === "image" ? (
-            <Image
-              alt={
-                entry.content
-                  ? entry.content
-                  : "The user did not provide a caption for this image."
-              }
-              height="100"
-              src={entry.srcUrl}
-              width="100"
-            />
+          {entry.type === "text" ? (
+            <div className={styles.textEntryIconContainer}>
+              <ThemedImage alt="text entry icon" imageName="quote-icon" />
+            </div>
+          ) : entry.type === "image" ? (
+            <div className={styles.imageWrapper}>
+              <div className={styles.imageContainer}>
+                <Image
+                  alt={
+                    entry.content
+                      ? entry.content
+                      : "The user did not provide a caption for this image."
+                  }
+                  className={styles.image}
+                  fill={true}
+                  src={entry.srcUrl}
+                />
+              </div>
+            </div>
           ) : entry.type === "video" ? (
-            <video autoPlay loop muted src={entry.srcUrl}></video>
+            <div className={styles.videoWrapper}>
+              <div className={styles.videoContainer}>
+                <video
+                  autoPlay
+                  className={styles.video}
+                  controls
+                  loop
+                  muted
+                  src={entry.srcUrl}
+                ></video>
+              </div>
+            </div>
           ) : null}
           <EditEntryForm
             entry={entry}

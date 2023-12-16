@@ -1,0 +1,153 @@
+.component {
+  display: flex;
+  flex-direction: column;
+  width: max(250px, 80vw);
+}
+
+.text.component {
+  gap: max(10px, 2vh);
+}
+
+.imgVideo.component {
+  gap: max(5px, 1vh);
+}
+
+.contentField,
+.captionField {
+  background-color: rgb(var(--background-rgb));
+  border: 0.05em solid rgb(var(--high-contrast-rgb));
+  border-radius: 0.2em;
+  color: rgb(var(--foreground-rgb));
+  font-family: var(--font-muli);
+  line-height: 1.5;
+  resize: none;
+}
+
+.contentField::placeholder,
+.captionField::placeholder {
+  color: rgba(var(--foreground-rgb), 0.8);
+  font-style: italic;
+  font-weight: 200;
+}
+
+.contentField:disabled,
+.captionField:disabled {
+  background-color: rgb(var(--low-contrast-rgb));
+  border: 0.05em solid rgb(var(--medium-contrast-rgb));
+  opacity: 1;
+}
+
+.contentField:disabled::placeholder,
+.captionField:disabled::placeholder {
+  color: rgba(var(--foreground-rgb), 0.6);
+}
+
+.contentField {
+  font-size: max(12px, calc(12px + 0.5vw));
+  height: max(120px, 35vh);
+  padding: 1em;
+}
+
+.captionField {
+  font-size: max(10px, calc(10px + 0.5vw));
+  height: max(60px, 10vh);
+  padding: 0.5em;
+}
+
+.captionField:disabled {
+  color: rgb(var(--high-contrast-rgb));
+  font-style: italic;
+  font-weight: 200;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  overflow: auto;
+}
+
+.text .tags {
+  max-height: max(50px, 15vh);
+}
+
+.imgVideo .tags {
+  max-height: max(50px, 7.5vh);
+}
+
+.tag {
+  background-color: rgb(var(--medium-contrast-rgb));
+  border-radius: 0.25em;
+  font-weight: 200;
+  padding: 0.2em 0.5em;
+}
+
+.text .tag {
+  font-size: max(8px, calc(8px + 0.5vw));
+}
+
+.imgVideo .tag {
+  font-size: max(6px, calc(6px + 0.5vw));
+}
+
+.primaryBtn {
+  background-color: rgb(var(--high-contrast-rgb));
+  border: none;
+  border-radius: 0.2em;
+  color: rgb(var(--background-rgb));
+  font-family: var(--font-monarcha);
+  font-size: max(15px, calc(15px + 0.5vw));
+  font-weight: 600;
+  padding: 0.25em 1em;
+}
+
+.secondaryBtn {
+  background-color: transparent;
+  border: 0.075em solid rgb(var(--high-contrast-rgb));
+  border-radius: 0.2em;
+  color: rgb(var(--high-contrast-rgb));
+  font-family: var(--font-monarcha);
+  font-size: max(12px, calc(12px + 0.5vw));
+  font-weight: 600;
+  padding: 0.25em 0;
+}
+
+.tertiaryBtn {
+  background-color: transparent;
+  border: none;
+  border-bottom: 0.075em solid rgb(var(--high-contrast-rgb));
+  color: rgb(var(--high-contrast-rgb));
+  font-family: var(--font-monarcha);
+  font-size: max(15px, calc(15px + 0.5vw));
+  font-style: italic;
+  font-weight: 200;
+  padding: 0.3em 0.5em 0.2em 0.5em;
+}
+
+.enableEditBtn {
+  margin-bottom: 2vh;
+  margin-top: max(15px, 3vh);
+}
+
+.editActions {
+  align-self: flex-end;
+  display: flex;
+  gap: 2vw;
+  padding: 2vh 0 3vh 0;
+}
+
+.deleteActions {
+  border-top: 0.2em solid rgb(var(--medium-contrast-rgb));
+  display: flex;
+  padding: 3vh 1vw 2vh 1vw;
+}
+
+.deleteBtn {
+  flex-grow: 1;
+}
+
+@media (min-width: 1000px) {
+  .component {
+    width: 60vw;
+  }
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import deleteEntry from "@/server-actions/delete-entry";
+import styles from "./index.module.css";
 import TagDropdown from "../tag-dropdown";
 import updateEntryChanges from "@/server-actions/update-entry-changes";
 import { v4 as uuidv4 } from "uuid";
@@ -63,13 +64,24 @@ export default function EditEntryForm({
 
   return (
     <>
-      <form ref={formEl}>
+      <form
+        className={`${styles.component} ${
+          entry.type === "text" ? styles.text : styles.imgVideo
+        }`}
+        ref={formEl}
+      >
         <textarea
+          className={
+            entry.type === "text" ? styles.contentField : styles.captionField
+          }
           disabled={!editable}
           name="content"
           onChange={updateContent}
+          placeholder={
+            entry.type === "text" ? "Write something..." : "no caption"
+          }
           ref={contentInput}
-          value={content}
+          value={content === null ? "" : content}
         ></textarea>
         {editable ? (
           <TagDropdown
@@ -78,27 +90,49 @@ export default function EditEntryForm({
             preSelectedTags={entry.tags}
             userTags={userTags}
           />
-        ) : (
-          <ul>
+        ) : tags.length > 0 ? (
+          <ul className={styles.tags}>
             {tags.map((tag) => (
-              <li key={uuidv4()}>{tag}</li>
+              <li className={styles.tag} key={uuidv4()}>
+                {tag}
+              </li>
             ))}
           </ul>
-        )}
+        ) : null}
         {editable ? (
           <>
-            <button onClick={cancelEdit} type="button">
-              cancel
-            </button>
-            <button onClick={saveChanges} type="button">
-              save
-            </button>
-            <button onClick={() => handleDelete(entry.id)} type="button">
-              delete
-            </button>
+            <div className={styles.editActions}>
+              <button
+                className={`${styles.tertiaryBtn}`}
+                onClick={cancelEdit}
+                type="button"
+              >
+                cancel
+              </button>
+              <button
+                className={`${styles.primaryBtn} ${styles.saveBtn}`}
+                onClick={saveChanges}
+                type="button"
+              >
+                save
+              </button>
+            </div>
+            <div className={styles.deleteActions}>
+              <button
+                className={`${styles.deleteBtn} ${styles.secondaryBtn}`}
+                onClick={() => handleDelete(entry.id)}
+                type="button"
+              >
+                delete entry
+              </button>
+            </div>
           </>
         ) : (
-          <button onClick={enableEdit} type="button">
+          <button
+            className={`${styles.enableEditBtn} ${styles.secondaryBtn}`}
+            onClick={enableEdit}
+            type="button"
+          >
             edit
           </button>
         )}
