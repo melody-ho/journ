@@ -170,7 +170,7 @@ export default function Dashboard({ user, userTags }) {
           <section>
             <dialog
               className={styles.filtersMenuModal}
-              onCancel={closeFiltersMenu}
+              onClose={closeFiltersMenu}
               ref={filtersMenuModal}
             >
               <div

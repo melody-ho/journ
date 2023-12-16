@@ -116,6 +116,9 @@ export default function NewAccountForm() {
   function handleCancel(e) {
     e.preventDefault();
   }
+  function handleEsc(e) {
+    if (e.key === "Escape") e.preventDefault();
+  }
   function handleRetry() {
     setSubmissionState(null);
     statusModal.current.close();
@@ -256,6 +259,7 @@ export default function NewAccountForm() {
         <dialog
           className={styles.statusModal}
           onCancel={handleCancel}
+          onKeyDown={handleEsc}
           ref={statusModal}
         >
           {submissionState === "pending" ? (

@@ -20,6 +20,10 @@ export default function NewEntryStatusModal({ resetForm, retry, status }) {
     e.preventDefault();
   }
 
+  function handleEsc(e) {
+    if (e.key === "Escape") e.preventDefault();
+  }
+
   return (
     <dialog
       className={`${styles.modal} ${
@@ -28,6 +32,7 @@ export default function NewEntryStatusModal({ resetForm, retry, status }) {
           : styles.transparentBackdrop
       }`}
       onCancel={handleCancel}
+      onKeyDown={handleEsc}
       ref={modal}
     >
       {status === "uploading" ? (

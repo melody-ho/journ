@@ -222,6 +222,9 @@ export default function ManageAccountForm({ userData }) {
   function handleCancel(e) {
     e.preventDefault();
   }
+  function handleEsc(e) {
+    if (e.key === "Escape") e.preventDefault();
+  }
   function handleBackToManageAccount() {
     setSubmissionState(null);
     handleCancelEdit();
@@ -473,6 +476,7 @@ export default function ManageAccountForm({ userData }) {
         <dialog
           className={styles.statusModal}
           onCancel={handleCancel}
+          onKeyDown={handleEsc}
           ref={statusModalRef}
         >
           {submissionState === "pending" ? (

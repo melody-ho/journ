@@ -23,7 +23,6 @@ export default function EntryModal({
   useEffect(
     function show() {
       if (modal.current) {
-        modal.current.close();
         modal.current.showModal();
       }
     },
@@ -52,13 +51,22 @@ export default function EntryModal({
   function handleCancel(e) {
     if (updating || deleting) {
       e.preventDefault();
-    } else {
-      removeModal();
+    }
+  }
+  function handleEsc(e) {
+    if (e.key === "Escape" && (updating || deleting)) {
+      e.preventDefault();
     }
   }
 
   return (
-    <dialog className={styles.entryModal} onCancel={handleCancel} ref={modal}>
+    <dialog
+      className={styles.entryModal}
+      onCancel={handleCancel}
+      onClose={removeModal}
+      onKeyDown={handleEsc}
+      ref={modal}
+    >
       {updating ? (
         <p>updating...</p>
       ) : deleting ? (
