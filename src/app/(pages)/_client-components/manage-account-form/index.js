@@ -10,6 +10,8 @@ import { experimental_useFormState as useFormState } from "react-dom";
 import z from "zod";
 import { useEffect, useRef, useState } from "react";
 
+const DEBOUNCE_DURATION = 200;
+
 export default function ManageAccountForm({ userData }) {
   // manage form input values and client side validation //
   // first name
@@ -74,7 +76,10 @@ export default function ManageAccountForm({ userData }) {
       oldUsername: userData.username,
     });
   }
-  const debouncedHandleUsernameChange = debounce(handleUsernameChange, 200);
+  const debouncedHandleUsernameChange = debounce(
+    handleUsernameChange,
+    DEBOUNCE_DURATION,
+  );
   useEffect(
     function updateUsername() {
       usernameInputRef.current.value = username;

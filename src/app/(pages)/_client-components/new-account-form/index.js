@@ -10,6 +10,8 @@ import { experimental_useFormState as useFormState } from "react-dom";
 import z from "zod";
 import { useEffect, useRef, useState } from "react";
 
+const DEBOUNCE_DURATION = 200;
+
 export default function NewAccountForm() {
   // client-side form validation //
   // first name
@@ -51,7 +53,10 @@ export default function NewAccountForm() {
     }
     checkUsernameAvailability(e.target.value);
   }
-  const debouncedHandleUsernameChange = debounce(handleUsernameChange, 200);
+  const debouncedHandleUsernameChange = debounce(
+    handleUsernameChange,
+    DEBOUNCE_DURATION,
+  );
   // password
   const passwordField = useRef(null);
   const [password, setPassword] = useState("");
