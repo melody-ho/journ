@@ -14,6 +14,12 @@
 
 .contentField,
 .captionField {
+  display: flex;
+  flex-direction: column;
+}
+
+.contentInput,
+.captionInput {
   background-color: rgb(var(--background-rgb));
   border: 0.05em solid rgb(var(--high-contrast-rgb));
   border-radius: 0.2em;
@@ -23,38 +29,45 @@
   resize: none;
 }
 
-.contentField::placeholder,
-.captionField::placeholder {
+.contentInput::placeholder,
+.captionInput::placeholder {
   color: rgba(var(--foreground-rgb), 0.8);
   font-style: italic;
   font-weight: 200;
 }
 
-.contentField:disabled,
-.captionField:disabled {
+.contentInput:disabled,
+.captionInput:disabled {
   background-color: rgb(var(--low-contrast-rgb));
   border: 0.05em solid rgb(var(--medium-contrast-rgb));
   opacity: 1;
 }
 
-.contentField:disabled::placeholder,
-.captionField:disabled::placeholder {
+.contentInput:disabled::placeholder,
+.captionInput:disabled::placeholder {
   color: rgba(var(--foreground-rgb), 0.6);
 }
 
-.contentField {
+.contentInput {
   font-size: max(12px, calc(12px + 0.5vw));
   height: max(120px, 35vh);
   padding: 1em;
 }
 
-.captionField {
+.requiredIndicator {
+  align-self: flex-end;
+  font-size: max(8px, calc(8px + 0.5vw));
+  font-style: italic;
+  font-weight: 200;
+}
+
+.captionInput {
   font-size: max(10px, calc(10px + 0.5vw));
   height: max(60px, 10vh);
   padding: 0.5em;
 }
 
-.captionField:disabled {
+.captionInput:disabled {
   color: rgb(var(--high-contrast-rgb));
   font-style: italic;
   font-weight: 200;
@@ -134,6 +147,11 @@
   display: flex;
   gap: 2vw;
   padding: 2vh 0 3vh 0;
+}
+
+.saveBtn:disabled {
+  background-color: rgba(var(--high-contrast-rgb), 0.8);
+  color: rgba(var(--background-rgb), 0.2);
 }
 
 .deleteActions {

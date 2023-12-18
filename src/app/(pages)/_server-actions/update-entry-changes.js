@@ -9,8 +9,15 @@ export default async function updateEntryChanges(formData) {
     const entryId = formData.get("id");
     const userId = formData.get("userId");
 
-    // update entry content //
+    // get entry //
     const entry = await rds.models.Entry.findByPk(entryId);
+
+    // check for empty text entry //
+    if (entry.type === "text" && formData.get("content") === "") {
+      return "empty";
+    }
+
+    // udpate entry content //
     entry.content = formData.get("content");
     await entry.save();
 
@@ -29,6 +36,8 @@ export default async function updateEntryChanges(formData) {
         tagId: tagData.id,
       });
     }
+
+    return "success";
   } catch (error) {
     // TO DO: error handling //
   }

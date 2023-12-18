@@ -74,6 +74,7 @@ export default function NewTextEntry({ user, userTags }) {
             onChange={updateTextInputValue}
             ref={textInput}
           ></textarea>
+          <p className={styles.requiredIndicator}>required</p>
         </div>
         <div className={styles.tagsField}>
           <p className={styles.tagsFieldLabel}>Tags:</p>

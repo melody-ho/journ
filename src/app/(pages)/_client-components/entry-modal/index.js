@@ -16,6 +16,7 @@ export default function EntryModal({
   const [entry, setEntry] = useState(null);
   const [deleted, setDeleted] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [emptyText, setEmptyText] = useState(false);
   const [updating, setUpdating] = useState(false);
   const modal = useRef(null);
 
@@ -47,6 +48,11 @@ export default function EntryModal({
     [entry, id],
   );
 
+  // go back to form //
+  function acknowledgeEmptyTextAlert() {
+    setEmptyText(false);
+  }
+
   // close modal on cancel if not updating or deleting //
   function handleCancel(e) {
     if (updating || deleting) {
@@ -69,12 +75,24 @@ export default function EntryModal({
     >
       {updating ? (
         <p>updating...</p>
+      ) : emptyText ? (
+        <div>
+          <p>empty text</p>
+          <button onClick={acknowledgeEmptyTextAlert} type="button">
+            Go back
+          </button>
+        </div>
       ) : deleting ? (
         <p>deleting...</p>
       ) : deleted ? (
         <p>deleted</p>
-      ) : entry ? (
-        <>
+      ) : null}
+      {entry ? (
+        <div
+          className={
+            updating || emptyText || deleting || deleted ? styles.hidden : null
+          }
+        >
           {entry.type === "text" ? (
             <div className={styles.textEntryIconContainer}>
               <ThemedImage alt="text entry icon" imageName="quote-icon" />
@@ -113,12 +131,13 @@ export default function EntryModal({
             removeFromFeed={removeFromFeed}
             setDeleted={setDeleted}
             setDeleting={setDeleting}
+            setEmptyText={setEmptyText}
             setEntry={setEntry}
             setUpdating={setUpdating}
             updateFeed={updateFeed}
             userTags={userTags}
           />
-        </>
+        </div>
       ) : (
         <p>loading...</p>
       )}

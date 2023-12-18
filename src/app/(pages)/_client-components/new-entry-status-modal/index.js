@@ -44,6 +44,20 @@ export default function NewEntryStatusModal({ resetForm, retry, status }) {
           <div className={styles.loader}></div>
           <p className={styles.statusMessage}>Adding new entry</p>
         </div>
+      ) : status === "empty" ? (
+        <div className={styles.modalContent}>
+          <div className={styles.alertIconContainer}>
+            <ThemedImage alt="alert icon" imageName="alert-icon" />
+          </div>
+          <p className={styles.statusMessage}>Entry content cannot be empty.</p>
+          <button
+            className={`${styles.button} ${styles.callToAction} ${styles.errorAction}`}
+            onClick={retry}
+            type="button"
+          >
+            Go back
+          </button>
+        </div>
       ) : status === "error" ? (
         <div className={styles.modalContent}>
           <div className={styles.errorIconContainer}>

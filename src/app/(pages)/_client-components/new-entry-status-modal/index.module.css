@@ -49,6 +49,7 @@
   }
 }
 
+.alertIconContainer,
 .errorIconContainer,
 .successIconContainer {
   aspect-ratio: 1;

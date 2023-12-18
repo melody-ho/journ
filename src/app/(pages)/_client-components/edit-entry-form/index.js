@@ -12,6 +12,7 @@ export default function EditEntryForm({
   removeFromFeed,
   setDeleted,
   setDeleting,
+  setEmptyText,
   setEntry,
   setUpdating,
   updateFeed,
@@ -48,9 +49,14 @@ export default function EditEntryForm({
     formData.append("id", entry.id);
     formData.append("userId", entry.userId);
     formData.append("tags", JSON.stringify(tags));
-    await updateEntryChanges(formData);
-    if (updateFeed) updateFeed(entry.id);
-    setEntry(null);
+    const updateStatus = await updateEntryChanges(formData);
+    if (updateStatus === "empty") {
+      setEmptyText(true);
+    }
+    if (updateStatus === "success") {
+      if (updateFeed) updateFeed(entry.id);
+      setEntry(null);
+    }
     setUpdating(false);
   }
 
@@ -70,19 +76,28 @@ export default function EditEntryForm({
         }`}
         ref={formEl}
       >
-        <textarea
+        <div
           className={
             entry.type === "text" ? styles.contentField : styles.captionField
           }
-          disabled={!editable}
-          name="content"
-          onChange={updateContent}
-          placeholder={
-            entry.type === "text" ? "Write something..." : "no caption"
-          }
-          ref={contentInput}
-          value={content === null ? "" : content}
-        ></textarea>
+        >
+          <textarea
+            className={
+              entry.type === "text" ? styles.contentInput : styles.captionInput
+            }
+            disabled={!editable}
+            name="content"
+            onChange={updateContent}
+            placeholder={
+              entry.type === "text" ? "Write something..." : "no caption"
+            }
+            ref={contentInput}
+            value={content === null ? "" : content}
+          ></textarea>
+          {entry.type === "text" && editable ? (
+            <p className={styles.requiredIndicator}>required</p>
+          ) : null}
+        </div>
         {editable ? (
           <TagDropdown
             instruction="Edit tags"
@@ -111,6 +126,9 @@ export default function EditEntryForm({
               </button>
               <button
                 className={`${styles.primaryBtn} ${styles.saveBtn}`}
+                disabled={
+                  entry.type === "text" && contentInput.current.value === ""
+                }
                 onClick={saveChanges}
                 type="button"
               >

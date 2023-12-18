@@ -27,6 +27,13 @@
   outline: 0.25em solid rgb(var(--medium-contrast-rgb));
 }
 
+.requiredIndicator {
+  align-self: flex-end;
+  font-size: max(8px, calc(8px + 0.5vw));
+  font-style: italic;
+  font-weight: 200;
+}
+
 .tagsField {
   align-items: center;
   display: flex;

@@ -49,6 +49,10 @@
   width: 100%;
 }
 
+.hidden {
+  display: none;
+}
+
 @media (min-width: 1000px) {
   .imageWrapper,
   .videoWrapper {
