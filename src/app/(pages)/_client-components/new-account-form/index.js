@@ -268,42 +268,36 @@ export default function NewAccountForm() {
           ref={statusModal}
         >
           {submissionState === "pending" ? (
-            <>
-              <div className={styles.modalContent}>
-                <div className={styles.loadingIndicator}>
-                  <div className={styles.spinner}></div>
-                </div>
-                <p className={styles.status}>Creating account...</p>
+            <div className={styles.modalContent}>
+              <div className={styles.loadingIndicator}>
+                <div className={styles.spinner}></div>
               </div>
-            </>
+              <p className={styles.status}>Creating account...</p>
+            </div>
           ) : submissionState === "success" ? (
-            <>
-              <div className={styles.modalContent}>
-                <div className={styles.statusIcon}>
-                  <ThemedImage alt="success icon" imageName="success-icon" />
-                </div>
-                <p className={styles.status}>Success! Welcome to Journ.</p>
-                <Link className={styles.signInLink} href="/">
-                  Sign-in page ➜
-                </Link>
+            <div className={styles.modalContent}>
+              <div className={styles.statusIcon}>
+                <ThemedImage alt="success icon" imageName="success-icon" />
               </div>
-            </>
+              <p className={styles.status}>Success! Welcome to Journ.</p>
+              <Link className={styles.signInLink} href="/">
+                Sign-in page ➜
+              </Link>
+            </div>
           ) : (
-            <>
-              <div className={styles.modalContent}>
-                <div className={styles.statusIcon}>
-                  <ThemedImage alt="sad face icon" imageName="sad-icon" />
-                </div>
-                <p className={styles.status}>Oh no! An error occurred.</p>
-                <button
-                  className={styles.backButton}
-                  onClick={handleRetry}
-                  type="button"
-                >
-                  Try again ➜
-                </button>
+            <div className={styles.modalContent}>
+              <div className={styles.statusIcon}>
+                <ThemedImage alt="sad face icon" imageName="sad-icon" />
               </div>
-            </>
+              <p className={styles.status}>Oh no! An error occurred.</p>
+              <button
+                className={styles.backButton}
+                onClick={handleRetry}
+                type="button"
+              >
+                Try again ➜
+              </button>
+            </div>
           )}
         </dialog>
       ) : null}
