@@ -3,6 +3,8 @@
 import cleanUpTags from "./clean-up-tags";
 import rds from "@/database/rds";
 
+const MAX_TAG_LENGTH = 50;
+
 export default async function updateEntryChanges(formData) {
   try {
     // get ids needed //
@@ -25,15 +27,18 @@ export default async function updateEntryChanges(formData) {
     const tags = JSON.parse(formData.get("tags"));
     await cleanUpTags(entryId);
     for (const tag of tags) {
+      const validatedTagName = tag.split(" ").join("").slice(0, MAX_TAG_LENGTH);
       const [tagData, created] = await rds.models.Tag.findOrCreate({
-        where: { name: tag },
+        where: { name: validatedTagName },
       });
       await rds.models.UserTag.findOrCreate({
         where: { userId, tagId: tagData.id },
       });
-      await rds.models.EntryTag.create({
-        entryId,
-        tagId: tagData.id,
+      await rds.models.EntryTag.findOrCreate({
+        where: {
+          entryId,
+          tagId: tagData.id,
+        },
       });
     }
 

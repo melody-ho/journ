@@ -7,6 +7,7 @@ import s3 from "@/database/s3";
 import { Upload } from "@aws-sdk/lib-storage";
 
 /// private ///
+const MAX_TAG_LENGTH = 50;
 const s3Bucket = process.env.S3_BUCKET;
 
 async function addEntry(userId, type, caption) {
@@ -28,15 +29,21 @@ export default async function handleImageVideoUpload(entryData) {
   try {
     const entryId = await addEntry(userId, type, caption);
     for (const tagName of tagNames) {
+      const validatedTagName = tagName
+        .split(" ")
+        .join("")
+        .slice(0, MAX_TAG_LENGTH);
       const [tag, created] = await rds.models.Tag.findOrCreate({
-        where: { name: tagName },
+        where: { name: validatedTagName },
       });
       await rds.models.UserTag.findOrCreate({
         where: { userId, tagId: tag.id },
       });
-      await rds.models.EntryTag.create({
-        entryId,
-        tagId: tag.id,
+      await rds.models.EntryTag.findOrCreate({
+        where: {
+          entryId,
+          tagId: tag.id,
+        },
       });
     }
     const key = `${userId}/${type}s/${entryId}`;

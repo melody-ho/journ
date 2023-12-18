@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 
 const DROPDOWN_CLOSE_DURATION = 200;
+const MAX_TAG_LENGTH = 50;
 
 function Icon({ alt, dropdownId, imageName }) {
   return (
@@ -188,7 +189,12 @@ export default function TagDropdown({
   }
 
   function updateMatchedTags(e) {
-    const regex = new RegExp(e.target.value, "i");
+    const searchValue = e.target.value
+      .split(" ")
+      .join("")
+      .slice(0, MAX_TAG_LENGTH);
+    tagSearchRef.current.value = searchValue;
+    const regex = new RegExp(searchValue, "i");
     const newMatchedTags = userTags.filter((userTag) =>
       userTag.name.match(regex),
     );
@@ -297,7 +303,12 @@ export default function TagDropdown({
                         >
                           Create tag:{" "}
                         </span>
-                        {tagSearchRef.current.value}
+                        <span
+                          className={styles.addNewTagLabel}
+                          dropdown={dropdownId.current}
+                        >
+                          {tagSearchRef.current.value}
+                        </span>
                       </button>
                     ) : null}
                     <div

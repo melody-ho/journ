@@ -115,6 +115,10 @@
   font-weight: 200;
 }
 
+.addNewTagLabel {
+  word-break: break-all;
+}
+
 .dropdownSection {
   border-bottom: 0.02em solid rgb(var(--high-contrast-rgb));
   padding: 0.5em;
@@ -174,10 +178,12 @@
   display: flex;
   gap: 0.1em;
   margin: 0.2em 0;
+  word-break: break-all;
 }
 
 .checkboxIcon {
   border-radius: 0.35em;
+  flex-shrink: 0;
   height: 1.5em;
   width: 1.5em;
 }
