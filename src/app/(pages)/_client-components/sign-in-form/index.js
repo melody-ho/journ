@@ -4,11 +4,11 @@
 import authCredentials from "@/server-actions/auth-credentials";
 import styles from "./index.module.css";
 import ThemedImage from "@/helper-components/themed-image";
+import { useEffect, useRef, useState } from "react";
 import {
   experimental_useFormState as useFormState,
   experimental_useFormStatus as useFormStatus,
 } from "react-dom";
-import { useEffect, useRef, useState } from "react";
 
 /// constants ///
 // duration of delay for posting form data to ensure success message is shown //
@@ -16,7 +16,7 @@ const POST_DELAY = 200;
 
 /// children components ///
 function FormFields({ status }) {
-  // client-side validation //
+  // initialize states used for client-side validation //
   // username
   const [usernameState, setUsernameState] = useState(null);
   function handleUsernameChange(e) {
@@ -27,7 +27,8 @@ function FormFields({ status }) {
   function handlePasswordChange(e) {
     setPasswordState(e.target.value);
   }
-  // form status initialization //
+
+  // initialize form status //
   const { pending } = useFormStatus();
 
   return (
@@ -41,12 +42,13 @@ function FormFields({ status }) {
             onBlur={handleUsernameChange}
             onChange={handleUsernameChange}
             readOnly={pending || status === "success"}
+            required
             type="text"
           ></input>
           <label className={styles.inputLabel} htmlFor="username">
             username
           </label>
-          <p aria-hidden={usernameState !== ""} className={styles.errorMessage}>
+          <p className={styles.errorMessage} role="status">
             {usernameState === "" ? "Please enter your username." : ""}
           </p>
         </li>
@@ -58,19 +60,23 @@ function FormFields({ status }) {
             onBlur={handlePasswordChange}
             onChange={handlePasswordChange}
             readOnly={pending || status === "success"}
+            required
             type="password"
           ></input>
           <label className={styles.inputLabel} htmlFor="password">
             password
           </label>
-          <p aria-hidden={passwordState !== ""} className={styles.errorMessage}>
+          <p className={styles.errorMessage} role="status">
             {passwordState === "" ? "Please enter your password." : ""}
           </p>
         </li>
       </ul>
       {pending || status === "success" ? (
-        <div className={styles.loadingIndicator}>
-          <div className={styles.spinner}></div>
+        <div className={styles.loadingIndicator} role="status">
+          <div
+            aria-description="Attempting sign-in with credentials provided. Please wait."
+            className={styles.spinner}
+          ></div>
         </div>
       ) : (
         <button
@@ -86,16 +92,16 @@ function FormFields({ status }) {
 
 /// main component ///
 export default function SignInForm() {
-  // server-side response handling //
+  // handle server-side response //
   const [formState, formAction] = useFormState(authCredentials, "initial");
-  const form = useRef(null);
+  const formRef = useRef(null);
   useEffect(
     function postOnSuccess() {
       if (formState === "success") {
-        form.current.action = "./sign-in";
-        form.current.method = "post";
+        formRef.current.action = "./sign-in";
+        formRef.current.method = "post";
         setTimeout(function submit() {
-          form.current.submit();
+          formRef.current.submit();
         }, POST_DELAY);
       }
     },
@@ -103,12 +109,9 @@ export default function SignInForm() {
   );
 
   return (
-    <form action={formAction} className={styles.form} ref={form}>
+    <form action={formAction} className={styles.form} ref={formRef}>
       <FormFields status={formState} />
-      <div
-        aria-hidden={formState === "initial"}
-        className={styles.submitStatus}
-      >
+      <div className={styles.submitStatus} role="status">
         {formState === "invalid" ? (
           <>
             <div className={styles.statusIcon}>

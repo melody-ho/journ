@@ -1,19 +1,23 @@
+"use client";
+
+/// imports ///
 import Link from "next/link";
 import styles from "./index.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 import { useEffect, useRef } from "react";
 
+/// main component ///
 export default function NewEntryStatusModal({ resetForm, retry, status }) {
-  const modal = useRef(null);
+  const modalRef = useRef(null);
 
   useEffect(
     function openModal() {
-      if (modal.current) {
-        modal.current.close();
-        modal.current.showModal();
+      if (modalRef.current) {
+        modalRef.current.close();
+        modalRef.current.showModal();
       }
     },
-    [modal],
+    [modalRef],
   );
 
   function handleCancel(e) {
@@ -33,7 +37,7 @@ export default function NewEntryStatusModal({ resetForm, retry, status }) {
       }`}
       onCancel={handleCancel}
       onKeyDown={handleEsc}
-      ref={modal}
+      ref={modalRef}
     >
       {status === "uploading" ? (
         <p className={styles.visuallyHidden}>

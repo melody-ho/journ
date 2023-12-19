@@ -8,7 +8,7 @@ import { Upload } from "@aws-sdk/lib-storage";
 
 /// private ///
 const MAX_TAG_LENGTH = 50;
-const s3Bucket = process.env.S3_BUCKET;
+const S3_BUCKET = process.env.S3_BUCKET;
 
 async function addEntry(userId, type, caption) {
   const entry = await rds.models.Entry.create({
@@ -50,7 +50,7 @@ export default async function handleImageVideoUpload(entryData) {
     const upload = new Upload({
       client: s3,
       params: {
-        Bucket: s3Bucket,
+        Bucket: S3_BUCKET,
         Key: key,
         ContentType: file.type,
         Body: file.stream(),

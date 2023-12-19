@@ -1,9 +1,11 @@
 "use server";
 
+/// imports ///
 import argon2 from "argon2";
 import rds from "@/database/rds";
 import z from "zod";
 
+/// main ///
 export default async function createUser(formData) {
   // define form validation schemas
   const confirmPasswordSchema = z.literal(formData.get("password"));

@@ -1,10 +1,13 @@
 "use server";
 
-import cleanUpTags from "./clean-up-tags";
+/// imports ///
+import cleanUpTags from "@/helper-functions/clean-up-tags";
 import rds from "@/database/rds";
 
+/// private ///
 const MAX_TAG_LENGTH = 50;
 
+/// main ///
 export default async function updateEntryChanges(formData) {
   try {
     // get ids needed //

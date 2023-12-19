@@ -1,3 +1,6 @@
+"use client";
+
+/// imports ///
 import EditEntryForm from "@/client-components/edit-entry-form";
 import { getEntryWithTags } from "@/server-actions/get-entry";
 import Image from "next/image";
@@ -5,6 +8,7 @@ import styles from "./index.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 import { useEffect, useRef, useState } from "react";
 
+/// main component ///
 export default function EntryModal({
   id,
   removeFromFeed,
@@ -13,22 +17,24 @@ export default function EntryModal({
   userTags,
 }) {
   // initialize states and refs //
-  const [entry, setEntry] = useState(null);
+  // states
   const [deleted, setDeleted] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [emptyText, setEmptyText] = useState(false);
+  const [entry, setEntry] = useState(null);
   const [updating, setUpdating] = useState(false);
-  const modal = useRef(null);
-  const modalWrapper = useRef(null);
+  // refs
+  const modalRef = useRef(null);
+  const modalWrapperRef = useRef(null);
 
   // open modal when rendered //
   useEffect(
     function show() {
-      if (modal.current) {
-        modal.current.showModal();
+      if (modalRef.current) {
+        modalRef.current.showModal();
       }
     },
-    [modal],
+    [modalRef],
   );
 
   // get entry data //
@@ -49,7 +55,7 @@ export default function EntryModal({
     [entry, id],
   );
 
-  // go back to form //
+  // go back to form after attempting to submit empty text entry //
   function acknowledgeEmptyTextAlert() {
     setEmptyText(false);
   }
@@ -57,8 +63,8 @@ export default function EntryModal({
   // close modal on cancel if not updating or deleting //
   function handleClickOut(e) {
     if (
-      modalWrapper.current &&
-      !modalWrapper.current.contains(e.target) &&
+      modalWrapperRef.current &&
+      !modalWrapperRef.current.contains(e.target) &&
       !updating &&
       !deleting
     ) {
@@ -87,9 +93,13 @@ export default function EntryModal({
       onClick={handleClickOut}
       onClose={removeModal}
       onKeyDown={handleEsc}
-      ref={modal}
+      ref={modalRef}
     >
-      <div className={styles.modalWrapper} ref={modalWrapper}>
+      <div
+        aria-live="polite"
+        className={styles.modalWrapper}
+        ref={modalWrapperRef}
+      >
         {updating ? (
           <div className={styles.statusModalContent}>
             <div className={styles.updatingSpinner}></div>
@@ -147,7 +157,7 @@ export default function EntryModal({
               type="button"
             >
               <ThemedImage alt="close icon" imageName="close-icon" />
-              Close
+              Close entry popup
             </button>
             {entry.type === "text" ? (
               <div className={styles.textEntryIconContainer}>

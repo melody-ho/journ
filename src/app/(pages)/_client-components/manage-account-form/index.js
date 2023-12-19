@@ -1,5 +1,6 @@
 "use client";
 
+/// imports ///
 import checkEditedUsername from "@/server-actions/check-edited-username";
 import debounce from "lodash.debounce";
 import Link from "next/link";
@@ -10,8 +11,11 @@ import { experimental_useFormState as useFormState } from "react-dom";
 import z from "zod";
 import { useEffect, useRef, useState } from "react";
 
+/// constants ///
+// debounce duration for checking username availability //
 const DEBOUNCE_DURATION = 200;
 
+/// main component ///
 export default function ManageAccountForm({ userData }) {
   // manage form input values and client side validation //
   // first name
@@ -141,7 +145,7 @@ export default function ManageAccountForm({ userData }) {
   );
   // current password
   const [currentPassword, setCurrentPassword] = useState("");
-  const [currenPwdMessage, setCurrentPwdMessage] = useState(null);
+  const [currentPwdMessage, setCurrentPwdMessage] = useState(null);
   const currentPwdInputRef = useRef(null);
   const currentPwdSchema = z
     .string()
@@ -277,14 +281,13 @@ export default function ManageAccountForm({ userData }) {
                 name="firstName"
                 onChange={handleChangeFirstName}
                 ref={firstNameInputRef}
+                required
                 type="text"
               ></input>
               {edit ? (
                 <>
-                  <p aria-hidden={!edit} className={styles.requiredIndicator}>
-                    {edit ? "required" : ""}
-                  </p>
-                  <p aria-hidden={!firstNameMessage} className={styles.hint}>
+                  <p className={styles.requiredIndicator}>required</p>
+                  <p className={styles.hint} role="status">
                     {firstNameMessage ? firstNameMessage : ""}
                   </p>
                 </>
@@ -324,21 +327,19 @@ export default function ManageAccountForm({ userData }) {
                 className={styles.inputField}
                 disabled={!edit}
                 id="username"
+                maxLength={255}
+                minLength={6}
                 name="username"
                 onBlur={debouncedHandleUsernameChange}
                 onChange={debouncedHandleUsernameChange}
                 ref={usernameInputRef}
+                required
                 type="text"
               ></input>
               {edit ? (
                 <>
-                  <p aria-hidden={!edit} className={styles.requiredIndicator}>
-                    {edit ? "required" : ""}
-                  </p>
-                  <p
-                    aria-hidden={!usernameMessage && !usernameUnavailable}
-                    className={styles.hint}
-                  >
+                  <p className={styles.requiredIndicator}>required</p>
+                  <p className={styles.hint} role="status">
                     {usernameMessage
                       ? usernameMessage
                       : usernameUnavailable
@@ -380,14 +381,17 @@ export default function ManageAccountForm({ userData }) {
                   <input
                     className={styles.inputField}
                     id="new-password"
+                    maxLength={255}
+                    minLength={6}
                     name="newPassword"
                     onBlur={handleNewPwdChange}
                     onChange={handleNewPwdChange}
                     ref={newPwdInputRef}
+                    required
                     type="password"
                   ></input>
                   <p className={styles.requiredIndicator}>required</p>
-                  <p aria-hidden={!newPwdMessage} className={styles.hint}>
+                  <p className={styles.hint} role="status">
                     {newPwdMessage ? newPwdMessage : ""}
                   </p>
                 </li>
@@ -401,17 +405,17 @@ export default function ManageAccountForm({ userData }) {
                   <input
                     className={styles.inputField}
                     id="confirm-new-password"
+                    maxLength={255}
+                    minLength={6}
                     name="confirmNewPassword"
                     onBlur={handleConfirmNewPwdChange}
                     onChange={handleConfirmNewPwdChange}
                     ref={confirmNewPwdInputRef}
+                    required
                     type="password"
                   ></input>
                   <p className={styles.requiredIndicator}>required</p>
-                  <p
-                    aria-hidden={!confirmNewPwdMessage}
-                    className={styles.hint}
-                  >
+                  <p className={styles.hint} role="status">
                     {confirmNewPwdMessage ? confirmNewPwdMessage : ""}
                   </p>
                 </li>
@@ -436,11 +440,12 @@ export default function ManageAccountForm({ userData }) {
                   name="currentPassword"
                   onChange={handleCurrentPwdChange}
                   ref={currentPwdInputRef}
+                  required
                   type="password"
                 ></input>
                 <p className={styles.requiredIndicator}>required</p>
-                <p aria-hidden={!currenPwdMessage} className={styles.hint}>
-                  {currenPwdMessage ? currenPwdMessage : ""}
+                <p className={styles.hint} role="status">
+                  {currentPwdMessage ? currentPwdMessage : ""}
                 </p>
               </div>
             </div>
@@ -468,7 +473,7 @@ export default function ManageAccountForm({ userData }) {
                 usernameUnavailable ||
                 newPwdMessage ||
                 confirmNewPwdMessage ||
-                currenPwdMessage
+                currentPwdMessage
               }
               onClick={handleSaveChanges}
             >

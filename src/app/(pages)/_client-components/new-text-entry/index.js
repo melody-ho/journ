@@ -1,5 +1,6 @@
 "use client";
 
+/// imports ///
 import addTextEntry from "@/server-actions/add-text-entry";
 import NewEntryStatusModal from "../new-entry-status-modal";
 import styles from "./index.module.css";
@@ -7,25 +8,28 @@ import TagDropdown from "../tag-dropdown";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
+/// main component ///
 export default function NewTextEntry({ user, userTags }) {
   // initialize router //
   const router = useRouter();
 
   // initialize states and refs //
+  // states
   const [resetTagDropdown, setResetTagDropdown] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
   const [textInputValue, setTextInputValue] = useState("");
-  const textForm = useRef(null);
-  const textInput = useRef(null);
-
-  // update tag dropdown reset state after reset is complete //
-  function confirmTagDropdownReset() {
-    setResetTagDropdown(false);
-  }
+  // refs
+  const textFormRef = useRef(null);
+  const textInputRef = useRef(null);
 
   // update text input value when changed //
   function updateTextInputValue(e) {
     setTextInputValue(e.target.value);
+  }
+
+  // update tag dropdown reset state after reset is complete //
+  function confirmTagDropdownReset() {
+    setResetTagDropdown(false);
   }
 
   // update selected tags when changed in tag dropdown //
@@ -38,7 +42,7 @@ export default function NewTextEntry({ user, userTags }) {
   async function submitEntry(e) {
     setSubmitStatus("adding");
     e.preventDefault();
-    const formData = new FormData(textForm.current);
+    const formData = new FormData(textFormRef.current);
     formData.append("user", user);
     formData.append("tags", JSON.stringify(tags));
     const status = await addTextEntry(formData);
@@ -54,14 +58,14 @@ export default function NewTextEntry({ user, userTags }) {
   // reset form if user chooses to add another //
   function resetForm() {
     setResetTagDropdown(true);
-    textInput.current.value = "";
+    textInputRef.current.value = "";
     setTextInputValue("");
     setSubmitStatus(null);
   }
 
   return (
     <>
-      <form ref={textForm}>
+      <form ref={textFormRef}>
         <h2 className={styles.visuallyHidden}>New Text Entry</h2>
         <div className={styles.textField}>
           <label className={styles.textFieldLabel} htmlFor="text">
@@ -72,7 +76,8 @@ export default function NewTextEntry({ user, userTags }) {
             id="text"
             name="text"
             onChange={updateTextInputValue}
-            ref={textInput}
+            ref={textInputRef}
+            required
           ></textarea>
           <p className={styles.requiredIndicator}>required</p>
         </div>

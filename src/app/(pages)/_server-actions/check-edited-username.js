@@ -1,7 +1,9 @@
 "use server";
 
+/// imports ///
 import rds from "@/database/rds";
 
+/// main ///
 export default async function checkEditedUsername(
   state,
   { newUsername, oldUsername },

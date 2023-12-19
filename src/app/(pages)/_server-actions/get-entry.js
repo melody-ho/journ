@@ -1,8 +1,10 @@
 "use server";
 
+/// imports ///
 import getS3Url from "@/helper-functions/get-s3-url";
 import rds from "@/database/rds";
 
+/// main ///
 export async function getEntryWithoutTags(id) {
   const entry = await rds.models.Entry.findByPk(id, { raw: true });
   if (entry.type === "image" || entry.type === "video") {

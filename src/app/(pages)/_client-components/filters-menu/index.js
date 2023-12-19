@@ -1,9 +1,11 @@
 "use client";
 
+/// imports ///
 import styles from "./index.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 import { useEffect, useRef, useState } from "react";
 
+/// children components ///
 function Checkbox({ checked }) {
   return (
     <div className={styles.checkboxIcon}>
@@ -15,6 +17,7 @@ function Checkbox({ checked }) {
   );
 }
 
+/// main component ///
 export default function FiltesMenu({
   passFilters,
   previousEndDate,
@@ -24,18 +27,20 @@ export default function FiltesMenu({
   userTags,
 }) {
   // initialize states and refs //
-  const [startDate, setStartDate] = useState(previousStartDate);
+  // states
   const [endDate, setEndDate] = useState(previousEndDate);
-  const [selectedTypes, setSelectedTypes] = useState([...previousTypes]);
-  const [selectedTagIds, setSelectedTagIds] = useState([...previousTags]);
-  const [matchedTags, setMatchedTags] = useState([...userTags]);
   const [filteredMatchedTags, setFilteredMatchedTags] = useState(null);
-  const [selectedTagsSection, setSelectedTagsSection] = useState(false);
+  const [matchedTags, setMatchedTags] = useState([...userTags]);
   const [moreTagsSection, setMoreTagsSection] = useState(false);
+  const [selectedTagIds, setSelectedTagIds] = useState([...previousTags]);
+  const [selectedTagsSection, setSelectedTagsSection] = useState(false);
+  const [selectedTypes, setSelectedTypes] = useState([...previousTypes]);
+  const [startDate, setStartDate] = useState(previousStartDate);
+  // refs
+  const endDateInputRef = useRef(null);
   const formRef = useRef(null);
-  const startDateInput = useRef(null);
-  const endDateInput = useRef(null);
-  const tagSearchInput = useRef(null);
+  const startDateInputRef = useRef(null);
+  const tagSearchInputRef = useRef(null);
 
   // update filtered matched tags when matched tags or selected tags change //
   useEffect(
@@ -48,22 +53,22 @@ export default function FiltesMenu({
     [matchedTags, selectedTagIds],
   );
 
-  // define event handlers //
+  // declare event handlers //
   function clearFilters() {
     setStartDate(null);
     setEndDate(null);
     setSelectedTypes([]);
     setSelectedTagIds([]);
     setMatchedTags([...userTags]);
-    tagSearchInput.current.value = "";
+    tagSearchInputRef.current.value = "";
   }
 
   function updateStartDate() {
-    setStartDate(startDateInput.current.value);
+    setStartDate(startDateInputRef.current.value);
   }
 
   function updateEndDate() {
-    setEndDate(endDateInput.current.value);
+    setEndDate(endDateInputRef.current.value);
   }
 
   function updateSelectedTypes(e) {
@@ -124,8 +129,8 @@ export default function FiltesMenu({
         <h2 aria-hidden={true} className={styles.fieldsetHeading}>
           Date
         </h2>
-        <div className={styles.dateFields}>
-          <div className={styles.dateField}>
+        <ul className={styles.dateFields}>
+          <li className={styles.dateField}>
             <label className={styles.dateLabel} htmlFor="startDate">
               start
             </label>
@@ -135,12 +140,12 @@ export default function FiltesMenu({
               max={endDate}
               name="startDate"
               onChange={updateStartDate}
-              ref={startDateInput}
+              ref={startDateInputRef}
               type="date"
               value={startDate ? startDate : ""}
             />
-          </div>
-          <div className={styles.dateField}>
+          </li>
+          <li className={styles.dateField}>
             <label className={styles.dateLabel} htmlFor="endDate">
               end
             </label>
@@ -150,59 +155,65 @@ export default function FiltesMenu({
               min={startDate}
               name="endDate"
               onChange={updateEndDate}
-              ref={endDateInput}
+              ref={endDateInputRef}
               type="date"
               value={endDate ? endDate : ""}
             />
-          </div>
-        </div>
+          </li>
+        </ul>
       </fieldset>
       <fieldset className={styles.fieldset}>
         <legend className={styles.visuallyHiddenLegend}>Entry Types</legend>
         <h2 aria-hidden={true} className={styles.fieldsetHeading}>
           Type
         </h2>
-        <div className={`${styles.checkboxItems} ${styles.typesCheckboxItems}`}>
-          <label className={styles.checkboxItem} htmlFor="text">
-            <input
-              checked={selectedTypes.includes("text")}
-              className={styles.hiddenCheckbox}
-              id="text"
-              name="type"
-              onChange={updateSelectedTypes}
-              type="checkbox"
-              value="text"
-            />
-            <Checkbox checked={selectedTypes.includes("text")} />
-            text
-          </label>
-          <label className={styles.checkboxItem} htmlFor="image">
-            <input
-              checked={selectedTypes.includes("image")}
-              className={styles.hiddenCheckbox}
-              id="image"
-              name="type"
-              onChange={updateSelectedTypes}
-              type="checkbox"
-              value="image"
-            />
-            <Checkbox checked={selectedTypes.includes("image")} />
-            image
-          </label>
-          <label className={styles.checkboxItem} htmlFor="video">
-            <input
-              checked={selectedTypes.includes("video")}
-              className={styles.hiddenCheckbox}
-              id="video"
-              name="type"
-              onChange={updateSelectedTypes}
-              type="checkbox"
-              value="video"
-            />
-            <Checkbox checked={selectedTypes.includes("video")} />
-            video
-          </label>
-        </div>
+        <ul className={`${styles.checkboxItems} ${styles.typesCheckboxItems}`}>
+          <li>
+            <label className={styles.checkboxItem} htmlFor="text">
+              <input
+                checked={selectedTypes.includes("text")}
+                className={styles.hiddenCheckbox}
+                id="text"
+                name="type"
+                onChange={updateSelectedTypes}
+                type="checkbox"
+                value="text"
+              />
+              <Checkbox checked={selectedTypes.includes("text")} />
+              text
+            </label>
+          </li>
+          <li>
+            <label className={styles.checkboxItem} htmlFor="image">
+              <input
+                checked={selectedTypes.includes("image")}
+                className={styles.hiddenCheckbox}
+                id="image"
+                name="type"
+                onChange={updateSelectedTypes}
+                type="checkbox"
+                value="image"
+              />
+              <Checkbox checked={selectedTypes.includes("image")} />
+              image
+            </label>
+          </li>
+          <li>
+            <label className={styles.checkboxItem} htmlFor="video">
+              <input
+                checked={selectedTypes.includes("video")}
+                className={styles.hiddenCheckbox}
+                id="video"
+                name="type"
+                onChange={updateSelectedTypes}
+                type="checkbox"
+                value="video"
+              />
+              <Checkbox checked={selectedTypes.includes("video")} />
+              video
+            </label>
+          </li>
+        </ul>
       </fieldset>
       <fieldset className={styles.fieldset}>
         <legend className={styles.visuallyHiddenLegend}>Tags</legend>
@@ -212,6 +223,8 @@ export default function FiltesMenu({
         <div className={styles.tagsField}>
           <div className={styles.tagsSection}>
             <button
+              aria-label="Collapse/expand selected tags"
+              aria-haspopup="menu"
               className={styles.tagsSectionToggle}
               onClick={toggleSelectedTagsSection}
               type="button"
@@ -234,38 +247,50 @@ export default function FiltesMenu({
               className={`${styles.tagsSectionItems} ${
                 !selectedTagsSection ? styles.collapsedTagsSection : ""
               }`}
+              role="menu"
             >
               {selectedTagIds.length !== 0 ? (
-                userTags.map((userTag) => {
-                  if (selectedTagIds.includes(userTag.id)) {
-                    return (
-                      <label
-                        className={`${styles.checkboxItem} ${styles.tagsCheckboxItem}`}
-                        htmlFor={userTag.id}
-                        key={userTag.id}
-                      >
-                        <input
-                          checked
-                          className={styles.hiddenCheckbox}
-                          id={userTag.id}
-                          name="tags"
-                          onChange={updateSelectedTagIds}
-                          type="checkbox"
-                          value={userTag.id}
-                        />
-                        <Checkbox checked={true} />
-                        {userTag.name}
-                      </label>
-                    );
-                  }
-                })
+                <ul>
+                  {userTags.map((userTag) => {
+                    if (selectedTagIds.includes(userTag.id)) {
+                      return (
+                        <li
+                          aria-checked={true}
+                          key={userTag.id}
+                          role="menuitemcheckbox"
+                        >
+                          <label
+                            className={`${styles.checkboxItem} ${styles.tagsCheckboxItem}`}
+                            htmlFor={userTag.id}
+                          >
+                            <input
+                              checked
+                              className={styles.hiddenCheckbox}
+                              id={userTag.id}
+                              name="tags"
+                              onChange={updateSelectedTagIds}
+                              type="checkbox"
+                              value={userTag.id}
+                            />
+                            <Checkbox checked={true} />
+                            {userTag.name}
+                          </label>
+                        </li>
+                      );
+                    }
+                  })}
+                </ul>
               ) : (
-                <p className={styles.noneIndicator}>none</p>
+                <p className={styles.noneIndicator} role="status">
+                  none
+                </p>
               )}
             </div>
           </div>
           <div className={styles.tagsSection}>
             <button
+              aria-label="Collapse/expand more tags available for selection"
+              aria-haspopup="menu"
               className={styles.tagsSectionToggle}
               disabled={filteredMatchedTags === null}
               onClick={toggleMoreTagsSection}
@@ -291,8 +316,9 @@ export default function FiltesMenu({
               className={`${styles.tagsSectionItems} ${
                 !moreTagsSection ? styles.collapsedTagsSection : ""
               }`}
+              role="menu"
             >
-              <div>
+              <div role="menuitem">
                 <label
                   className={styles.visuallyHiddenLabel}
                   htmlFor="tagSearch"
@@ -304,36 +330,45 @@ export default function FiltesMenu({
                   id="tagSearch"
                   onChange={updateMatchedTags}
                   placeholder="Search tags..."
-                  ref={tagSearchInput}
+                  ref={tagSearchInputRef}
                   type="search"
                 />
               </div>
               {filteredMatchedTags !== null &&
               filteredMatchedTags.length !== 0 ? (
-                filteredMatchedTags.map((matchedTag) => {
-                  if (!selectedTagIds.includes(matchedTag.id)) {
-                    return (
-                      <label
-                        className={`${styles.checkboxItem} ${styles.tagsCheckboxItem}`}
-                        htmlFor={matchedTag.id}
-                        key={matchedTag.id}
-                      >
-                        <input
-                          className={styles.hiddenCheckbox}
-                          id={matchedTag.id}
-                          name="tags"
-                          onChange={updateSelectedTagIds}
-                          type="checkbox"
-                          value={matchedTag.id}
-                        />
-                        <Checkbox checked={false} />
-                        {matchedTag.name}
-                      </label>
-                    );
-                  }
-                })
+                <ul aria-live="polite">
+                  {filteredMatchedTags.map((matchedTag) => {
+                    if (!selectedTagIds.includes(matchedTag.id)) {
+                      return (
+                        <li
+                          aria-checked={false}
+                          key={matchedTag.id}
+                          role="menuitemcheckbox"
+                        >
+                          <label
+                            className={`${styles.checkboxItem} ${styles.tagsCheckboxItem}`}
+                            htmlFor={matchedTag.id}
+                          >
+                            <input
+                              className={styles.hiddenCheckbox}
+                              id={matchedTag.id}
+                              name="tags"
+                              onChange={updateSelectedTagIds}
+                              type="checkbox"
+                              value={matchedTag.id}
+                            />
+                            <Checkbox checked={false} />
+                            {matchedTag.name}
+                          </label>
+                        </li>
+                      );
+                    }
+                  })}
+                </ul>
               ) : (
-                <p className={styles.noneIndicator}>none</p>
+                <p className={styles.noneIndicator} role="status">
+                  none
+                </p>
               )}
             </div>
           </div>

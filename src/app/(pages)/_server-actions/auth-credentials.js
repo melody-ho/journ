@@ -1,8 +1,10 @@
 "use server";
 
+/// imports ///
 import argon2 from "argon2";
 import rds from "@/database/rds";
 
+/// main ///
 export default async function authCredentials(formState, formData) {
   const username = formData.get("username");
   const password = formData.get("password");

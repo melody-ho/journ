@@ -1,12 +1,17 @@
 "use client";
 
+/// imports ///
 import styles from "./index.module.css";
 import { v4 as uuidv4 } from "uuid";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 
+/// constants ///
+// transition duration for closing dropdown //
 const DROPDOWN_CLOSE_DURATION = 200;
+// maximum character length for tags //
 const MAX_TAG_LENGTH = 50;
 
+/// children components ///
 function Icon({ alt, dropdownId, imageName }) {
   return (
     <picture>
@@ -19,6 +24,7 @@ function Icon({ alt, dropdownId, imageName }) {
   );
 }
 
+/// main component ///
 export default function TagDropdown({
   confirmReset = null,
   instruction,
@@ -29,6 +35,7 @@ export default function TagDropdown({
   userTags,
 }) {
   // initialize states and refs //
+  // states
   const [dropdown, setDropdown] = useState(false);
   const [entryTags, setEntryTags] = useState([]);
   const [filteredMatchedTags, setFilteredMatchedTags] = useState([]);
@@ -39,6 +46,7 @@ export default function TagDropdown({
     preSelectedTags !== null ? { prev: [], curr: [...preSelectedTags] } : null,
   );
   const [selectedTags, setSelectedTags] = useState([]);
+  // refs
   const dropdownId = useRef(uuidv4());
   const dropdownRef = useRef(null);
   const tagSearchRef = useRef(null);
@@ -233,6 +241,8 @@ export default function TagDropdown({
             ref={dropdownRef}
           >
             <button
+              aria-haspopup="menu"
+              aria-label="Toggle tags selection dropdown"
               className={styles.dropdownToggle}
               disabled={readOnly}
               dropdown={dropdownId.current}
@@ -263,6 +273,7 @@ export default function TagDropdown({
                   dropdown === "animate out" ? styles.shrinkUp : null
                 }`}
                 dropdown={dropdownId.current}
+                role="menu"
               >
                 {userTags !== null ? (
                   <>
@@ -292,6 +303,7 @@ export default function TagDropdown({
                     tagSearchRef.current.value &&
                     !newTags.includes(tagSearchRef.current.value) ? (
                       <button
+                        aria-live="polite"
                         className={styles.addNewBtn}
                         dropdown={dropdownId.current}
                         onClick={() => addNewTag(tagSearchRef.current.value)}
@@ -312,6 +324,7 @@ export default function TagDropdown({
                       </button>
                     ) : null}
                     <div
+                      aria-live="polite"
                       className={styles.dropdownSection}
                       dropdown={dropdownId.current}
                     >
@@ -322,35 +335,38 @@ export default function TagDropdown({
                         new
                       </p>
                       {newTags.length !== 0 ? (
-                        newTags.map((newTag) => (
-                          <div dropdown={dropdownId.current} key={newTag}>
-                            <label
-                              className={styles.checkboxItem}
-                              dropdown={dropdownId.current}
-                              htmlFor={newTag}
-                            >
-                              <input
-                                checked
-                                className={styles.hiddenCheckbox}
+                        <ul dropdown={dropdownId.current}>
+                          {newTags.map((newTag) => (
+                            <li dropdown={dropdownId.current} key={newTag}>
+                              <label
+                                className={styles.checkboxItem}
                                 dropdown={dropdownId.current}
-                                id={newTag}
-                                onChange={removeTag}
-                                type="checkbox"
-                                value={newTag}
-                              />
-                              <div className={styles.checkboxIcon}>
-                                <Icon
-                                  alt="checked box icon"
-                                  dropdownId={dropdownId.current}
-                                  imageName="checked-icon"
+                                htmlFor={newTag}
+                              >
+                                <input
+                                  checked
+                                  className={styles.hiddenCheckbox}
+                                  dropdown={dropdownId.current}
+                                  id={newTag}
+                                  onChange={removeTag}
+                                  type="checkbox"
+                                  value={newTag}
                                 />
-                              </div>
-                              {newTag}
-                            </label>
-                          </div>
-                        ))
+                                <div className={styles.checkboxIcon}>
+                                  <Icon
+                                    alt="checked box icon"
+                                    dropdownId={dropdownId.current}
+                                    imageName="checked-icon"
+                                  />
+                                </div>
+                                {newTag}
+                              </label>
+                            </li>
+                          ))}
+                        </ul>
                       ) : (
                         <p
+                          aria-description="no new tags"
                           className={styles.noneIndicator}
                           dropdown={dropdownId.current}
                         >
@@ -359,6 +375,7 @@ export default function TagDropdown({
                       )}
                     </div>
                     <div
+                      aria-live="polite"
                       className={styles.dropdownSection}
                       dropdown={dropdownId.current}
                     >
@@ -369,40 +386,43 @@ export default function TagDropdown({
                         selected
                       </p>
                       {selectedTags.length !== 0 ? (
-                        selectedTags.map((selectedTag) => {
-                          return (
-                            <div
-                              dropdown={dropdownId.current}
-                              key={selectedTag}
-                            >
-                              <label
-                                className={styles.checkboxItem}
+                        <ul dropdown={dropdownId.current}>
+                          {selectedTags.map((selectedTag) => {
+                            return (
+                              <li
                                 dropdown={dropdownId.current}
-                                htmlFor={selectedTag}
+                                key={selectedTag}
                               >
-                                <input
-                                  checked
-                                  className={styles.hiddenCheckbox}
+                                <label
+                                  className={styles.checkboxItem}
                                   dropdown={dropdownId.current}
-                                  id={selectedTag}
-                                  onChange={removeTag}
-                                  type="checkbox"
-                                  value={selectedTag}
-                                />
-                                <div className={styles.checkboxIcon}>
-                                  <Icon
-                                    alt="checked box icon"
-                                    dropdownId={dropdownId.current}
-                                    imageName="checked-icon"
+                                  htmlFor={selectedTag}
+                                >
+                                  <input
+                                    checked
+                                    className={styles.hiddenCheckbox}
+                                    dropdown={dropdownId.current}
+                                    id={selectedTag}
+                                    onChange={removeTag}
+                                    type="checkbox"
+                                    value={selectedTag}
                                   />
-                                </div>
-                                {selectedTag}
-                              </label>
-                            </div>
-                          );
-                        })
+                                  <div className={styles.checkboxIcon}>
+                                    <Icon
+                                      alt="checked box icon"
+                                      dropdownId={dropdownId.current}
+                                      imageName="checked-icon"
+                                    />
+                                  </div>
+                                  {selectedTag}
+                                </label>
+                              </li>
+                            );
+                          })}
+                        </ul>
                       ) : (
                         <p
+                          aria-description="no selected tags"
                           className={styles.noneIndicator}
                           dropdown={dropdownId.current}
                         >
@@ -411,6 +431,7 @@ export default function TagDropdown({
                       )}
                     </div>
                     <div
+                      aria-live="polite"
                       className={`${styles.dropdownSection} ${styles.lastSection}`}
                       dropdown={dropdownId.current}
                     >
@@ -421,39 +442,42 @@ export default function TagDropdown({
                         more
                       </p>
                       {filteredMatchedTags.length !== 0 ? (
-                        filteredMatchedTags.map((matchedTag) => {
-                          return (
-                            <div
-                              dropdown={dropdownId.current}
-                              key={matchedTag.name}
-                            >
-                              <label
-                                className={styles.checkboxItem}
+                        <ul dropdown={dropdownId.current}>
+                          {filteredMatchedTags.map((matchedTag) => {
+                            return (
+                              <li
                                 dropdown={dropdownId.current}
-                                htmlFor={matchedTag.name}
+                                key={matchedTag.name}
                               >
-                                <input
-                                  className={styles.hiddenCheckbox}
+                                <label
+                                  className={styles.checkboxItem}
                                   dropdown={dropdownId.current}
-                                  id={matchedTag.name}
-                                  onChange={addSelectedTag}
-                                  type="checkbox"
-                                  value={matchedTag.name}
-                                />
-                                <div className={styles.checkboxIcon}>
-                                  <Icon
-                                    alt="unchecked box icon"
-                                    dropdownId={dropdownId.current}
-                                    imageName="unchecked-icon"
+                                  htmlFor={matchedTag.name}
+                                >
+                                  <input
+                                    className={styles.hiddenCheckbox}
+                                    dropdown={dropdownId.current}
+                                    id={matchedTag.name}
+                                    onChange={addSelectedTag}
+                                    type="checkbox"
+                                    value={matchedTag.name}
                                   />
-                                </div>
-                                {matchedTag.name}
-                              </label>
-                            </div>
-                          );
-                        })
+                                  <div className={styles.checkboxIcon}>
+                                    <Icon
+                                      alt="unchecked box icon"
+                                      dropdownId={dropdownId.current}
+                                      imageName="unchecked-icon"
+                                    />
+                                  </div>
+                                  {matchedTag.name}
+                                </label>
+                              </li>
+                            );
+                          })}
+                        </ul>
                       ) : (
                         <p
+                          aria-description="no existing tags that match current search criteria"
                           className={styles.noneIndicator}
                           dropdown={dropdownId.current}
                         >

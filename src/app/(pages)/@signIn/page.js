@@ -7,14 +7,10 @@ export default function SignIn() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <div
-          className={`${styles.logotypeImageContainer} ${styles.desktopOnly}`}
-        >
+        <div className={`${styles.logotypeContainer} ${styles.desktopOnly}`}>
           <ThemedImage alt="Journ" imageName="logotype" />
         </div>
-        <div
-          className={`${styles.logotypeImageContainer} ${styles.mobileOnly}`}
-        >
+        <div className={`${styles.logotypeContainer} ${styles.mobileOnly}`}>
           <ThemedImage alt="Journ" imageName="logotype" />
         </div>
       </header>
@@ -26,7 +22,7 @@ export default function SignIn() {
           <div className={styles.signInBox}>
             <h1 className={styles.signInHeading}>Sign In</h1>
             <SignInForm />
-            <p className={styles.newAccount}>
+            <p className={styles.newAccountCta}>
               New to Journ?
               <Link className={styles.newAccountLink} href="./new-account">
                 Sign up

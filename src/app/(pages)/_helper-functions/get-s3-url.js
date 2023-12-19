@@ -1,10 +1,13 @@
+/// imports ///
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import s3 from "@/database/s3";
 
+/// private ///
 const S3_BUCKET = process.env.S3_BUCKET;
 const URL_VALID_TIME = 60;
 
+/// main ///
 export default async function getS3Url(key) {
   const command = new GetObjectCommand({ Bucket: S3_BUCKET, Key: key });
   try {

@@ -1,5 +1,6 @@
 "use client";
 
+/// imports ///
 import handleImageVideoUpload from "@/server-actions/handle-image-video-upload";
 import Image from "next/image";
 import NewEntryStatusModal from "../new-entry-status-modal";
@@ -10,27 +11,25 @@ import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+/// main component ///
 export default function NewImageVideoEntry({ user, userTags }) {
   // initialize router //
   const router = useRouter();
 
   // initialize states and refs //
+  // states
   const [images, setImages] = useState([]);
-  const [videos, setVideos] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
-  const [videoPreviews, setVideoPreviews] = useState([]);
-  const [tagsForAll, setTagsForAll] = useState([]);
+  const [overallStatus, setOverallStatus] = useState(null);
   const [tagsData, setTagsData] = useState(new Map());
+  const [tagsForAll, setTagsForAll] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [uploadStatuses, setUploadStatuses] = useState(new Map());
-  const [overallStatus, setOverallStatus] = useState(null);
+  const [videos, setVideos] = useState([]);
+  const [videoPreviews, setVideoPreviews] = useState([]);
+  // refs
   const captionRefs = useRef(new Map());
   const tagRefs = useRef(new Map());
-
-  // update tags for all when changed //
-  const updateTagsForAll = useCallback((tags) => {
-    setTagsForAll([...tags]);
-  }, []);
 
   // define factory function for managing tags data //
   const manageTagData = useCallback(() => {
@@ -42,6 +41,11 @@ export default function NewImageVideoEntry({ user, userTags }) {
       return entryTags;
     }
     return { updateEntryTags, getEntryTags };
+  }, []);
+
+  // update tags for all when changed //
+  const updateTagsForAll = useCallback((tags) => {
+    setTagsForAll([...tags]);
   }, []);
 
   // create image/video previews //
@@ -116,13 +120,13 @@ export default function NewImageVideoEntry({ user, userTags }) {
             {uploadStatuses.has(entry.index) ? (
               uploadStatuses.get(entry.index) === "adding" ? (
                 // currently uploading
-                <div className={styles.uploadProgress}>
+                <div className={styles.uploadProgress} role="status">
                   <p className={styles.visuallyHidden}>uploading</p>
                   <div className={styles.uploadingSpinner}></div>
                 </div>
               ) : uploadStatuses.get(entry.index) === "success" ? (
                 // uploaded
-                <div className={styles.uploadStatus}>
+                <div className={styles.uploadStatus} role="status">
                   <p className={styles.visuallyHidden}>uploaded</p>
                   <div className={styles.statusIcon}>
                     <ThemedImage alt="success icon" imageName="success-icon" />
@@ -130,7 +134,7 @@ export default function NewImageVideoEntry({ user, userTags }) {
                 </div>
               ) : uploading ? (
                 // error
-                <div className={styles.uploadStatus}>
+                <div className={styles.uploadStatus} role="status">
                   <p className={styles.visuallyHidden}>error</p>
                   <div className={styles.statusIcon}>
                     <ThemedImage alt="error icon" imageName="alert-icon" />
@@ -149,7 +153,7 @@ export default function NewImageVideoEntry({ user, userTags }) {
                       <ThemedImage alt="delete icon" imageName="delete-icon" />
                     </div>
                   </button>
-                  <div className={styles.retryStatus}>
+                  <div className={styles.retryStatus} role="status">
                     <div className={styles.retryIcon}>
                       <ThemedImage alt="alert icon" imageName="alert-icon" />
                     </div>
@@ -161,7 +165,7 @@ export default function NewImageVideoEntry({ user, userTags }) {
               )
             ) : uploading ? (
               // queued
-              <div className={styles.uploadProgress}>
+              <div className={styles.uploadProgress} role="status">
                 <p className={styles.visuallyHidden}>queued</p>
                 <div className={styles.queueIndicator}></div>
               </div>
@@ -349,7 +353,7 @@ export default function NewImageVideoEntry({ user, userTags }) {
         <h2 className={styles.visuallyHidden}>New Image/Video Entries</h2>
         <div className={`${styles.addFilesField} ${styles.bottomMargin}`}>
           <label
-            aria-label="Choose image/video files"
+            aria-label="Browse and add image/video files"
             className={`${styles.addBtn} ${styles.labelFont}`}
             htmlFor="files"
           >
@@ -363,6 +367,7 @@ export default function NewImageVideoEntry({ user, userTags }) {
             multiple
             name="files"
             onChange={handleFileInput}
+            required
             type="file"
           ></input>
         </div>
@@ -373,7 +378,7 @@ export default function NewImageVideoEntry({ user, userTags }) {
         >
           {imagePreviews.length === 0 && videoPreviews.length === 0 ? (
             <div
-              aria-label="Drag and drop files to add"
+              aria-label="Add image/video files by dragging and dropping"
               className={styles.emptyDragDrop}
             >
               <p className={styles.labelFont}>or drag and drop...</p>
@@ -398,8 +403,8 @@ export default function NewImageVideoEntry({ user, userTags }) {
                   userTags={userTags}
                 />
               </div>
-              {<ul>{imagePreviews}</ul>}
-              {<ul>{videoPreviews}</ul>}
+              <ul>{imagePreviews}</ul>
+              <ul>{videoPreviews}</ul>
             </section>
           )}
         </div>

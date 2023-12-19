@@ -1,10 +1,12 @@
 "use client";
 
+/// imports ///
 import NewImageVideoEntry from "../new-image-video-entry";
-import styles from "./index.module.css";
 import NewTextEntry from "../new-text-entry";
+import styles from "./index.module.css";
 import { useState } from "react";
 
+/// main component ///
 export default function NewEntryForms({ user, userTags }) {
   const [formShown, setFormShown] = useState("text");
 
@@ -18,7 +20,7 @@ export default function NewEntryForms({ user, userTags }) {
 
   return (
     <div className={styles.component}>
-      <nav className={styles.tabs}>
+      <menu className={styles.tabs}>
         <button
           className={`${styles.tab} ${
             formShown === "text" ? styles.activeTab : styles.inactiveTab
@@ -37,7 +39,7 @@ export default function NewEntryForms({ user, userTags }) {
         >
           Images/Videos
         </button>
-      </nav>
+      </menu>
       <section className={styles.form} hidden={formShown !== "text"}>
         <NewTextEntry user={user} userTags={userTags} />
       </section>

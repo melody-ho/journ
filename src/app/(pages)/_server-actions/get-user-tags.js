@@ -1,7 +1,9 @@
 "use server";
 
+/// imports ///
 import rds from "@/database/rds";
 
+/// main ///
 export default async function getUserTags(userId) {
   try {
     return await rds.models.Tag.findAll({

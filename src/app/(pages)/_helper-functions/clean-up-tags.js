@@ -1,5 +1,7 @@
+/// imports ///
 import rds from "@/database/rds";
 
+/// main ///
 export default async function cleanUpTags(entryId) {
   const entryTags = await rds.models.EntryTag.findAll({
     where: { entryId },

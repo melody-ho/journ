@@ -1,5 +1,6 @@
 "use client";
 
+/// imports ///
 import EntryModal from "../entry-modal";
 import getEntries from "@/server-actions/get-entries";
 import { getEntryWithoutTags } from "@/server-actions/get-entry";
@@ -7,6 +8,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+/// main component ///
 export default function FilteredEntries({
   selectedEndDate,
   selectedStartDate,
@@ -19,13 +21,15 @@ export default function FilteredEntries({
   const router = useRouter();
 
   // initialize states and refs //
+  // states
   const [entries, setEntries] = useState([]);
   const [entryModal, setEntryModal] = useState(null);
   const [entryToUpdate, setEntryToUpdate] = useState(null);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [reachEnd, setReachEnd] = useState(false);
-  const observerTarget = useRef(null);
+  // refs
+  const observerTargetRef = useRef(null);
 
   // reset component when filters change //
   useEffect(
@@ -41,7 +45,7 @@ export default function FilteredEntries({
   useEffect(
     function configureObserver() {
       // get target
-      const target = observerTarget.current;
+      const target = observerTargetRef.current;
       // create observer
       const observer = new IntersectionObserver(
         async (targets) => {
@@ -75,7 +79,7 @@ export default function FilteredEntries({
     },
     [
       entries,
-      observerTarget,
+      observerTargetRef,
       page,
       selectedEndDate,
       selectedStartDate,
@@ -129,20 +133,17 @@ export default function FilteredEntries({
   return (
     <>
       <section>
-        {entries.map((entry) => {
-          if (entry.type === "text") {
-            return (
-              <button
-                key={entry.id}
-                onClick={() => renderEntryModal(entry.id)}
-                type="button"
-              >
-                <p>{entry.content}</p>
-              </button>
-            );
-          } else if (entry.type === "image") {
-            return (
-              <button key={entry.id} onClick={() => renderEntryModal(entry.id)}>
+        {entries.map((entry) => (
+          <button
+            aria-haspopup="dialog"
+            key={entry.id}
+            onClick={() => renderEntryModal(entry.id)}
+            type="button"
+          >
+            {entry.type === "text" ? (
+              <p>{entry.content}</p>
+            ) : entry.type === "image" ? (
+              <>
                 <Image
                   alt={
                     entry.content
@@ -154,29 +155,27 @@ export default function FilteredEntries({
                   width="100"
                 />
                 <p>{entry.content}</p>
-              </button>
-            );
-          } else {
-            return (
-              <button key={entry.id} onClick={() => renderEntryModal(entry.id)}>
+              </>
+            ) : (
+              <>
                 <video autoPlay loop muted src={entry.srcUrl}></video>
                 <p>{entry.content}</p>
-              </button>
-            );
-          }
-        })}
+              </>
+            )}
+          </button>
+        ))}
         {loading ? (
-          <div>
+          <div aria-description="loading more entries">
             <p>loading...</p>
           </div>
         ) : reachEnd ? (
-          <div>
+          <div aria-description="no more entries">
             <p>end</p>
           </div>
         ) : (
           <div
             aria-hidden="true"
-            ref={observerTarget}
+            ref={observerTargetRef}
             style={{ height: 50 }}
           ></div>
         )}

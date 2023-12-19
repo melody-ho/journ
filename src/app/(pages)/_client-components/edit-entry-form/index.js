@@ -1,5 +1,6 @@
 "use client";
 
+/// imports ///
 import deleteEntry from "@/server-actions/delete-entry";
 import styles from "./index.module.css";
 import TagDropdown from "../tag-dropdown";
@@ -7,6 +8,7 @@ import updateEntryChanges from "@/server-actions/update-entry-changes";
 import { v4 as uuidv4 } from "uuid";
 import { useCallback, useRef, useState } from "react";
 
+/// main component ///
 export default function EditEntryForm({
   entry,
   removeFromFeed,
@@ -18,34 +20,38 @@ export default function EditEntryForm({
   updateFeed,
   userTags,
 }) {
-  const [editable, setEditable] = useState(false);
+  // initialize states and refs //
+  // states
   const [content, setContent] = useState(entry.content);
+  const [editable, setEditable] = useState(false);
   const [tags, setTags] = useState([...entry.tags]);
-  const formEl = useRef(null);
-  const contentInput = useRef(null);
+  // refs
+  const formRef = useRef(null);
+  const contentInputRef = useRef(null);
 
+  // handle enable/disable edit //
   function enableEdit() {
     setEditable(true);
   }
-
   function cancelEdit() {
     setContent(entry.content);
     setTags([...entry.tags]);
     setEditable(false);
   }
 
+  // manage input data //
   function updateContent() {
-    setContent(contentInput.current.value);
+    setContent(contentInputRef.current.value);
   }
-
   const getTags = useCallback(function updateTags(passedTags) {
     setTags([...passedTags]);
   }, []);
 
+  // handle saving changes //
   async function saveChanges(e) {
     setUpdating(true);
     e.preventDefault();
-    const formData = new FormData(formEl.current);
+    const formData = new FormData(formRef.current);
     formData.append("id", entry.id);
     formData.append("userId", entry.userId);
     formData.append("tags", JSON.stringify(tags));
@@ -60,6 +66,7 @@ export default function EditEntryForm({
     setUpdating(false);
   }
 
+  // handle deleting entry //
   async function handleDelete(id) {
     setDeleting(true);
     await deleteEntry(id);
@@ -74,7 +81,7 @@ export default function EditEntryForm({
         className={`${styles.component} ${
           entry.type === "text" ? styles.text : styles.imgVideo
         }`}
-        ref={formEl}
+        ref={formRef}
       >
         <div
           className={
@@ -91,7 +98,8 @@ export default function EditEntryForm({
             placeholder={
               entry.type === "text" ? "Write something..." : "no caption"
             }
-            ref={contentInput}
+            ref={contentInputRef}
+            required={entry.type === "text"}
             value={content === null ? "" : content}
           ></textarea>
           {entry.type === "text" && editable ? (
@@ -127,7 +135,7 @@ export default function EditEntryForm({
               <button
                 className={`${styles.primaryBtn} ${styles.saveBtn}`}
                 disabled={
-                  entry.type === "text" && contentInput.current.value === ""
+                  entry.type === "text" && contentInputRef.current.value === ""
                 }
                 onClick={saveChanges}
                 type="button"

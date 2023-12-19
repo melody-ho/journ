@@ -1,5 +1,6 @@
 "use client";
 
+/// imports ///
 import checkUsername from "@/server-actions/check-username";
 import createUser from "@/server-actions/create-user";
 import debounce from "lodash.debounce";
@@ -10,8 +11,11 @@ import { experimental_useFormState as useFormState } from "react-dom";
 import z from "zod";
 import { useEffect, useRef, useState } from "react";
 
+/// constants ///
+// debounce duration for checking username availability //
 const DEBOUNCE_DURATION = 200;
 
+/// main component ///
 export default function NewAccountForm() {
   // client-side form validation //
   // first name
@@ -58,14 +62,14 @@ export default function NewAccountForm() {
     DEBOUNCE_DURATION,
   );
   // password
-  const passwordField = useRef(null);
+  const passwordInputRef = useRef(null);
   const [password, setPassword] = useState("");
   const [passwordMessage, setPasswordMessage] = useState(null);
-  const confirmPasswordField = useRef(null);
+  const confirmPwdInputRef = useRef(null);
   const [confirmPassword, setConfirmPassword] = useState("");
   const [confirmPasswordMessage, setConfirmPasswordMessage] = useState(null);
   function matchPasswords() {
-    if (passwordField.current.value === confirmPasswordField.current.value) {
+    if (passwordInputRef.current.value === confirmPwdInputRef.current.value) {
       setConfirmPasswordMessage(null);
     } else {
       setConfirmPasswordMessage("Passwords do not match.");
@@ -83,10 +87,10 @@ export default function NewAccountForm() {
     } catch (error) {
       setPasswordMessage(error.issues[0].message);
     }
-    if (e.target.value === "" && confirmPasswordField.current.value === "") {
+    if (e.target.value === "" && confirmPwdInputRef.current.value === "") {
       setConfirmPasswordMessage(null);
     }
-    if (confirmPasswordField.current.value !== "") {
+    if (confirmPwdInputRef.current.value !== "") {
       matchPasswords();
     }
   }
@@ -110,11 +114,11 @@ export default function NewAccountForm() {
 
   // account creation status modal //
   // show status modal when rendered
-  const statusModal = useRef(null);
+  const statusModalRef = useRef(null);
   useEffect(function openModal() {
-    if (statusModal.current) {
-      statusModal.current.close();
-      statusModal.current.showModal();
+    if (statusModalRef.current) {
+      statusModalRef.current.close();
+      statusModalRef.current.showModal();
     }
   });
   // declare status modal handlers
@@ -126,7 +130,7 @@ export default function NewAccountForm() {
   }
   function handleRetry() {
     setSubmissionState(null);
-    statusModal.current.close();
+    statusModalRef.current.close();
   }
 
   return (
@@ -148,10 +152,11 @@ export default function NewAccountForm() {
               onBlur={handleChangeFirstName}
               onChange={handleChangeFirstName}
               readOnly={submissionState}
+              required
               type="text"
             ></input>
             <p className={styles.requiredIndicator}>required</p>
-            <p aria-hidden={!firstNameMessage} className={styles.hint}>
+            <p className={styles.hint} role="status">
               {firstNameMessage ? firstNameMessage : ""}
             </p>
           </li>
@@ -184,17 +189,17 @@ export default function NewAccountForm() {
             <input
               className={styles.inputField}
               id="username"
+              maxLength={255}
+              minLength={6}
               name="username"
               onBlur={debouncedHandleUsernameChange}
               onChange={debouncedHandleUsernameChange}
               readOnly={submissionState}
+              required
               type="text"
             ></input>
             <p className={styles.requiredIndicator}>required</p>
-            <p
-              aria-hidden={!usernameMessage && !usernameUnavailable}
-              className={styles.hint}
-            >
+            <p className={styles.hint} role="status">
               {usernameMessage
                 ? usernameMessage
                 : usernameUnavailable
@@ -209,15 +214,18 @@ export default function NewAccountForm() {
             <input
               className={styles.inputField}
               id="password"
+              maxLength={255}
+              minLength={6}
               name="password"
               onBlur={handlePasswordChange}
               onChange={handlePasswordChange}
               readOnly={submissionState}
-              ref={passwordField}
+              ref={passwordInputRef}
+              required
               type="password"
             ></input>
             <p className={styles.requiredIndicator}>required</p>
-            <p aria-hidden={!passwordMessage} className={styles.hint}>
+            <p className={styles.hint} role="status">
               {passwordMessage ? passwordMessage : ""}
             </p>
           </li>
@@ -228,15 +236,18 @@ export default function NewAccountForm() {
             <input
               className={styles.inputField}
               id="confirm-password"
+              maxLength={255}
+              minLength={6}
               name="confirmPassword"
               onBlur={handleConfirmPasswordChange}
               onChange={handleConfirmPasswordChange}
               readOnly={submissionState}
-              ref={confirmPasswordField}
+              ref={confirmPwdInputRef}
+              required
               type="password"
             ></input>
             <p className={styles.requiredIndicator}>required</p>
-            <p aria-hidden={!confirmPasswordMessage} className={styles.hint}>
+            <p className={styles.hint} role="status">
               {confirmPasswordMessage ? confirmPasswordMessage : ""}
             </p>
           </li>
@@ -265,7 +276,7 @@ export default function NewAccountForm() {
           className={styles.statusModal}
           onCancel={handleCancel}
           onKeyDown={handleEsc}
-          ref={statusModal}
+          ref={statusModalRef}
         >
           {submissionState === "pending" ? (
             <div className={styles.modalContent}>

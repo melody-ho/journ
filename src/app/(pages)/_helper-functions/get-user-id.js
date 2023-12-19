@@ -1,6 +1,8 @@
+/// imports ///
 import { getUserSession } from "@/(authentication)/_utils/sessions";
 import rds from "@/database/rds";
 
+/// main ///
 export default async function getUserId(headers) {
   // get session //
   const session = await getUserSession(headers);
