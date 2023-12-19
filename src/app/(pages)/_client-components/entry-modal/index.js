@@ -19,6 +19,7 @@ export default function EntryModal({
   const [emptyText, setEmptyText] = useState(false);
   const [updating, setUpdating] = useState(false);
   const modal = useRef(null);
+  const modalWrapper = useRef(null);
 
   // open modal when rendered //
   useEffect(
@@ -54,6 +55,16 @@ export default function EntryModal({
   }
 
   // close modal on cancel if not updating or deleting //
+  function handleClickOut(e) {
+    if (
+      modalWrapper.current &&
+      !modalWrapper.current.contains(e.target) &&
+      !updating &&
+      !deleting
+    ) {
+      removeModal();
+    }
+  }
   function handleCancel(e) {
     if (updating || deleting) {
       e.preventDefault();
@@ -73,110 +84,123 @@ export default function EntryModal({
           : styles.entryModal
       }`}
       onCancel={handleCancel}
+      onClick={handleClickOut}
       onClose={removeModal}
       onKeyDown={handleEsc}
       ref={modal}
     >
-      {updating ? (
-        <div className={styles.statusModalContent}>
-          <div className={styles.updatingSpinner}></div>
-          <p className={styles.statusMessage}>Updating entry...</p>
-        </div>
-      ) : emptyText ? (
-        <div>
+      <div className={styles.modalWrapper} ref={modalWrapper}>
+        {updating ? (
           <div className={styles.statusModalContent}>
-            <div className={styles.alertIconContainer}>
-              <ThemedImage alt="alert icon" imageName="alert-icon" />
+            <div className={styles.updatingSpinner}></div>
+            <p className={styles.statusMessage}>Updating entry...</p>
+          </div>
+        ) : emptyText ? (
+          <div>
+            <div className={styles.statusModalContent}>
+              <div className={styles.alertIconContainer}>
+                <ThemedImage alt="alert icon" imageName="alert-icon" />
+              </div>
+              <p className={styles.statusMessage}>
+                Entry content cannot be empty.
+              </p>
+              <button
+                className={styles.statusCta}
+                onClick={acknowledgeEmptyTextAlert}
+                type="button"
+              >
+                Go back
+              </button>
             </div>
-            <p className={styles.statusMessage}>
-              Entry content cannot be empty.
-            </p>
+          </div>
+        ) : deleting ? (
+          <div className={styles.statusModalContent}>
+            <div className={styles.deletingSpinner}></div>
+            <p className={styles.statusMessage}>Deleting entry...</p>
+          </div>
+        ) : deleted ? (
+          <div className={styles.statusModalContent}>
+            <div className={styles.successIconContainer}>
+              <ThemedImage alt="success icon" imageName="success-icon" />
+            </div>
+            <p className={styles.statusMessage}>Entry deleted!</p>
             <button
               className={styles.statusCta}
-              onClick={acknowledgeEmptyTextAlert}
+              onClick={removeModal}
               type="button"
             >
-              Go back
+              Back to feed
             </button>
           </div>
-        </div>
-      ) : deleting ? (
-        <div className={styles.statusModalContent}>
-          <div className={styles.deletingSpinner}></div>
-          <p className={styles.statusMessage}>Deleting entry...</p>
-        </div>
-      ) : deleted ? (
-        <div className={styles.statusModalContent}>
-          <div className={styles.successIconContainer}>
-            <ThemedImage alt="success icon" imageName="success-icon" />
-          </div>
-          <p className={styles.statusMessage}>Entry deleted!</p>
-          <button
-            className={styles.statusCta}
-            onClick={removeModal}
-            type="button"
+        ) : null}
+        {entry ? (
+          <div
+            className={
+              updating || emptyText || deleting || deleted
+                ? styles.hidden
+                : null
+            }
           >
-            Back to feed
-          </button>
-        </div>
-      ) : null}
-      {entry ? (
-        <div
-          className={
-            updating || emptyText || deleting || deleted ? styles.hidden : null
-          }
-        >
-          {entry.type === "text" ? (
-            <div className={styles.textEntryIconContainer}>
-              <ThemedImage alt="text entry icon" imageName="quote-icon" />
-            </div>
-          ) : entry.type === "image" ? (
-            <div className={styles.imageWrapper}>
-              <div className={styles.imageContainer}>
-                <Image
-                  alt={
-                    entry.content
-                      ? entry.content
-                      : "The user did not provide a caption for this image."
-                  }
-                  className={styles.image}
-                  fill={true}
-                  src={entry.srcUrl}
-                />
+            <button
+              className={styles.imgBtn}
+              onClick={removeModal}
+              type="button"
+            >
+              <ThemedImage alt="close icon" imageName="close-icon" />
+              Close
+            </button>
+            {entry.type === "text" ? (
+              <div className={styles.textEntryIconContainer}>
+                <ThemedImage alt="text entry icon" imageName="quote-icon" />
               </div>
-            </div>
-          ) : entry.type === "video" ? (
-            <div className={styles.videoWrapper}>
-              <div className={styles.videoContainer}>
-                <video
-                  autoPlay
-                  className={styles.video}
-                  controls
-                  loop
-                  muted
-                  src={entry.srcUrl}
-                ></video>
+            ) : entry.type === "image" ? (
+              <div className={styles.imageWrapper}>
+                <div className={styles.imageContainer}>
+                  <Image
+                    alt={
+                      entry.content
+                        ? entry.content
+                        : "The user did not provide a caption for this image."
+                    }
+                    className={styles.image}
+                    fill={true}
+                    src={entry.srcUrl}
+                  />
+                </div>
               </div>
-            </div>
-          ) : null}
-          <EditEntryForm
-            entry={entry}
-            removeFromFeed={removeFromFeed}
-            setDeleted={setDeleted}
-            setDeleting={setDeleting}
-            setEmptyText={setEmptyText}
-            setEntry={setEntry}
-            setUpdating={setUpdating}
-            updateFeed={updateFeed}
-            userTags={userTags}
-          />
-        </div>
-      ) : (
-        <div className={styles.statusModalContent}>
-          <div className={styles.loadingSpinner}></div>
-          <p className={styles.statusMessage}>Loading...</p>
-        </div>
-      )}
+            ) : entry.type === "video" ? (
+              <div className={styles.videoWrapper}>
+                <div className={styles.videoContainer}>
+                  <video
+                    autoPlay
+                    className={styles.video}
+                    controls
+                    loop
+                    muted
+                    src={entry.srcUrl}
+                  ></video>
+                </div>
+              </div>
+            ) : null}
+            <EditEntryForm
+              entry={entry}
+              removeFromFeed={removeFromFeed}
+              setDeleted={setDeleted}
+              setDeleting={setDeleting}
+              setEmptyText={setEmptyText}
+              setEntry={setEntry}
+              setUpdating={setUpdating}
+              updateFeed={updateFeed}
+              userTags={userTags}
+            />
+          </div>
+        ) : (
+          <div className={styles.statusModalContent}>
+            <div className={styles.loadingSpinner}></div>
+            <p className={styles.statusMessage}>Loading...</p>
+          </div>
+        )}
+      </div>
     </dialog>
   );
 }

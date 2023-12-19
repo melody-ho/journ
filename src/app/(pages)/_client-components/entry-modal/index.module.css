@@ -2,6 +2,7 @@
 .statusModal {
   border: none;
   color: rgb(var(--foreground-rgb));
+  padding: 0;
 }
 
 .entryModal {
@@ -26,6 +27,20 @@
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   background-color: rgba(var(--background-rgb), 0.9);
+}
+
+.modalWrapper {
+  padding: 5vw;
+}
+
+.imgBtn {
+  background-color: transparent;
+  border: none;
+  font-size: 0;
+  height: max(40px, 3vw);
+  margin-bottom: max(5px, 1vw);
+  position: relative;
+  width: max(40px, 3vw);
 }
 
 .textEntryIconContainer {
@@ -176,6 +191,10 @@
 }
 
 @media (min-width: 1000px) {
+  .modalWrapper {
+    padding: 2vw;
+  }
+
   .imageWrapper,
   .videoWrapper {
     width: 60vw;
