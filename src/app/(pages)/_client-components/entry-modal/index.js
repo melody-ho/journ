@@ -67,25 +67,58 @@ export default function EntryModal({
 
   return (
     <dialog
-      className={styles.entryModal}
+      className={`${
+        !entry || updating || emptyText || deleting || deleted
+          ? styles.statusModal
+          : styles.entryModal
+      }`}
       onCancel={handleCancel}
       onClose={removeModal}
       onKeyDown={handleEsc}
       ref={modal}
     >
       {updating ? (
-        <p>updating...</p>
+        <div className={styles.statusModalContent}>
+          <div className={styles.updatingSpinner}></div>
+          <p className={styles.statusMessage}>Updating entry...</p>
+        </div>
       ) : emptyText ? (
         <div>
-          <p>empty text</p>
-          <button onClick={acknowledgeEmptyTextAlert} type="button">
-            Go back
-          </button>
+          <div className={styles.statusModalContent}>
+            <div className={styles.alertIconContainer}>
+              <ThemedImage alt="alert icon" imageName="alert-icon" />
+            </div>
+            <p className={styles.statusMessage}>
+              Entry content cannot be empty.
+            </p>
+            <button
+              className={styles.statusCta}
+              onClick={acknowledgeEmptyTextAlert}
+              type="button"
+            >
+              Go back
+            </button>
+          </div>
         </div>
       ) : deleting ? (
-        <p>deleting...</p>
+        <div className={styles.statusModalContent}>
+          <div className={styles.deletingSpinner}></div>
+          <p className={styles.statusMessage}>Deleting entry...</p>
+        </div>
       ) : deleted ? (
-        <p>deleted</p>
+        <div className={styles.statusModalContent}>
+          <div className={styles.successIconContainer}>
+            <ThemedImage alt="success icon" imageName="success-icon" />
+          </div>
+          <p className={styles.statusMessage}>Entry deleted!</p>
+          <button
+            className={styles.statusCta}
+            onClick={removeModal}
+            type="button"
+          >
+            Back to feed
+          </button>
+        </div>
       ) : null}
       {entry ? (
         <div
@@ -139,7 +172,10 @@ export default function EntryModal({
           />
         </div>
       ) : (
-        <p>loading...</p>
+        <div className={styles.statusModalContent}>
+          <div className={styles.loadingSpinner}></div>
+          <p className={styles.statusMessage}>Loading...</p>
+        </div>
       )}
     </dialog>
   );
