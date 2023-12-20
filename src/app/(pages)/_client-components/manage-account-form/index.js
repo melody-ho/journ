@@ -438,6 +438,7 @@ export default function ManageAccountForm({ userData }) {
                   className={styles.inputField}
                   id="current-password"
                   name="currentPassword"
+                  onBlur={handleCurrentPwdChange}
                   onChange={handleCurrentPwdChange}
                   ref={currentPwdInputRef}
                   required

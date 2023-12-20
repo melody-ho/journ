@@ -97,7 +97,7 @@
 
 .hint {
   color: rgb(var(--high-contrast-rgb));
-  font-size: max(10px, calc(10px + 1vw));
+  font-size: max(10px, calc(10px + 0.5vw));
   font-style: italic;
   font-weight: 200;
   margin-bottom: 1em;
