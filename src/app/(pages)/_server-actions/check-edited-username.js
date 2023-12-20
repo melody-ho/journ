@@ -11,10 +11,14 @@ export default async function checkEditedUsername(
   if (newUsername === oldUsername) {
     return null;
   } else {
-    const user = await rds.models.User.findOne({
-      attributes: ["username"],
-      where: { username: newUsername },
-    });
-    return user ? "Username unavailable." : null;
+    try {
+      const user = await rds.models.User.findOne({
+        attributes: ["username"],
+        where: { username: newUsername },
+      });
+      return user ? "Username unavailable." : null;
+    } catch (error) {
+      return "Network error when checking availability.";
+    }
   }
 }
