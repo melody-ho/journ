@@ -17,30 +17,39 @@ export default async function addTextEntry(formData) {
   if (content === "") return "empty";
   try {
     // add entry to database
-    const entry = await rds.models.Entry.create({
-      type: "text",
-      content,
-      userId,
+    await rds.transaction(async function addTextEntryToDatabase(t) {
+      const entry = await rds.models.Entry.create(
+        {
+          type: "text",
+          content,
+          userId,
+        },
+        { transaction: t },
+      );
+      for (const tagName of tagNames) {
+        const validatedTagName = tagName
+          .split(" ")
+          .join("")
+          .slice(0, MAX_TAG_LENGTH);
+        const [tag, created] = await rds.models.Tag.findOrCreate({
+          where: { name: validatedTagName },
+          transaction: t,
+        });
+        await rds.models.UserTag.findOrCreate({
+          where: { userId, tagId: tag.id },
+          transaction: t,
+        });
+        await rds.models.EntryTag.findOrCreate({
+          where: { entryId: entry.id, tagId: tag.id },
+          transaction: t,
+        });
+      }
     });
-    for (const tagName of tagNames) {
-      const validatedTagName = tagName
-        .split(" ")
-        .join("")
-        .slice(0, MAX_TAG_LENGTH);
-      const [tag, created] = await rds.models.Tag.findOrCreate({
-        where: { name: validatedTagName },
-      });
-      await rds.models.UserTag.findOrCreate({
-        where: { userId, tagId: tag.id },
-      });
-      await rds.models.EntryTag.findOrCreate({
-        where: { entryId: entry.id, tagId: tag.id },
-      });
-    }
+    // report success
     revalidatePath("/");
     return "success";
   } catch (error) {
+    // report error
     return "error";
-    // TO DO: error handling //
   }
 }
