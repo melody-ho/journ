@@ -99,6 +99,18 @@ export default function NewAccountForm() {
     matchPasswords();
   }
 
+  // show/hide username info popup //
+  const [usernameInfo, setUsernameInfo] = useState(false);
+  function showUsernameInfo() {
+    setUsernameInfo(true);
+  }
+  function hideUsernameInfo() {
+    setUsernameInfo(false);
+  }
+  function toggleUsernameInfo() {
+    setUsernameInfo(!usernameInfo);
+  }
+
   // form submission //
   // initialize states and refs
   const newAccountFormRef = useRef(null);
@@ -183,9 +195,36 @@ export default function NewAccountForm() {
         </h3>
         <ul className={styles.usernamePwdFields}>
           <li className={`${styles.formField} ${styles.usernameField}`}>
-            <label className={styles.inputLabel} htmlFor="username">
-              username
-            </label>
+            <div className={styles.usernameLabelAndInfo}>
+              <div
+                className={styles.usernameLabelWrapper}
+                onBlur={hideUsernameInfo}
+                onClick={toggleUsernameInfo}
+                onFocus={showUsernameInfo}
+                onMouseEnter={showUsernameInfo}
+                onMouseLeave={hideUsernameInfo}
+                tabIndex={0}
+              >
+                <label className={styles.inputLabel} htmlFor="username">
+                  username
+                </label>
+                <div className={styles.infoIcon}>
+                  <ThemedImage alt="info icon" imageName="info-icon" />
+                </div>
+              </div>
+              <div
+                aria-description="username format guide"
+                className={`${styles.infoPopup} ${
+                  usernameInfo ? styles.show : styles.hide
+                }`}
+              >
+                <p className={styles.infoContent}>
+                  Can only consist of lowercase alphanumerical characters,
+                  periods, and underscores. Must start and end with a lowercase
+                  alphanumerical character.
+                </p>
+              </div>
+            </div>
             <input
               className={styles.inputField}
               id="username"

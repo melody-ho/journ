@@ -206,6 +206,18 @@ export default function ManageAccountForm({ userData }) {
     setEditPassword(false);
   }
 
+  // show/hide username info popup //
+  const [usernameInfo, setUsernameInfo] = useState(false);
+  function showUsernameInfo() {
+    setUsernameInfo(true);
+  }
+  function hideUsernameInfo() {
+    setUsernameInfo(false);
+  }
+  function toggleUsernameInfo() {
+    setUsernameInfo(!usernameInfo);
+  }
+
   // handle submit //
   const manageAccountFormRef = useRef(null);
   const [submissionState, setSubmissionState] = useState(null);
@@ -320,9 +332,42 @@ export default function ManageAccountForm({ userData }) {
             <li
               className={`${styles.formField} ${!edit ? styles.readOnly : ""}`}
             >
-              <label className={styles.inputLabel} htmlFor="username">
-                username
-              </label>
+              {edit ? (
+                <div className={styles.usernameLabelAndInfo}>
+                  <div
+                    className={styles.usernameLabelWrapper}
+                    onBlur={hideUsernameInfo}
+                    onClick={toggleUsernameInfo}
+                    onFocus={showUsernameInfo}
+                    onMouseEnter={showUsernameInfo}
+                    onMouseLeave={hideUsernameInfo}
+                    tabIndex={0}
+                  >
+                    <label className={styles.inputLabel} htmlFor="username">
+                      username
+                    </label>
+                    <div className={styles.infoIcon}>
+                      <ThemedImage alt="info icon" imageName="info-icon" />
+                    </div>
+                  </div>
+                  <div
+                    aria-description="username format guide"
+                    className={`${styles.infoPopup} ${
+                      usernameInfo ? styles.show : styles.hide
+                    }`}
+                  >
+                    <p className={styles.infoContent}>
+                      Can only consist of lowercase alphanumerical characters,
+                      periods, and underscores. Must start and end with a
+                      lowercase alphanumerical character.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <label className={styles.inputLabel} htmlFor="username">
+                  username
+                </label>
+              )}
               <input
                 className={styles.inputField}
                 disabled={!edit}
