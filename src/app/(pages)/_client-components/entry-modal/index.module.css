@@ -163,6 +163,7 @@
 }
 
 .successIconContainer,
+.errorIconContainer,
 .alertIconContainer {
   height: 3em;
   margin: 0.5em;

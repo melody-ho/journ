@@ -16,6 +16,7 @@ export default function EditEntryForm({
   setDeleting,
   setEmptyText,
   setEntry,
+  setUpdateError,
   setUpdating,
   updateFeed,
   userTags,
@@ -56,12 +57,13 @@ export default function EditEntryForm({
     formData.append("userId", entry.userId);
     formData.append("tags", JSON.stringify(tags));
     const updateStatus = await updateEntryChanges(formData);
-    if (updateStatus === "empty") {
-      setEmptyText(true);
-    }
     if (updateStatus === "success") {
-      if (updateFeed) updateFeed(entry.id);
+      updateFeed(entry.id);
       setEntry(null);
+    } else if (updateStatus === "empty") {
+      setEmptyText(true);
+    } else {
+      setUpdateError(true);
     }
     setUpdating(false);
   }
@@ -69,9 +71,13 @@ export default function EditEntryForm({
   // handle deleting entry //
   async function handleDelete(id) {
     setDeleting(true);
-    await deleteEntry(id);
-    if (removeFromFeed) removeFromFeed(entry.id);
-    setDeleted(true);
+    const deleteStatus = await deleteEntry(id);
+    if (deleteStatus === "success") {
+      removeFromFeed(entry.id);
+      setDeleted("success");
+    } else {
+      setDeleted("fail");
+    }
     setDeleting(false);
   }
 

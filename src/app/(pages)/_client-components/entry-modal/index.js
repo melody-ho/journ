@@ -22,6 +22,7 @@ export default function EntryModal({
   const [deleting, setDeleting] = useState(false);
   const [emptyText, setEmptyText] = useState(false);
   const [entry, setEntry] = useState(null);
+  const [updateError, setUpdateError] = useState(false);
   const [updating, setUpdating] = useState(false);
   // refs
   const modalRef = useRef(null);
@@ -55,6 +56,16 @@ export default function EntryModal({
     [entry, id],
   );
 
+  // close status modal after acknowledging delete error //
+  function acknowledgeDeleteError() {
+    setDeleted(false);
+  }
+
+  // close status modal after acknowledging update error //
+  function acknowledgeUpdateError() {
+    setUpdateError(false);
+  }
+
   // go back to form after attempting to submit empty text entry //
   function acknowledgeEmptyTextAlert() {
     setEmptyText(false);
@@ -85,7 +96,7 @@ export default function EntryModal({
   return (
     <dialog
       className={`${
-        !entry || updating || emptyText || deleting || deleted
+        !entry || updating || deleting || deleted || updateError || emptyText
           ? styles.statusModal
           : styles.entryModal
       }`}
@@ -123,12 +134,40 @@ export default function EntryModal({
               </button>
             </div>
           </div>
+        ) : updateError ? (
+          <div className={styles.statusModalContent}>
+            <div className={styles.errorIconContainer}>
+              <ThemedImage alt="sad face icon" imageName="sad-icon" />
+            </div>
+            <p className={styles.statusMessage}>Failed to save changes.</p>
+            <button
+              className={styles.statusCta}
+              onClick={acknowledgeUpdateError}
+              type="button"
+            >
+              Try again.
+            </button>
+          </div>
         ) : deleting ? (
           <div className={styles.statusModalContent}>
             <div className={styles.deletingSpinner}></div>
             <p className={styles.statusMessage}>Deleting entry...</p>
           </div>
-        ) : deleted ? (
+        ) : deleted === "fail" ? (
+          <div className={styles.statusModalContent}>
+            <div className={styles.errorIconContainer}>
+              <ThemedImage alt="sad face icon" imageName="sad-icon" />
+            </div>
+            <p className={styles.statusMessage}>Failed to delete.</p>
+            <button
+              className={styles.statusCta}
+              onClick={acknowledgeDeleteError}
+              type="button"
+            >
+              Try again.
+            </button>
+          </div>
+        ) : deleted === "success" ? (
           <div className={styles.statusModalContent}>
             <div className={styles.successIconContainer}>
               <ThemedImage alt="success icon" imageName="success-icon" />
@@ -146,7 +185,7 @@ export default function EntryModal({
         {entry ? (
           <div
             className={
-              updating || emptyText || deleting || deleted
+              updating || deleting || deleted || updateError || emptyText
                 ? styles.hidden
                 : null
             }
@@ -199,6 +238,7 @@ export default function EntryModal({
               setDeleting={setDeleting}
               setEmptyText={setEmptyText}
               setEntry={setEntry}
+              setUpdateError={setUpdateError}
               setUpdating={setUpdating}
               updateFeed={updateFeed}
               userTags={userTags}
