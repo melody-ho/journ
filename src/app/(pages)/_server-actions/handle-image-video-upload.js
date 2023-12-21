@@ -10,60 +10,70 @@ import { Upload } from "@aws-sdk/lib-storage";
 const MAX_TAG_LENGTH = 50;
 const S3_BUCKET = process.env.S3_BUCKET;
 
-async function addEntry(userId, type, caption) {
-  const entry = await rds.models.Entry.create({
-    type,
-    content: caption.length === 0 ? null : caption,
-    userId,
-  });
-  return entry.id;
-}
-
 /// main ///
 export default async function handleImageVideoUpload(entryData) {
+  // get data
   const userId = entryData.get("user");
   const file = entryData.get("file");
   const caption = entryData.get("caption");
   const tagNames = JSON.parse(entryData.get("tags"));
   const type = file.type.startsWith("image/") ? "image" : "video";
   try {
-    const entryId = await addEntry(userId, type, caption);
-    for (const tagName of tagNames) {
-      const validatedTagName = tagName
-        .split(" ")
-        .join("")
-        .slice(0, MAX_TAG_LENGTH);
-      const [tag, created] = await rds.models.Tag.findOrCreate({
-        where: { name: validatedTagName },
-      });
-      await rds.models.UserTag.findOrCreate({
-        where: { userId, tagId: tag.id },
-      });
-      await rds.models.EntryTag.findOrCreate({
-        where: {
-          entryId,
-          tagId: tag.id,
+    await rds.transaction(async function addImgVideoEntryToDatabase(t) {
+      // add entry
+      const entry = await rds.models.Entry.create(
+        {
+          type,
+          content: caption.length === 0 ? null : caption,
+          userId,
+        },
+        { transaction: t },
+      );
+      const entryId = entry.id;
+      // add tags
+      for (const tagName of tagNames) {
+        const validatedTagName = tagName
+          .split(" ")
+          .join("")
+          .slice(0, MAX_TAG_LENGTH);
+        const [tag, created] = await rds.models.Tag.findOrCreate({
+          where: { name: validatedTagName },
+          transaction: t,
+        });
+        await rds.models.UserTag.findOrCreate({
+          where: { userId, tagId: tag.id },
+          transaction: t,
+        });
+        await rds.models.EntryTag.findOrCreate({
+          where: {
+            entryId,
+            tagId: tag.id,
+          },
+          transaction: t,
+        });
+      }
+      // upload file
+      const key = `${userId}/${type}s/${entryId}`;
+      const upload = new Upload({
+        client: s3,
+        params: {
+          Bucket: S3_BUCKET,
+          Key: key,
+          ContentType: file.type,
+          Body: file.stream(),
         },
       });
-    }
-    const key = `${userId}/${type}s/${entryId}`;
-    const upload = new Upload({
-      client: s3,
-      params: {
-        Bucket: S3_BUCKET,
-        Key: key,
-        ContentType: file.type,
-        Body: file.stream(),
-      },
+      upload.on("httpUploadProgress", (progress) => {
+        console.log(progress);
+      });
+      await upload.done();
     });
-    upload.on("httpUploadProgress", (progress) => {
-      console.log(progress);
-    });
-    await upload.done();
+    // update data
     revalidatePath("/");
+    // report success
     return "success";
   } catch (error) {
-    // TO DO: error handling //
+    // report error
     return "error";
   }
 }
