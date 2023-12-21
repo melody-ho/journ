@@ -77,7 +77,8 @@ export default function TagDropdown({
   useEffect(
     function updateUserTags() {
       if (userTags !== null) {
-        setMatchedTags([...userTags]);
+        const userTagNames = userTags.map((userTag) => userTag.name);
+        setMatchedTags(userTagNames);
       }
     },
     [userTags],
@@ -87,9 +88,9 @@ export default function TagDropdown({
   useEffect(
     function filterMatchedTags() {
       const filtered = matchedTags.filter(
-        (matchedTag) => !selectedTags.includes(matchedTag.name),
+        (matchedTag) => !selectedTags.includes(matchedTag),
       );
-      setFilteredMatchedTags([...filtered]);
+      setFilteredMatchedTags(filtered);
     },
     [matchedTags, selectedTags],
   );
@@ -183,7 +184,10 @@ export default function TagDropdown({
   function toggleDropdown() {
     if (dropdown === false) {
       setDropdown(true);
-      setMatchedTags(userTags ? [...userTags] : []);
+      const userTagNames = userTags
+        ? userTags.map((userTag) => userTag.name)
+        : [];
+      setMatchedTags(userTagNames);
     } else if (dropdown === true) {
       closeDropdown();
     }
@@ -203,9 +207,15 @@ export default function TagDropdown({
       .slice(0, MAX_TAG_LENGTH);
     tagSearchRef.current.value = searchValue;
     const regex = new RegExp(searchValue, "i");
-    const newMatchedTags = userTags.filter((userTag) =>
-      userTag.name.match(regex),
-    );
+    const newMatchedTags = userTags.reduce(function filterAndGetName(
+      result,
+      userTag,
+    ) {
+      if (userTag.name.match(regex)) {
+        result.push(userTag.name);
+      }
+      return result;
+    }, []);
     setMatchedTags(newMatchedTags);
   }
 
@@ -220,7 +230,10 @@ export default function TagDropdown({
     updatedEntryTags.sort();
     setEntryTags(updatedEntryTags);
     tagSearchRef.current.value = "";
-    setMatchedTags(userTags ? [...userTags] : []);
+    const userTagNames = userTags
+      ? userTags.map((userTag) => userTag.name)
+      : [];
+    setMatchedTags(userTagNames);
   }
 
   function removeTag(e) {
@@ -298,9 +311,9 @@ export default function TagDropdown({
                         type="text"
                       ></input>
                     </div>
-                    {matchedTags.length === 0 &&
-                    tagSearchRef.current &&
+                    {tagSearchRef.current &&
                     tagSearchRef.current.value &&
+                    !matchedTags.includes(tagSearchRef.current.value) &&
                     !newTags.includes(tagSearchRef.current.value) ? (
                       <button
                         aria-live="polite"
@@ -447,20 +460,20 @@ export default function TagDropdown({
                             return (
                               <li
                                 dropdown={dropdownId.current}
-                                key={matchedTag.name}
+                                key={matchedTag}
                               >
                                 <label
                                   className={styles.checkboxItem}
                                   dropdown={dropdownId.current}
-                                  htmlFor={matchedTag.name}
+                                  htmlFor={matchedTag}
                                 >
                                   <input
                                     className={styles.hiddenCheckbox}
                                     dropdown={dropdownId.current}
-                                    id={matchedTag.name}
+                                    id={matchedTag}
                                     onChange={addSelectedTag}
                                     type="checkbox"
-                                    value={matchedTag.name}
+                                    value={matchedTag}
                                   />
                                   <div className={styles.checkboxIcon}>
                                     <Icon
@@ -469,7 +482,7 @@ export default function TagDropdown({
                                       imageName="unchecked-icon"
                                     />
                                   </div>
-                                  {matchedTag.name}
+                                  {matchedTag}
                                 </label>
                               </li>
                             );
