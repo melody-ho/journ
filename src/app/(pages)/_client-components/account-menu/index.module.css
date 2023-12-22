@@ -36,7 +36,7 @@
 .link,
 .menuButton {
   color: rgb(var(--high-contrast-rgb));
-  font-size: max(18px, calc(18px + 0.5vw));
+  font-size: calc(18px + 0.5vw);
   margin-left: 1vw;
   margin-top: 2em;
 }
@@ -80,6 +80,11 @@
 }
 
 @media (min-width: 1000px) {
+  .layerTop {
+    position: relative;
+    z-index: 1;
+  }
+
   .component {
     animation: initial;
     border-radius: 0.5em;
@@ -101,7 +106,7 @@
   .item,
   .link,
   .menuButton {
-    font-size: max(10px, calc(10px + 0.75vw));
+    font-size: calc(10px + 0.75vw);
     margin: 0px;
   }
 

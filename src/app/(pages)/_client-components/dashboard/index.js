@@ -112,7 +112,7 @@ export default function Dashboard({ user, userTags }) {
             </div>
           </button>
           <div
-            className={styles.desktopOnly}
+            className={`${styles.accountMenu} ${styles.desktopOnly}`}
             hidden={!accountMenu}
             onClick={preventClose}
             role="menu"
@@ -126,7 +126,7 @@ export default function Dashboard({ user, userTags }) {
           </div>
         </div>
       </header>
-      <main className={styles.main} inert={accountMenu ? "" : null}>
+      <aside className={styles.aside}>
         <menu className={styles.entriesMenu} role="menu">
           <li>
             <button
@@ -198,6 +198,8 @@ export default function Dashboard({ user, userTags }) {
             </div>
           </dialog>
         ) : null}
+      </aside>
+      <main className={styles.main} inert={accountMenu ? "" : null}>
         <section className={styles.entries}>
           <FilteredEntries
             selectedEndDate={selectedEndDate}
@@ -209,8 +211,8 @@ export default function Dashboard({ user, userTags }) {
           />
         </section>
       </main>
-      <div
-        className={styles.mobileOnly}
+      <aside
+        className={`${styles.accountMenu} ${styles.mobileOnly}`}
         hidden={!accountMenu}
         onClick={preventClose}
         role="menu"
@@ -221,7 +223,7 @@ export default function Dashboard({ user, userTags }) {
             close={closeAccountMenu}
           />
         ) : null}
-      </div>
+      </aside>
     </div>
   );
 }

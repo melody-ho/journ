@@ -9,7 +9,9 @@ import ThemedImage from "@/helper-components/themed-image";
 export default function AccountMenu({ animateOut, close }) {
   return (
     <div
-      className={`${styles.growDown} ${animateOut ? styles.shrinkUp : null}`}
+      className={`${styles.layerTop} ${styles.growDown} ${
+        animateOut ? styles.shrinkUp : null
+      }`}
     >
       <div
         className={`${styles.component} ${styles.slideIn} ${

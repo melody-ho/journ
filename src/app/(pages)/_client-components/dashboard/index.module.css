@@ -1,40 +1,58 @@
 .page {
   display: grid;
-  grid-template: 2fr 3fr 24fr 2fr / 1fr 12fr 1fr;
+  grid-template: 120px auto 1fr 40px / 1fr 12fr 1fr;
   min-height: 100vh;
-  overflow-x: clip;
-  position: relative;
-  width: max(280px, 100%);
+  width: max(360px, 100%);
+}
+
+.header,
+.aside {
+  background-color: rgb(var(--background-rgb));
+  position: -webkit-sticky;
+  position: sticky;
 }
 
 .header {
-  align-items: center;
+  align-items: flex-end;
   border-bottom: 0.05em solid rgb(var(--foreground-rgb));
   display: flex;
-  grid-area: 2 / 2 / 3 / 3;
+  grid-area: 1 / 2 / 2 / 3;
   justify-content: space-between;
-  padding-bottom: 2vh;
+  padding: 40px 0 20px 0;
+  top: 0;
+  z-index: 2;
+}
+
+.aside {
+  grid-area: 2 / 2 / 3 / 3;
+  top: 120px;
+  z-index: 1;
 }
 
 .main {
   grid-area: 3 / 2 / 4 / 3;
 }
 
-.headerLeft {
-  display: flex;
-  gap: 1em;
+.headerLeft,
+.heading {
+  font-size: calc(15px + 2vw);
 }
 
-.logo {
-  height: max(6px, 10vw);
+.headerLeft {
+  display: flex;
+  gap: 0.5em;
+}
+
+.logo,
+.accountIcon {
+  height: max(40px, calc(20px + 3vw));
   position: relative;
-  width: max(6px, 10vw);
+  width: max(40px, calc(20px + 3vw));
 }
 
 .heading {
   align-self: flex-end;
   font-family: var(--font-bely-display);
-  font-size: max(12px, 6vw);
 }
 
 .accountBtn,
@@ -49,36 +67,34 @@
   cursor: pointer;
 }
 
-.accountIcon {
-  height: 10vw;
-  position: relative;
-  width: 10vw;
+.accountMenu {
+  z-index: 2;
 }
 
 .entriesMenu {
-  column-gap: 0.25em;
+  column-gap: 0.5em;
   display: flex;
-  margin: 1em 0;
+  font-size: calc(16px + 0.5vw);
+  margin: 0.5em 0;
 }
 
 .entriesMenuItem {
   align-items: center;
   color: rgb(var(--foreground-rgb));
-  column-gap: 0.25em;
+  column-gap: 0.15em;
+  font-size: calc(16px + 1vw);
   padding: 0;
   text-decoration: none;
 }
 
 .entriesMenuIcon {
-  height: 8vw;
+  height: 1.5em;
   position: relative;
-  width: 8vw;
+  width: 1.5em;
 }
 
 .entriesMenuLabel {
   font-family: var(--font-monarcha);
-  font-size: max(16px, calc(16px + 1vw));
-  margin-right: 0.5em;
 }
 
 .filtersMenuModal {
@@ -90,14 +106,14 @@
   padding: 0;
 }
 
-.filtersMenuModalWrapper {
-  padding: 1em;
-}
-
 .filtersMenuModal::backdrop {
   -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   background-color: rgba(var(--low-contrast-rgb), 0.6);
+}
+
+.filtersMenuModalWrapper {
+  padding: 1em;
 }
 
 .filtersMenuModalCloseBtn {
@@ -110,6 +126,12 @@
   width: 40px;
 }
 
+.mobileOnly {
+  height: 100%;
+  position: fixed;
+  width: 100%;
+}
+
 .desktopOnly {
   display: none;
 }
@@ -118,34 +140,22 @@
   .page {
     --account-icon-size: 5vw;
     --account-menu-size: 18vw;
-    grid-template: 1fr 2fr 12fr 1fr / 1fr 12fr 1fr;
+    grid-template-rows: 150px auto 1fr 50px;
   }
 
-  .headerLeft {
-    gap: 2em;
+  .aside {
+    top: 150px;
   }
 
-  .logo {
-    height: 5vw;
-    width: 5vw;
-  }
-
-  .heading {
-    font-size: max(32px, calc(32px + 1vw));
-  }
-
+  .logo,
   .accountIcon {
     height: var(--account-icon-size);
     width: var(--account-icon-size);
   }
 
   .entriesMenuItem {
-    column-gap: 0.2em;
-  }
-
-  .entriesMenuIcon {
-    height: 4vw;
-    width: 4vw;
+    column-gap: 0;
+    font-size: calc(22px + 1vw);
   }
 
   .entriesMenuLabel {
