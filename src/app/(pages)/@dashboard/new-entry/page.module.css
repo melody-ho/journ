@@ -23,7 +23,7 @@
 
 .heading {
   font-family: var(--font-bely-display);
-  font-size: max(26px, calc(26px + 1vw));
+  font-size: calc(26px + 1vw);
 }
 
 @media (min-width: 600px) {

@@ -22,7 +22,7 @@
   border-bottom: 0.075em solid rgba(var(--high-contrast-rgb), 0);
   color: rgba(var(--foreground-rgb), 0.6);
   font-family: var(--font-monarcha);
-  font-size: max(18px, calc(18px + 1vw));
+  font-size: calc(18px + 1vw);
   padding: 0 0.25em;
   transition: border-bottom-color 0.25s ease-in;
 }

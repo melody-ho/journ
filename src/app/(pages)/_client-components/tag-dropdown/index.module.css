@@ -20,14 +20,14 @@
   border-radius: 2px;
   color: rgb(var(--high-contrast-rgb));
   display: flex;
-  font-size: max(16px, calc(16px + 0.5vw));
+  font-size: calc(16px + 0.5vw);
   justify-content: space-between;
   padding: 0.35em 0.6em;
   width: max(200px, 15vw);
 }
 
 .countIndicator {
-  font-size: max(8px, calc(8px + 0.5vw));
+  font-size: calc(8px + 0.5vw);
   font-weight: 200;
 }
 
@@ -47,7 +47,7 @@
   background-color: rgba(var(--low-contrast-rgb), 0.8);
   border: 0.02em solid rgb(var(--high-contrast-rgb));
   border-top: none;
-  font-size: max(10px, calc(10px + 0.5vw));
+  font-size: calc(10px + 0.5vw);
   max-height: 250px;
   overflow: auto;
   position: absolute;
@@ -100,7 +100,7 @@
   border: 0.025em solid rgb(var(--high-contrast-rgb));
   border-radius: 0.25em;
   color: rgb(var(--high-contrast-rgb));
-  font-size: max(10px, calc(10px + 0.5vw));
+  font-size: calc(10px + 0.5vw);
   margin-left: 0.25em;
   margin-top: 0.25em;
   padding: 0.5em;
@@ -111,7 +111,7 @@
 }
 
 .addNewSubLabel {
-  font-size: max(8px, calc(8px + 0.5vw));
+  font-size: calc(8px + 0.5vw);
   font-weight: 200;
 }
 
@@ -135,7 +135,7 @@
   border: none;
   border-radius: 0;
   color: rgb(var(--background-rgb));
-  font-size: max(10px, calc(10px + 0.5vw));
+  font-size: calc(10px + 0.5vw);
   padding: 0.25em;
   width: 100%;
 }
@@ -151,7 +151,7 @@
 
 .dropdownSectionLabel,
 .noneIndicator {
-  font-size: max(8px, calc(8px + 0.5vw));
+  font-size: calc(8px + 0.5vw);
   font-style: italic;
   font-weight: 200;
 }

@@ -9,7 +9,7 @@
   background-color: rgb(var(--low-contrast-rgb));
   border-radius: 0.2em;
   box-shadow: 0px 0px 5px 3px rgb(var(--medium-contrast-rgb));
-  font-size: max(12px, calc(12px + 0.5vw));
+  font-size: calc(12px + 0.5vw);
 }
 
 .entryModal::backdrop {
@@ -20,7 +20,7 @@
 
 .statusModal {
   background-color: transparent;
-  font-size: max(16px, calc(16px + 0.5vw));
+  font-size: calc(16px + 0.5vw);
 }
 
 .statusModal::backdrop {
@@ -181,7 +181,7 @@
   border: none;
   border-radius: 0.2em;
   color: rgb(var(--low-contrast-rgb));
-  font-size: max(10px, calc(10px + 0.5vw));
+  font-size: calc(10px + 0.5vw);
   font-weight: 600;
   margin-top: 2em;
   padding: 0.5em 1em;

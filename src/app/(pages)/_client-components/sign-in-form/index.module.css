@@ -14,7 +14,7 @@
   border-bottom: 0.1em solid rgb(var(--foreground-rgb));
   border-radius: 0;
   color: rgb(var(--high-contrast-rgb));
-  font-size: max(12px, calc(12px + 1vw));
+  font-size: calc(12px + 1vw);
   max-width: 350px;
   padding-left: 0;
   width: max(150px, 50vw);
@@ -25,14 +25,14 @@
 }
 
 .inputLabel {
-  font-size: max(10px, calc(10px + 1vw));
+  font-size: calc(10px + 1vw);
   font-style: italic;
   font-weight: 300;
 }
 
 .errorMessage {
   color: rgb(var(--high-contrast-rgb));
-  font-size: max(10px, calc(10px + 1vw));
+  font-size: calc(10px + 1vw);
   font-weight: 200;
   margin-bottom: 1em;
   margin-top: 0.25em;
@@ -47,7 +47,7 @@
   border-radius: max(10px, 0.8vw);
   color: rgb(var(--background-rgb));
   font-family: var(--font-monarcha);
-  font-size: max(14px, calc(14px + 1vw));
+  font-size: calc(14px + 1vw);
   font-weight: 600;
   width: max(120px, 50%);
 }
@@ -176,7 +176,7 @@
 .submitStatus {
   align-items: center;
   display: flex;
-  font-size: max(12px, calc(12px + 1vw));
+  font-size: calc(12px + 1vw);
   gap: 0.5em;
   margin-bottom: 1em;
   margin-top: 1em;
@@ -195,21 +195,21 @@
 
 @media (min-width: 1000px) and (min-aspect-ratio: 1) {
   .textInput {
-    font-size: max(10px, calc(10px + 0.5vw));
+    font-size: calc(10px + 0.5vw);
     width: max(150px, 18vw);
   }
 
   .inputLabel {
-    font-size: max(8px, calc(8px + 0.5vw));
+    font-size: calc(8px + 0.5vw);
   }
 
   .errorMessage {
-    font-size: max(8px, calc(8px + 0.5vw));
+    font-size: calc(8px + 0.5vw);
   }
 
   .submitButton {
     aspect-ratio: 2.5;
-    font-size: max(12px, calc(12px + 0.5vw));
+    font-size: calc(12px + 0.5vw);
   }
 
   .loadingIndicator {
@@ -217,6 +217,6 @@
   }
 
   .submitStatus {
-    font-size: max(10px, calc(10px + 0.5vw));
+    font-size: calc(10px + 0.5vw);
   }
 }

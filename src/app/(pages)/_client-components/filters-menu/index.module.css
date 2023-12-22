@@ -1,5 +1,5 @@
 .component {
-  --input-font-size: max(14px, calc(14px + 0.5vw));
+  --input-font-size: calc(14px + 0.5vw);
   align-items: flex-start;
   display: flex;
   flex-direction: column;
@@ -9,7 +9,7 @@
 
 .mainHeading {
   font-family: var(--font-bely-display);
-  font-size: max(26px, calc(26px + 0.5vw));
+  font-size: calc(26px + 0.5vw);
 }
 
 .clearBtn,
@@ -23,7 +23,7 @@
   border: 0.1em solid rgb(var(--high-contrast-rgb));
   border-radius: 0.2em;
   color: rgb(var(--high-contrast-rgb));
-  font-size: max(16px, calc(16px + 0.5vw));
+  font-size: calc(16px + 0.5vw);
   font-style: italic;
   margin-top: 1.5em;
   padding: 0.25em 0.5em;
@@ -43,7 +43,7 @@
 
 .fieldsetHeading {
   font-family: var(--font-monarcha);
-  font-size: max(20px, calc(20px + 0.5vw));
+  font-size: calc(20px + 0.5vw);
   font-weight: 600;
 }
 
@@ -115,7 +115,7 @@
 .tagsSection,
 .tagsSectionToggle,
 .tagsSectionItems {
-  font-size: max(12px, calc(12px + 0.5vw));
+  font-size: calc(12px + 0.5vw);
 }
 
 .tagsSection {
@@ -203,7 +203,7 @@
   border-radius: 0.25em;
   color: rgb(var(--background-rgb));
   font-family: var(--font-monarcha);
-  font-size: max(18px, calc(18px + 0.5vw));
+  font-size: calc(18px + 0.5vw);
   font-weight: 600;
   margin-top: 2em;
   min-width: max-content;
@@ -212,7 +212,7 @@
 
 @media (min-width: 500px) {
   .mainHeading {
-    font-size: max(32px, calc(32px + 0.5vw));
+    font-size: calc(32px + 0.5vw);
   }
 
   .fieldset {
