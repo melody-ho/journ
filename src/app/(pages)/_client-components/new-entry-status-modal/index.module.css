@@ -28,8 +28,8 @@
 
 .loader {
   animation: rotate 1s linear infinite;
-  aspect-ratio: 1;
   background: rgb(var(--high-contrast-rgb));
+  height: 3em;
   margin: 1.5em;
   width: 3em;
 }
@@ -52,7 +52,7 @@
 .alertIconContainer,
 .errorIconContainer,
 .successIconContainer {
-  aspect-ratio: 1;
+  height: 5em;
   position: relative;
   width: 5em;
 }
