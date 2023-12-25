@@ -55,6 +55,9 @@ export default function EntryModal({
     },
     [entry, id],
   );
+  function retryGetData() {
+    setEntry(null);
+  }
 
   // close status modal after acknowledging delete error //
   function acknowledgeDeleteError() {
@@ -96,7 +99,13 @@ export default function EntryModal({
   return (
     <dialog
       className={`${
-        !entry || updating || deleting || deleted || updateError || emptyText
+        !entry ||
+        entry === "error" ||
+        updating ||
+        deleting ||
+        deleted ||
+        updateError ||
+        emptyText
           ? styles.statusModal
           : styles.entryModal
       }`}
@@ -182,7 +191,26 @@ export default function EntryModal({
             </button>
           </div>
         ) : null}
-        {entry ? (
+        {!entry ? (
+          <div className={styles.statusModalContent}>
+            <div className={styles.loadingSpinner}></div>
+            <p className={styles.statusMessage}>Loading...</p>
+          </div>
+        ) : entry === "error" ? (
+          <div className={styles.statusModalContent}>
+            <div className={styles.errorIconContainer}>
+              <ThemedImage alt="sad face icon" imageName="sad-icon" />
+            </div>
+            <p className={styles.statusMessage}>Failed to load.</p>
+            <button
+              className={styles.statusCta}
+              onClick={retryGetData}
+              type="button"
+            >
+              Retry
+            </button>
+          </div>
+        ) : (
           <div
             className={
               updating || deleting || deleted || updateError || emptyText
@@ -243,11 +271,6 @@ export default function EntryModal({
               updateFeed={updateFeed}
               userTags={userTags}
             />
-          </div>
-        ) : (
-          <div className={styles.statusModalContent}>
-            <div className={styles.loadingSpinner}></div>
-            <p className={styles.statusMessage}>Loading...</p>
           </div>
         )}
       </div>

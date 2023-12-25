@@ -6,22 +6,37 @@ import rds from "@/database/rds";
 
 /// main ///
 export async function getEntryWithoutTags(id) {
-  const entry = await rds.models.Entry.findByPk(id, { raw: true });
-  if (entry.type === "image" || entry.type === "video") {
-    const key = `${entry.userId}/${entry.type}s/${entry.id}`;
-    entry.srcUrl = await getS3Url(key);
+  try {
+    const entry = await rds.models.Entry.findByPk(id, { raw: true });
+    if (entry.type === "image" || entry.type === "video") {
+      const key = `${entry.userId}/${entry.type}s/${entry.id}`;
+      const srcUrl = await getS3Url(key);
+      if (srcUrl === "error") {
+        return "error";
+      }
+      entry.srcUrl = srcUrl;
+    }
+    return entry;
+  } catch {
+    return "error";
   }
-  return entry;
 }
 
 export async function getEntryWithTags(id) {
-  const entry = await getEntryWithoutTags(id);
-  const tagDataList = await rds.models.EntryTag.findAll({
-    where: { entryId: id },
-    attributes: [],
-    include: { model: rds.models.Tag, attributes: ["name"] },
-    raw: true,
-  });
-  entry.tags = tagDataList.map((tagData) => tagData["Tag.name"]).sort();
-  return entry;
+  try {
+    const entry = await getEntryWithoutTags(id);
+    if (entry === "error") {
+      return "error";
+    }
+    const tagDataList = await rds.models.EntryTag.findAll({
+      where: { entryId: id },
+      attributes: [],
+      include: { model: rds.models.Tag, attributes: ["name"] },
+      raw: true,
+    });
+    entry.tags = tagDataList.map((tagData) => tagData["Tag.name"]).sort();
+    return entry;
+  } catch {
+    return "error";
+  }
 }

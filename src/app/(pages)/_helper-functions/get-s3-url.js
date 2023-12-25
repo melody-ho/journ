@@ -13,6 +13,6 @@ export default async function getS3Url(key) {
   try {
     return await getSignedUrl(s3, command, { expiresIn: URL_VALID_TIME });
   } catch (error) {
-    // TO DO: error handling //
+    return "error";
   }
 }

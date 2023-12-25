@@ -68,6 +68,6 @@ export default async function getEntries(
     });
     return entries;
   } catch (error) {
-    // TO DO: error handling //
+    return "error";
   }
 }

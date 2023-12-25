@@ -5,27 +5,37 @@
   grid-template-columns: repeat(2, 1fr);
 }
 
-.entryBtn {
-  background-color: transparent;
-  border: none;
+.entryBtn,
+.errorContainer {
   display: grid;
-  grid-area: auto / auto / span 1 / span 1;
-  overflow: clip;
-  padding: 0;
-}
-
-.large.entryBtn {
-  grid-area: auto / auto / span 2 / span 2;
 }
 
 .entryBtn::before,
-.entry {
+.errorContainer::before {
+  content: "";
+  padding-bottom: 100%;
+}
+
+.entryBtn::before,
+.errorContainer::before,
+.entry,
+.error {
   grid-area: 1 / 1 / 2 / 2;
 }
 
-.entryBtn::before {
-  content: "";
-  padding-bottom: 100%;
+.small {
+  grid-area: auto / auto / span 1 / span 1;
+}
+
+.large {
+  grid-area: auto / auto / span 2 / span 2;
+}
+
+.entryBtn {
+  background-color: transparent;
+  border: none;
+  overflow: clip;
+  padding: 0;
 }
 
 .entry {
@@ -122,6 +132,45 @@
   object-fit: cover;
 }
 
+.error {
+  align-items: center;
+  background-color: rgb(var(--low-contrast-rgb));
+  border-radius: 0.2em;
+  display: flex;
+  flex-direction: column;
+  font-size: calc(12px + 1vw);
+  gap: 1.5em;
+  justify-content: center;
+}
+
+.large .error {
+  font-size: calc(16px + 1vw);
+}
+
+.retryButton {
+  align-items: center;
+  background-color: transparent;
+  border: 0.15em solid rgb(var(--foreground-rgb));
+  border-radius: 0.2em;
+  color: rgb(var(--foreground-rgb));
+  display: flex;
+  font-family: var(--font-muli);
+  font-size: calc(10px + 1vw);
+  font-weight: 600;
+  gap: 0.5em;
+  padding: 0.35em 0.75em;
+}
+
+.large .retryButton {
+  font-size: calc(12px + 1vw);
+}
+
+.retryIcon {
+  height: 1.5em;
+  position: relative;
+  width: 1.5em;
+}
+
 @media (min-width: 800px) {
   .component {
     gap: 2vw;
@@ -144,6 +193,22 @@
   .large .imgEntryCaptionBox,
   .large .videoEntryCaptionBox {
     font-size: calc(10px + 1vw);
+  }
+
+  .error {
+    font-size: calc(12px + 0.5vw);
+  }
+
+  .large .error {
+    font-size: calc(18px + 0.5vw);
+  }
+
+  .retryButton {
+    font-size: calc(10px + 0.5vw);
+  }
+
+  .large .retryButton {
+    font-size: calc(12px + 0.5vw);
   }
 }
 
@@ -169,5 +234,21 @@
   .large .imgEntryCaptionBox,
   .large .videoEntryCaptionBox {
     font-size: calc(8px + 0.5vw);
+  }
+
+  .error {
+    font-size: calc(12px + 0.2vw);
+  }
+
+  .large .error {
+    font-size: calc(18px + 0.2vw);
+  }
+
+  .retryButton {
+    font-size: calc(10px + 0.2vw);
+  }
+
+  .large .retryButton {
+    font-size: calc(12px + 0.2vw);
   }
 }

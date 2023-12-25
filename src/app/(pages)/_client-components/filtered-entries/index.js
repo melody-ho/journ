@@ -48,6 +48,7 @@ export default function FilteredEntries({
   const [entryModal, setEntryModal] = useState(null);
   const [entryToUpdate, setEntryToUpdate] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingError, setLoadingError] = useState(false);
   const [page, setPage] = useState(1);
   const [reachEnd, setReachEnd] = useState(false);
   // refs
@@ -81,7 +82,9 @@ export default function FilteredEntries({
               selectedTags,
               page,
             );
-            if (nextEntries.length === 0) {
+            if (nextEntries === "error") {
+              setLoadingError(true);
+            } else if (nextEntries.length === 0) {
               setReachEnd(true);
             } else {
               const entriesToAdd = nextEntries.map((nextEntry) => {
@@ -106,6 +109,7 @@ export default function FilteredEntries({
     },
     [
       entries,
+      loadingError,
       observerTargetRef,
       page,
       selectedEndDate,
@@ -115,6 +119,11 @@ export default function FilteredEntries({
       userId,
     ],
   );
+
+  // retry retrieving next entries //
+  function retryGetEntries() {
+    setLoadingError(false);
+  }
 
   // render entry modal when entry is clicked //
   function renderEntryModal(id) {
@@ -131,13 +140,23 @@ export default function FilteredEntries({
     router.refresh();
     setEntryToUpdate(entryId);
   }
+  function retryUpdate(entryId) {
+    setEntryToUpdate(entryId);
+  }
   useEffect(
     function updateEntries() {
       async function updateEntry() {
         const updatedEntry = await getEntryWithoutTags(entryToUpdate);
         const newEntries = entries.map((entry) => {
           if (entry.id === entryToUpdate) {
-            return updatedEntry;
+            if (updatedEntry === "error") {
+              return {
+                id: entryToUpdate,
+                layoutSize: entry.layoutSize,
+                error: true,
+              };
+            }
+            return { ...updatedEntry, layoutSize: entry.layoutSize };
           } else {
             return entry;
           }
@@ -147,7 +166,7 @@ export default function FilteredEntries({
       }
       if (entryToUpdate) updateEntry();
     },
-    [entries, entryToUpdate, router],
+    [entries, entryToUpdate],
   );
 
   // remove entry in feed and update tags in filters menu when deleted //
@@ -161,7 +180,30 @@ export default function FilteredEntries({
     <>
       <section className={styles.component}>
         {entries.map((entry) => {
-          return (
+          return entry.error || entry.srcUrl === "error" ? (
+            <div
+              className={` ${styles.errorContainer}
+                ${entry.layoutSize === "small" ? styles.small : styles.large}
+              `}
+              key={entry.id}
+            >
+              <div className={styles.error}>
+                <p>Failed to load.</p>
+                <button
+                  className={styles.retryButton}
+                  onClick={() => {
+                    retryUpdate(entry.id);
+                  }}
+                  type="button"
+                >
+                  Retry
+                  <div className={styles.retryIcon}>
+                    <ThemedImage alt="retry icon" imageName="retry-icon" />
+                  </div>
+                </button>
+              </div>
+            </div>
+          ) : (
             <button
               aria-haspopup="dialog"
               className={`${styles.entryBtn} ${
@@ -237,6 +279,13 @@ export default function FilteredEntries({
       {loading ? (
         <div role="status">
           <p>loading...</p>
+        </div>
+      ) : loadingError ? (
+        <div role="status">
+          <p>failed to load</p>
+          <button onClick={retryGetEntries} type="button">
+            retry
+          </button>
         </div>
       ) : reachEnd ? (
         <div role="status">
