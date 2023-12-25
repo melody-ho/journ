@@ -11,6 +11,40 @@ import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+/// private ///
+// max image dimension allowed //
+const MAX_IMAGE_SIZE = 1920;
+
+// resize images with at least one dimension larger than max allowed //
+function resizeImage(fileURL, fileIndex) {
+  return new Promise((resolve) => {
+    const image = document.createElement("img");
+    image.addEventListener("load", () => {
+      const canvas = document.createElement("canvas");
+      let width = image.width;
+      let height = image.height;
+      if (width > height) {
+        if (width > MAX_IMAGE_SIZE) {
+          height *= MAX_IMAGE_SIZE / width;
+          width = MAX_IMAGE_SIZE;
+        }
+      } else {
+        if (height > MAX_IMAGE_SIZE) {
+          width *= MAX_IMAGE_SIZE / height;
+          height = MAX_IMAGE_SIZE;
+        }
+      }
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext("2d").drawImage(image, 0, 0, width, height);
+      canvas.toBlob((b) => {
+        resolve(new File([b], `${fileIndex}.png`, { type: "image/png" }));
+      }, "image/png");
+    });
+    image.src = fileURL;
+  });
+}
+
 /// main component ///
 export default function NewImageVideoEntry({ user, userTags }) {
   // initialize router //
@@ -229,7 +263,7 @@ export default function NewImageVideoEntry({ user, userTags }) {
   );
 
   // update lists of images and videos when files are added //
-  function addNewFiles(files) {
+  async function addNewFiles(files) {
     for (let i = 0; i < files.length; i += 1) {
       const file = files[i];
       if (file.type.startsWith("image/") || file.type.startsWith("video/")) {
@@ -237,8 +271,10 @@ export default function NewImageVideoEntry({ user, userTags }) {
         file.index = uuidv4();
         file.source = url;
         if (file.type.startsWith("image/")) {
+          file.resizedFile = await resizeImage(file.source, file.index);
           setImages((images) => [...images, file]);
         } else {
+          file.resizedFile = file;
           setVideos((videos) => [...videos, file]);
         }
       }
@@ -289,7 +325,7 @@ export default function NewImageVideoEntry({ user, userTags }) {
     const files = [...images, ...videos];
     files.forEach((file) => {
       entriesData.indexes.push(file.index);
-      entriesData.files[file.index] = file;
+      entriesData.files[file.index] = file.resizedFile;
     });
     captionRefs.current.forEach((ref, index) => {
       entriesData.captions[index] = ref.value;
