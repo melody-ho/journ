@@ -1,4 +1,4 @@
-.component {
+.filteredEntries {
   display: grid;
   gap: max(15px, 2.5vw);
   grid-auto-flow: dense;
@@ -171,8 +171,26 @@
   width: 1.5em;
 }
 
+.hiddenPage {
+  display: none;
+}
+
+.shownPage {
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
 @media (min-width: 800px) {
-  .component {
+  .filteredEntries {
     gap: 2vw;
     grid-template-columns: repeat(4, 1fr);
   }
@@ -213,7 +231,7 @@
 }
 
 @media (min-width: 1600px) {
-  .component {
+  .filteredEntries {
     gap: 1vw;
     grid-template-columns: repeat(8, 1fr);
   }

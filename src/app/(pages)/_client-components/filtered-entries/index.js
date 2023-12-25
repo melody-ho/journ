@@ -45,11 +45,13 @@ export default function FilteredEntries({
   // initialize states and refs //
   // states
   const [entries, setEntries] = useState([]);
+  const [entriesLoading, setEntriesLoading] = useState([]);
   const [entryModal, setEntryModal] = useState(null);
   const [entryToUpdate, setEntryToUpdate] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingError, setLoadingError] = useState(false);
   const [page, setPage] = useState(1);
+  const [pageLoading, setPageLoading] = useState(1);
   const [reachEnd, setReachEnd] = useState(false);
   // refs
   const observerTargetRef = useRef(null);
@@ -74,6 +76,7 @@ export default function FilteredEntries({
         async (targets) => {
           if (targets[0].isIntersecting) {
             setLoading(true);
+            setPageLoading(page);
             const nextEntries = await getEntries(
               userId,
               selectedStartDate,
@@ -84,18 +87,22 @@ export default function FilteredEntries({
             );
             if (nextEntries === "error") {
               setLoadingError(true);
+              setLoading(false);
             } else if (nextEntries.length === 0) {
               setReachEnd(true);
+              setLoading(false);
             } else {
               const entriesToAdd = nextEntries.map((nextEntry) => {
                 const entryToAdd = { ...nextEntry };
                 entryToAdd.layoutSize = getType();
+                entryToAdd.page = page;
+                entryToAdd.loaded = entryToAdd.type === "text";
                 return entryToAdd;
               });
               setEntries((entries) => [...entries, ...entriesToAdd]);
+              setEntriesLoading([...entriesToAdd]);
               setPage((prevPage) => prevPage + 1);
             }
-            setLoading(false);
           }
         },
         { threshold: 0 },
@@ -109,6 +116,7 @@ export default function FilteredEntries({
     },
     [
       entries,
+      loading,
       loadingError,
       observerTargetRef,
       page,
@@ -119,6 +127,33 @@ export default function FilteredEntries({
       userId,
     ],
   );
+
+  // check if all images are loaded //
+  function updateLoaded(id) {
+    // mark newly loaded entry
+    const newEntriesLoading = entriesLoading.map((entry) => {
+      if (entry.id === id) {
+        entry.loaded = true;
+      }
+      return entry;
+    });
+    // check if there are still unloaded entries
+    let allLoaded = true;
+    for (let i = 0; i < newEntriesLoading.length; i += 1) {
+      if (!newEntriesLoading[i].loaded) {
+        allLoaded = false;
+        break;
+      }
+    }
+    // respond to current load state
+    if (allLoaded) {
+      setLoading(false);
+      setPageLoading(null);
+      setEntriesLoading([]);
+    } else {
+      setEntriesLoading(newEntriesLoading);
+    }
+  }
 
   // retry retrieving next entries //
   function retryGetEntries() {
@@ -178,13 +213,17 @@ export default function FilteredEntries({
 
   return (
     <>
-      <section className={styles.component}>
+      <section className={styles.filteredEntries}>
         {entries.map((entry) => {
           return entry.error || entry.srcUrl === "error" ? (
             <div
               className={` ${styles.errorContainer}
                 ${entry.layoutSize === "small" ? styles.small : styles.large}
-              `}
+                ${
+                  entry.page === pageLoading
+                    ? styles.hiddenPage
+                    : styles.shownPage
+                }`}
               key={entry.id}
             >
               <div className={styles.error}>
@@ -206,8 +245,12 @@ export default function FilteredEntries({
           ) : (
             <button
               aria-haspopup="dialog"
-              className={`${styles.entryBtn} ${
-                entry.layoutSize === "small" ? styles.small : styles.large
+              className={`${styles.entryBtn}
+              ${entry.layoutSize === "small" ? styles.small : styles.large}
+              ${
+                entry.page === pageLoading
+                  ? styles.hiddenPage
+                  : styles.shownPage
               }`}
               key={entry.id}
               onClick={() => renderEntryModal(entry.id)}
@@ -236,6 +279,7 @@ export default function FilteredEntries({
                             : "The user did not provide a caption for this image."
                         }
                         fill={true}
+                        onLoad={() => updateLoaded(entry.id)}
                         priority={true}
                         sizes="(min-width: 1600px) 30vw, (min-width: 800px) 50vw, 100vw"
                         src={entry.srcUrl}
@@ -258,6 +302,7 @@ export default function FilteredEntries({
                         className={styles.videoEntryVideo}
                         loop
                         muted
+                        onCanPlay={() => updateLoaded(entry.id)}
                         playsInline
                         src={entry.srcUrl}
                       ></video>
