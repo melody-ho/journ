@@ -11,6 +11,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 /// Private ///
+// maximum image dimension allowed for uploads //
+const MAX_IMAGE_SIZE = "1920px";
+
 // generate individual entry layout sizes //
 const getType = (function getTypeFactory() {
   let _remainingSmall = false;
@@ -287,7 +290,7 @@ export default function FilteredEntries({
                         onError={() => updateLoaded(entry.id)}
                         onLoad={() => updateLoaded(entry.id)}
                         priority={true}
-                        sizes="(min-width: 1600px) 30vw, (min-width: 800px) 50vw, 100vw"
+                        sizes={MAX_IMAGE_SIZE}
                         src={entry.srcUrl}
                         style={{ objectFit: "cover" }}
                       />

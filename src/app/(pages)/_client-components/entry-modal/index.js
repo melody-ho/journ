@@ -8,6 +8,10 @@ import styles from "./index.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 import { useEffect, useRef, useState } from "react";
 
+/// Private ///
+// maximum image dimension allowed for uploads //
+const MAX_IMAGE_SIZE = "1920px";
+
 /// main component ///
 export default function EntryModal({
   id,
@@ -241,6 +245,7 @@ export default function EntryModal({
                     }
                     className={styles.image}
                     fill={true}
+                    sizes={MAX_IMAGE_SIZE}
                     src={entry.srcUrl}
                   />
                 </div>
