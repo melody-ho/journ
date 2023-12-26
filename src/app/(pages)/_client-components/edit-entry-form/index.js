@@ -16,6 +16,7 @@ export default function EditEntryForm({
   setDeleting,
   setEmptyText,
   setEntry,
+  setLoading,
   setUpdateError,
   setUpdating,
   updateFeed,
@@ -60,6 +61,7 @@ export default function EditEntryForm({
     if (updateStatus === "success") {
       updateFeed(entry.id);
       setEntry(null);
+      setLoading(true);
     } else if (updateStatus === "empty") {
       setEmptyText(true);
     } else {

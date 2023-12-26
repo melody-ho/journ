@@ -26,6 +26,7 @@ export default function EntryModal({
   const [deleting, setDeleting] = useState(false);
   const [emptyText, setEmptyText] = useState(false);
   const [entry, setEntry] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [updateError, setUpdateError] = useState(false);
   const [updating, setUpdating] = useState(false);
   // refs
@@ -47,20 +48,22 @@ export default function EntryModal({
     function getEntryData() {
       async function getData() {
         const data = await getEntryWithTags(id);
+        if (data === "error" || data.type === "text") setLoading(false);
         setEntry(data);
       }
       if (!entry) {
-        try {
-          getData();
-        } catch (error) {
-          // TO DO: error handling //
-        }
+        getData();
       }
     },
     [entry, id],
   );
   function retryGetData() {
     setEntry(null);
+  }
+
+  // remove loading state when image/video is rendered or an error occurs //
+  function handleLoaded() {
+    setLoading(false);
   }
 
   // close status modal after acknowledging delete error //
@@ -104,6 +107,7 @@ export default function EntryModal({
     <dialog
       className={`${
         !entry ||
+        loading ||
         entry === "error" ||
         updating ||
         deleting ||
@@ -195,7 +199,7 @@ export default function EntryModal({
             </button>
           </div>
         ) : null}
-        {!entry ? (
+        {!entry || loading ? (
           <div className={styles.statusModalContent}>
             <div className={styles.loadingSpinner}></div>
             <p className={styles.statusMessage}>Loading...</p>
@@ -214,10 +218,16 @@ export default function EntryModal({
               Retry
             </button>
           </div>
-        ) : (
+        ) : null}
+        {entry && entry !== "error" ? (
           <div
             className={
-              updating || deleting || deleted || updateError || emptyText
+              loading ||
+              updating ||
+              deleting ||
+              deleted ||
+              updateError ||
+              emptyText
                 ? styles.hidden
                 : null
             }
@@ -245,6 +255,9 @@ export default function EntryModal({
                     }
                     className={styles.image}
                     fill={true}
+                    onError={handleLoaded}
+                    onLoad={handleLoaded}
+                    priority={true}
                     sizes={MAX_IMAGE_SIZE}
                     src={entry.srcUrl}
                   />
@@ -259,6 +272,8 @@ export default function EntryModal({
                     controls
                     loop
                     muted
+                    onCanPlay={handleLoaded}
+                    onError={handleLoaded}
                     src={entry.srcUrl}
                   ></video>
                 </div>
@@ -271,13 +286,14 @@ export default function EntryModal({
               setDeleting={setDeleting}
               setEmptyText={setEmptyText}
               setEntry={setEntry}
+              setLoading={setLoading}
               setUpdateError={setUpdateError}
               setUpdating={setUpdating}
               updateFeed={updateFeed}
               userTags={userTags}
             />
           </div>
-        )}
+        ) : null}
       </div>
     </dialog>
   );
