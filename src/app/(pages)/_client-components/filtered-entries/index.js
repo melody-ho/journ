@@ -131,7 +131,7 @@ export default function FilteredEntries({
     ],
   );
 
-  // check if all images are loaded //
+  // remove next batch loading state if all images/videos are loaded //
   function updateLoaded(id) {
     // mark newly loaded entry
     const newEntriesLoading = entriesLoading.map((entry) => {
@@ -174,17 +174,25 @@ export default function FilteredEntries({
   }
 
   // update entry in feed and tags in filters menu when edited //
+  // handle main update
   function updateFeed(entryId) {
     router.refresh();
     setEntryToUpdate(entryId);
   }
+  // handle retry on error
   function retryUpdate(entryId) {
     setEntryToUpdate(entryId);
+  }
+  // remove loading state for image/video entry being updated when loading complete or loading error
+  function markUpdated() {
+    setEntryToUpdate(null);
   }
   useEffect(
     function updateEntries() {
       async function updateEntry() {
+        // retrieve entry to update
         const updatedEntry = await getEntryWithoutTags(entryToUpdate);
+        // update in list of entries
         const newEntries = entries.map((entry) => {
           if (entry.id === entryToUpdate) {
             if (updatedEntry === "error") {
@@ -200,7 +208,14 @@ export default function FilteredEntries({
           }
         });
         setEntries(newEntries);
-        setEntryToUpdate(null);
+        // remove loading state for text entries or entries that failed to retrieve
+        if (
+          updatedEntry.type === "text" ||
+          updatedEntry === "error" ||
+          updatedEntry.srcUrl === "error"
+        ) {
+          setEntryToUpdate(null);
+        }
       }
       if (entryToUpdate) updateEntry();
     },
@@ -212,6 +227,15 @@ export default function FilteredEntries({
     router.refresh();
     const newEntries = entries.filter((entry) => entry.id !== entryId);
     setEntries(newEntries);
+  }
+
+  // handle image/video loading complete and loading error //
+  function handleLoaded(entryId) {
+    if (entryToUpdate === null) {
+      updateLoaded(entryId);
+    } else if (entryId === entryToUpdate) {
+      markUpdated();
+    }
   }
 
   return (
@@ -264,7 +288,18 @@ export default function FilteredEntries({
               onClick={() => renderEntryModal(entry.id)}
               type="button"
             >
-              <div className={styles.entry}>
+              {entry.id === entryToUpdate ? (
+                <div className={styles.loading}>
+                  <div className={styles.shimmer}></div>
+                </div>
+              ) : null}
+              <div
+                className={`${styles.entry} ${
+                  entry.id === entryToUpdate
+                    ? styles.hiddenEntry
+                    : styles.shownEntry
+                }`}
+              >
                 {entry.type === "text" ? (
                   <div className={styles.textEntryBox}>
                     <div className={styles.textEntryIcon}>
@@ -287,8 +322,8 @@ export default function FilteredEntries({
                             : "The user did not provide a caption for this image."
                         }
                         fill={true}
-                        onError={() => updateLoaded(entry.id)}
-                        onLoad={() => updateLoaded(entry.id)}
+                        onError={() => handleLoaded(entry.id)}
+                        onLoad={() => handleLoaded(entry.id)}
                         priority={true}
                         sizes={MAX_IMAGE_SIZE}
                         src={entry.srcUrl}
@@ -311,8 +346,8 @@ export default function FilteredEntries({
                         className={styles.videoEntryVideo}
                         loop
                         muted
-                        onCanPlay={() => updateLoaded(entry.id)}
-                        onError={() => updateLoaded(entry.id)}
+                        onCanPlay={() => handleLoaded(entry.id)}
+                        onError={() => handleLoaded(entry.id)}
                         playsInline
                         src={entry.srcUrl}
                       ></video>

@@ -116,6 +116,33 @@
   object-fit: cover;
 }
 
+.loading {
+  aspect-ratio: 1;
+  background-color: rgb(var(--low-contrast-rgb));
+}
+
+.shimmer {
+  animation: shimmer 2.5s linear infinite;
+  background: linear-gradient(
+    to right bottom,
+    transparent 25%,
+    rgb(var(--medium-contrast-rgb)) 50%,
+    transparent 75%
+  );
+  background-repeat: no-repeat;
+  background-size: 200% 200%;
+  height: 100%;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 200%;
+  }
+  100% {
+    background-position: -200% -200%;
+  }
+}
+
 .error {
   align-items: center;
   background-color: rgb(var(--low-contrast-rgb));
@@ -155,11 +182,13 @@
   width: 1.5em;
 }
 
-.hiddenPage {
+.hiddenPage,
+.hiddenEntry {
   display: none;
 }
 
-.shownPage {
+.shownPage,
+.shownEntry {
   animation: fadeIn 0.2s ease-in;
 }
 
