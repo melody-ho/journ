@@ -237,7 +237,12 @@ export default function FilteredEntries({
                 >
                   Retry
                   <div className={styles.retryIcon}>
-                    <ThemedImage alt="retry icon" imageName="retry-icon" />
+                    <ThemedImage
+                      alt="retry icon"
+                      imageName="retry-icon"
+                      onError={() => updateLoaded(entry.id)}
+                      onLoad={() => updateLoaded(entry.id)}
+                    />
                   </div>
                 </button>
               </div>
@@ -279,6 +284,7 @@ export default function FilteredEntries({
                             : "The user did not provide a caption for this image."
                         }
                         fill={true}
+                        onError={() => updateLoaded(entry.id)}
                         onLoad={() => updateLoaded(entry.id)}
                         priority={true}
                         sizes="(min-width: 1600px) 30vw, (min-width: 800px) 50vw, 100vw"
@@ -303,6 +309,7 @@ export default function FilteredEntries({
                         loop
                         muted
                         onCanPlay={() => updateLoaded(entry.id)}
+                        onError={() => updateLoaded(entry.id)}
                         playsInline
                         src={entry.srcUrl}
                       ></video>
