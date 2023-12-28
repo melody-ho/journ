@@ -1,4 +1,5 @@
 import Image from "next/image";
+import styles from "./index.module.css";
 
 export default function ThemedImage({
   alt,
@@ -14,12 +15,12 @@ export default function ThemedImage({
       />
       <Image
         alt={alt}
+        className={styles.imageComponent}
         fill="true"
         onError={onError}
         onLoad={onLoad}
         priority={true}
         src={`/${imageName}/light.svg`}
-        style={{ objectFit: "contain", objectPosition: "center" }}
       />
     </picture>
   );

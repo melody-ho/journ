@@ -314,20 +314,20 @@ export default function FilteredEntries({
                   </div>
                 ) : entry.type === "image" ? (
                   <>
-                    <div className={styles.imgEntryImage}>
+                    <div className={styles.imgEntryImageContainer}>
                       <Image
                         alt={
                           entry.content
                             ? entry.content
                             : "The user did not provide a caption for this image."
                         }
+                        className={styles.imgEntryImage}
                         fill={true}
                         onError={() => handleLoaded(entry.id)}
                         onLoad={() => handleLoaded(entry.id)}
                         priority={true}
                         sizes={MAX_IMAGE_SIZE}
                         src={entry.srcUrl}
-                        style={{ objectFit: "cover" }}
                       />
                     </div>
                     {entry.content ? (

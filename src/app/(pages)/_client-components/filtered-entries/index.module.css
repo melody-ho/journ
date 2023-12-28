@@ -71,9 +71,13 @@
   text-overflow: ellipsis;
 }
 
-.imgEntryImage {
+.imgEntryImageContainer {
   height: 100%;
   position: relative;
+}
+
+.imgEntryImage {
+  object-fit: cover;
 }
 
 .imgEntryCaptionBox,
