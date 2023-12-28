@@ -289,7 +289,7 @@ export default function FilteredEntries({
               type="button"
             >
               {entry.id === entryToUpdate ? (
-                <div className={styles.loading}>
+                <div className={styles.placeholder}>
                   <div className={styles.shimmer}></div>
                 </div>
               ) : null}
@@ -367,25 +367,37 @@ export default function FilteredEntries({
         })}
       </section>
       {loading ? (
-        <div role="status">
-          <p>loading...</p>
+        <div className={styles.loading} role="status">
+          <div className={styles.loader}></div>
         </div>
       ) : loadingError ? (
-        <div role="status">
-          <p>failed to load</p>
-          <button onClick={retryGetEntries} type="button">
+        <div className={styles.loadError} role="status">
+          <div className={styles.loadErrorMessage}>
+            <div className={styles.loadErrorIcon}>
+              <ThemedImage alt="error icon" imageName="sad-icon" />
+            </div>
+            <p className={styles.loadErrorText}>Could not load entries.</p>
+          </div>
+          <button
+            className={styles.loadErrorBtn}
+            onClick={retryGetEntries}
+            type="button"
+          >
             retry
+            <div className={styles.loadErrorBtnIcon}>
+              <ThemedImage alt="retry icon" imageName="retry-icon" />
+            </div>
           </button>
         </div>
       ) : reachEnd ? (
-        <div role="status">
-          <p>end</p>
+        <div className={styles.endOfFeed} role="status">
+          <p className={styles.endOfFeedText}>end</p>
         </div>
       ) : (
         <div
           aria-hidden="true"
+          className={styles.intersectionObserver}
           ref={observerTargetRef}
-          style={{ height: 50 }}
         ></div>
       )}
       {entryModal ? (
