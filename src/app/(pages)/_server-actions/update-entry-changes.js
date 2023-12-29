@@ -1,6 +1,7 @@
 "use server";
 
 /// imports ///
+import { Op } from "sequelize";
 import rds from "@/database/rds";
 
 /// private ///
@@ -12,8 +13,8 @@ export default async function updateEntryChanges(formData) {
     const updateStatus = await rds.transaction(
       async function updateEntryInDatabase(t) {
         // get ids needed //
-        const entryId = formData.get("id");
         const userId = formData.get("userId");
+        const entryId = formData.get("id");
 
         // get entry //
         const entry = await rds.models.Entry.findByPk(entryId);
@@ -28,35 +29,56 @@ export default async function updateEntryChanges(formData) {
         await entry.save({ transaction: t });
 
         // update entry tags //
-        const tags = JSON.parse(formData.get("tags"));
-        // clean up tags
-        const entryTags = await rds.models.EntryTag.findAll({
-          where: { entryId },
-          raw: true,
-        });
-        for (const entryTag of entryTags) {
-          const tagId = entryTag.tagId;
-          const entryCounts = await rds.models.EntryTag.count({
+        // get data
+        const prevTags = JSON.parse(formData.get("prevTags"));
+        const newTags = JSON.parse(formData.get("newTags"));
+        // get entry tags removed/added
+        const tagsRemoved = prevTags.filter(
+          (prevTag) => !newTags.includes(prevTag),
+        );
+        const tagsAdded = newTags.filter(
+          (newTag) => !prevTags.includes(newTag),
+        );
+        // clean up tags removed
+        for (const tagRemoved of tagsRemoved) {
+          const tag = await rds.models.Tag.findOne({
+            attributes: ["id"],
+            where: { name: tagRemoved },
+            raw: true,
+          });
+          const tagId = tag.id;
+          const userEntries = await rds.models.Entry.findAll({
+            attributes: ["id"],
+            where: { userId },
+            raw: true,
+          });
+          const userEntriesIds = userEntries.map((userEntry) => userEntry.id);
+          const userEntryCounts = await rds.models.EntryTag.count({
+            where: { tagId, entryId: { [Op.in]: userEntriesIds } },
+          });
+          const userCounts = await rds.models.UserTag.count({
             where: { tagId },
           });
-          if (entryCounts === 1) {
+          if (userEntryCounts === 1) {
             await rds.models.UserTag.destroy({
-              where: { tagId },
+              where: { userId, tagId },
               transaction: t,
             });
-            await rds.models.Tag.destroy({
-              where: { id: tagId },
-              transaction: t,
-            });
+            if (userCounts === 1) {
+              await rds.models.Tag.destroy({
+                where: { id: tagId },
+                transaction: t,
+              });
+            }
           }
+          await rds.models.EntryTag.destroy({
+            where: { entryId, tagId },
+            transaction: t,
+          });
         }
-        await rds.models.EntryTag.destroy({
-          where: { entryId },
-          transaction: t,
-        });
-        // add tags
-        for (const tag of tags) {
-          const validatedTagName = tag
+        // add tags added
+        for (const tagAdded of tagsAdded) {
+          const validatedTagName = tagAdded
             .split(" ")
             .join("")
             .slice(0, MAX_TAG_LENGTH);
@@ -68,13 +90,10 @@ export default async function updateEntryChanges(formData) {
             where: { userId, tagId: tagData.id },
             transaction: t,
           });
-          await rds.models.EntryTag.findOrCreate({
-            where: {
-              entryId,
-              tagId: tagData.id,
-            },
-            transaction: t,
-          });
+          await rds.models.EntryTag.create(
+            { entryId, tagId: tagData.id },
+            { transaction: t },
+          );
         }
         return "success";
       },

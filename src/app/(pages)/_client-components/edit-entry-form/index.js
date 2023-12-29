@@ -54,9 +54,10 @@ export default function EditEntryForm({
     setUpdating(true);
     e.preventDefault();
     const formData = new FormData(formRef.current);
-    formData.append("id", entry.id);
     formData.append("userId", entry.userId);
-    formData.append("tags", JSON.stringify(tags));
+    formData.append("id", entry.id);
+    formData.append("prevTags", JSON.stringify(entry.tags));
+    formData.append("newTags", JSON.stringify(tags));
     const updateStatus = await updateEntryChanges(formData);
     if (updateStatus === "success") {
       updateFeed(entry.id);
@@ -71,11 +72,11 @@ export default function EditEntryForm({
   }
 
   // handle deleting entry //
-  async function handleDelete(id) {
+  async function handleDelete(userId, entryId) {
     setDeleting(true);
-    const deleteStatus = await deleteEntry(id);
+    const deleteStatus = await deleteEntry(userId, entryId);
     if (deleteStatus === "success") {
-      removeFromFeed(entry.id);
+      removeFromFeed(entryId);
       setDeleted("success");
     } else {
       setDeleted("fail");
@@ -154,7 +155,7 @@ export default function EditEntryForm({
             <div className={styles.deleteActions}>
               <button
                 className={`${styles.deleteBtn} ${styles.secondaryBtn}`}
-                onClick={() => handleDelete(entry.id)}
+                onClick={() => handleDelete(entry.userId, entry.id)}
                 type="button"
               >
                 delete entry
