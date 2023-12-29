@@ -72,6 +72,16 @@ export default function FilteredEntries({
   // configure intersection observer to retrieve next entries when they're in view //
   useEffect(
     function configureObserver() {
+      function checkLoaded(entries) {
+        let allLoaded = true;
+        for (let i = 0; i < entries.length; i += 1) {
+          if (!entries[i].loaded) {
+            allLoaded = false;
+            break;
+          }
+        }
+        return allLoaded;
+      }
       // get target
       const target = observerTargetRef.current;
       // create observer
@@ -103,7 +113,12 @@ export default function FilteredEntries({
                 return entryToAdd;
               });
               setEntries((entries) => [...entries, ...entriesToAdd]);
-              setEntriesLoading([...entriesToAdd]);
+              if (!checkLoaded(entriesToAdd)) {
+                setEntriesLoading([...entriesToAdd]);
+              } else {
+                setLoading(false);
+                setPageLoading(null);
+              }
               setPage((prevPage) => prevPage + 1);
             }
           }
