@@ -208,6 +208,8 @@
 
 .loading,
 .loadError,
+.noEntries,
+.noFilteredEntries,
 .endOfFeed {
   font-size: calc(10px + 1vw);
 }
@@ -273,10 +275,14 @@
   }
 }
 
-.loadError {
+.loadError,
+.noEntries {
   align-items: center;
   display: flex;
   flex-direction: column;
+}
+
+.loadError {
   gap: 0.5em;
 }
 
@@ -293,27 +299,47 @@
 }
 
 .loadErrorText,
+.noEntriesText,
+.noFilteredEntries,
 .endOfFeedText {
   font-style: italic;
   font-weight: 300;
 }
 
-.loadErrorBtn {
-  align-items: center;
-  background-color: transparent;
+.loadErrorBtn,
+.noEntriesBtn {
   border: 0.1em solid rgb(var(--foreground-rgb));
   border-radius: 0.2em;
   color: rgb(var(--foreground-rgb));
+  padding: 0.25em 0.75em;
+}
+
+.loadErrorBtn {
+  align-items: center;
+  background-color: transparent;
   display: flex;
   font-size: 1em;
   gap: 0.2em;
-  padding: 0.25em 0.75em;
 }
 
 .loadErrorBtnIcon {
   height: 1.2em;
   position: relative;
   width: 1.2em;
+}
+
+.noEntries {
+  gap: 1em;
+  margin-top: 1em;
+}
+
+.noEntriesBtn {
+  text-decoration: none;
+}
+
+.noFilteredEntries {
+  margin-top: 1em;
+  text-align: center;
 }
 
 .endOfFeed {
@@ -383,6 +409,8 @@
   }
 
   .loadError,
+  .noEntries,
+  .noFilteredEntries,
   .endOfFeed {
     font-size: calc(12px + 0.5vw);
   }

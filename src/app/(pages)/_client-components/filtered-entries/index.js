@@ -5,6 +5,7 @@ import EntryModal from "../entry-modal";
 import getEntries from "@/server-actions/get-entries";
 import { getEntryWithoutTags } from "@/server-actions/get-entry";
 import Image from "next/image";
+import Link from "next/link";
 import styles from "./index.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 import { useRouter } from "next/navigation";
@@ -53,6 +54,7 @@ export default function FilteredEntries({
   const [entryToUpdate, setEntryToUpdate] = useState(null);
   const [loading, setLoading] = useState(false);
   const [loadingError, setLoadingError] = useState(false);
+  const [noEntries, setNoEntries] = useState(false);
   const [page, setPage] = useState(1);
   const [pageLoading, setPageLoading] = useState(1);
   const [reachEnd, setReachEnd] = useState(false);
@@ -64,6 +66,7 @@ export default function FilteredEntries({
     function resetComponent() {
       setEntries([]);
       setPage(1);
+      setNoEntries(false);
       setReachEnd(false);
     },
     [selectedTags],
@@ -102,7 +105,11 @@ export default function FilteredEntries({
               setLoadingError(true);
               setLoading(false);
             } else if (nextEntries.length === 0) {
-              setReachEnd(true);
+              if (page === 1) {
+                setNoEntries(true);
+              } else {
+                setReachEnd(true);
+              }
               setLoading(false);
             } else {
               const entriesToAdd = nextEntries.map((nextEntry) => {
@@ -241,6 +248,9 @@ export default function FilteredEntries({
   function removeFromFeed(entryId) {
     router.refresh();
     const newEntries = entries.filter((entry) => entry.id !== entryId);
+    if (newEntries.length === 0) {
+      setNoEntries(true);
+    }
     setEntries(newEntries);
   }
 
@@ -404,6 +414,24 @@ export default function FilteredEntries({
             </div>
           </button>
         </div>
+      ) : noEntries ? (
+        !selectedStartDate &&
+        !selectedEndDate &&
+        selectedTypes.length === 0 &&
+        selectedTags.length === 0 ? (
+          <div className={styles.noEntries}>
+            <p className={styles.noEntriesText}>
+              You don&#39;t have any Journ entries yet.
+            </p>
+            <Link className={styles.noEntriesBtn} href="/new-entry">
+              Add entry
+            </Link>
+          </div>
+        ) : (
+          <p className={styles.noFilteredEntries}>
+            No entries matching current filters.
+          </p>
+        )
       ) : reachEnd ? (
         <div className={styles.endOfFeed} role="status">
           <p className={styles.endOfFeedText}>end</p>
