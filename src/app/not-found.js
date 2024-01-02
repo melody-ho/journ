@@ -9,7 +9,7 @@ export default function NotFound() {
         <ThemedImage alt="Journ logotype" imageName="logotype" />
       </header>
       <main className={styles.main}>
-        <p className={styles.text}>Oops! This page does not exist.</p>
+        <p className={styles.text}>Oops! This page is not available.</p>
         <Link className={styles.link} href="/">
           Back to home →
         </Link>
