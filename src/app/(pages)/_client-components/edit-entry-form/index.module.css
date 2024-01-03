@@ -164,6 +164,61 @@
   flex-grow: 1;
 }
 
+.confirmDelete {
+  -webkit-backdrop-filter: blur(5px);
+  align-items: center;
+  backdrop-filter: blur(5px);
+  background-color: rgba(var(--background-rgb), 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  height: 100%;
+  justify-content: center;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.confirmDeleteMainText,
+.confirmDeleteSecondaryText {
+  text-align: center;
+}
+
+.confirmDeleteMainText {
+  font-size: calc(20px + 1vw);
+  font-weight: 600;
+}
+
+.confirmDeleteSecondaryText {
+  font-size: calc(10px + 1vw);
+  font-style: italic;
+  font-weight: 300;
+}
+
+.confirmDeletePrimaryBtn,
+.confirmDeleteSecondaryBtn {
+  border-radius: 0.2em;
+  font-family: var(--font-monarcha);
+  font-size: calc(16px + 1vw);
+  font-weight: 600;
+  padding: 0.25em 0.75em;
+}
+
+.confirmDeletePrimaryBtn {
+  background-color: rgb(var(--high-contrast-rgb));
+  border: none;
+  color: rgb(var(--background-rgb));
+  margin-right: 1em;
+}
+
+.confirmDeleteSecondaryBtn {
+  background-color: transparent;
+  border: 0.1em solid rgb(var(--foreground-rgb));
+  color: rgb(var(--foreground-rgb));
+}
+
 @media (min-width: 1000px) {
   .component {
     width: 60vw;

@@ -24,6 +24,7 @@ export default function EditEntryForm({
 }) {
   // initialize states and refs //
   // states
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [content, setContent] = useState(entry.content);
   const [editable, setEditable] = useState(false);
   const [tags, setTags] = useState([...entry.tags]);
@@ -72,6 +73,16 @@ export default function EditEntryForm({
   }
 
   // handle deleting entry //
+  function displayConfirmDelete() {
+    setEditable(false);
+    setConfirmDelete(true);
+  }
+
+  function cancelDelete() {
+    setEditable(true);
+    setConfirmDelete(false);
+  }
+
   async function handleDelete(userId, entryId) {
     setDeleting(true);
     const deleteStatus = await deleteEntry(userId, entryId);
@@ -155,7 +166,7 @@ export default function EditEntryForm({
             <div className={styles.deleteActions}>
               <button
                 className={`${styles.deleteBtn} ${styles.secondaryBtn}`}
-                onClick={() => handleDelete(entry.userId, entry.id)}
+                onClick={displayConfirmDelete}
                 type="button"
               >
                 delete entry
@@ -165,12 +176,39 @@ export default function EditEntryForm({
         ) : (
           <button
             className={`${styles.enableEditBtn} ${styles.secondaryBtn}`}
+            disabled={confirmDelete}
             onClick={enableEdit}
             type="button"
           >
             edit
           </button>
         )}
+        {confirmDelete ? (
+          <div className={styles.confirmDelete}>
+            <div>
+              <p className={styles.confirmDeleteMainText}>Delete this entry?</p>
+              <p className={styles.confirmDeleteSecondaryText}>
+                This action cannot be undone.
+              </p>
+            </div>
+            <div>
+              <button
+                className={styles.confirmDeletePrimaryBtn}
+                onClick={() => handleDelete(entry.userId, entry.id)}
+                type="button"
+              >
+                Yes
+              </button>
+              <button
+                className={styles.confirmDeleteSecondaryBtn}
+                onClick={cancelDelete}
+                type="button"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        ) : null}
       </form>
     </>
   );
