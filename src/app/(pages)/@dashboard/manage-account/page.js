@@ -1,4 +1,5 @@
 import getUser from "@/helper-functions/get-user";
+import Link from "next/link";
 import ManageAccountForm from "@/client-components/manage-account-form";
 import styles from "./page.module.css";
 import ThemedImage from "@/helper-components/themed-image";
@@ -9,7 +10,9 @@ export default async function ManageAccount() {
   return (
     <div className={styles.page}>
       <header className={styles.logotype}>
-        <ThemedImage alt="Journ Logotype" imageName="logotype" />
+        <Link aria-label="Return to dashboard" href="/">
+          <ThemedImage alt="Journ Logotype" imageName="logotype" />
+        </Link>
       </header>
       <main className={styles.main}>
         <h1 className={styles.heading}>Manage Account</h1>
