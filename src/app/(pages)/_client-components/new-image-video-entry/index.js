@@ -14,6 +14,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 /// private ///
 // max image dimension allowed //
 const MAX_IMAGE_SIZE = 1920;
+// max video file size allowed //
+const MAX_VIDEO_SIZE = 5368709120;
 
 // resize images with at least one dimension larger than max allowed //
 function resizeImage(fileURL, fileIndex) {
@@ -275,8 +277,14 @@ export default function NewImageVideoEntry({ user, userTags }) {
           file.resizedFile = await resizeImage(file.source, file.index);
           setImages((images) => [...images, file]);
         } else {
-          file.resizedFile = file;
-          setVideos((videos) => [...videos, file]);
+          if (file.size <= MAX_VIDEO_SIZE) {
+            file.resizedFile = file;
+            setVideos((videos) => [...videos, file]);
+          } else {
+            alert(
+              `Video "${file.name}" exceeds 5GB limit and could not be added.`,
+            );
+          }
         }
       }
     }
