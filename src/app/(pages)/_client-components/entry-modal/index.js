@@ -12,6 +12,11 @@ import { useEffect, useRef, useState } from "react";
 // maximum image dimension allowed for uploads //
 const MAX_IMAGE_SIZE = "1920px";
 
+// load S3 URL as image URL //
+function imageLoader({ src, width, quality }) {
+  return src;
+}
+
 /// main component ///
 export default function EntryModal({
   id,
@@ -255,6 +260,7 @@ export default function EntryModal({
                     }
                     className={styles.image}
                     fill={true}
+                    loader={imageLoader}
                     onError={handleLoaded}
                     onLoad={handleLoaded}
                     priority={true}

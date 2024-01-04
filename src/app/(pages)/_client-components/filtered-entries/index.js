@@ -34,6 +34,11 @@ const getType = (function getTypeFactory() {
   return getType;
 })();
 
+// load S3 URL as image URL //
+function imageLoader({ src, width, quality }) {
+  return src;
+}
+
 /// main component ///
 export default function FilteredEntries({
   selectedEndDate,
@@ -348,6 +353,7 @@ export default function FilteredEntries({
                         }
                         className={styles.imgEntryImage}
                         fill={true}
+                        loader={imageLoader}
                         onError={() => handleLoaded(entry.id)}
                         onLoad={() => handleLoaded(entry.id)}
                         priority={true}
