@@ -6,7 +6,7 @@ import { Op } from "sequelize";
 import rds from "@/database/rds";
 
 /// private ///
-const PAGINATION_LIMIT = 50;
+const PAGINATION_LIMIT = 16;
 
 /// main ///
 export default async function getEntries(
