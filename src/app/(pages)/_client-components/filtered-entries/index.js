@@ -70,11 +70,15 @@ export default function FilteredEntries({
   useEffect(
     function resetComponent() {
       setEntries([]);
-      setPage(1);
+      setEntriesLoading([]);
+      setLoading(false);
+      setLoadingError(false);
       setNoEntries(false);
+      setPage(1);
+      setPageLoading(1);
       setReachEnd(false);
     },
-    [selectedTags],
+    [selectedEndDate, selectedStartDate, selectedTags, selectedTypes],
   );
 
   // configure intersection observer to retrieve next entries when they're in view //
