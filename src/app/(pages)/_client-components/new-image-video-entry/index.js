@@ -40,8 +40,8 @@ function resizeImage(fileURL, fileIndex) {
       canvas.height = height;
       canvas.getContext("2d").drawImage(image, 0, 0, width, height);
       canvas.toBlob((b) => {
-        resolve(new File([b], `${fileIndex}.png`, { type: "image/png" }));
-      }, "image/png");
+        resolve(new File([b], `${fileIndex}.webp`, { type: "image/webp" }));
+      }, "image/webp");
     });
     image.src = fileURL;
   });
