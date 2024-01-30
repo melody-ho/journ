@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverActions: true,
-  },
   images: {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     dangerouslyAllowSVG: true,

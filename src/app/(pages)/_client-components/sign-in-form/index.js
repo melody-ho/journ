@@ -5,10 +5,7 @@ import authCredentials from "@/server-actions/auth-credentials";
 import styles from "./index.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 import { useEffect, useRef, useState } from "react";
-import {
-  experimental_useFormState as useFormState,
-  experimental_useFormStatus as useFormStatus,
-} from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 
 /// constants ///
 // duration of delay for posting form data to ensure success message is shown //
