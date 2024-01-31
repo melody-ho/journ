@@ -1,8 +1,8 @@
 "use server";
 
 /// imports ///
-import rds from "@/database/rds";
 import { revalidatePath } from "next/cache";
+import sequelize from "@/database/sequelize";
 
 /// private ///
 const MAX_TAG_LENGTH = 50;
@@ -17,8 +17,8 @@ export default async function addTextEntry(formData) {
   if (content === "") return "empty";
   try {
     // add entry to database
-    await rds.transaction(async function addTextEntryToDatabase(t) {
-      const entry = await rds.models.Entry.create(
+    await sequelize.transaction(async function addTextEntryToDatabase(t) {
+      const entry = await sequelize.models.Entry.create(
         {
           type: "text",
           content,
@@ -31,15 +31,15 @@ export default async function addTextEntry(formData) {
           .split(" ")
           .join("")
           .slice(0, MAX_TAG_LENGTH);
-        const [tag, created] = await rds.models.Tag.findOrCreate({
+        const [tag, created] = await sequelize.models.Tag.findOrCreate({
           where: { name: validatedTagName },
           transaction: t,
         });
-        await rds.models.UserTag.findOrCreate({
+        await sequelize.models.UserTag.findOrCreate({
           where: { userId, tagId: tag.id },
           transaction: t,
         });
-        await rds.models.EntryTag.findOrCreate({
+        await sequelize.models.EntryTag.findOrCreate({
           where: { entryId: entry.id, tagId: tag.id },
           transaction: t,
         });

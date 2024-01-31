@@ -1,6 +1,6 @@
 /// imports ///
 import { getUserSession } from "@/(authentication)/_utils/sessions";
-import rds from "@/database/rds";
+import sequelize from "@/database/sequelize";
 
 /// main ///
 export default async function getUserId(headers) {
@@ -9,7 +9,7 @@ export default async function getUserId(headers) {
   if (!session) return false;
   // confirm user exists //
   const userId = session.user.id;
-  const userExists = await rds.models.User.findByPk(userId);
+  const userExists = await sequelize.models.User.findByPk(userId);
   if (!userExists) return false;
 
   return userId;

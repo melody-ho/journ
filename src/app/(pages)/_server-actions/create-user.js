@@ -2,7 +2,7 @@
 
 /// imports ///
 import argon2 from "argon2";
-import rds from "@/database/rds";
+import sequelize from "@/database/sequelize";
 import z from "zod";
 
 /// main ///
@@ -33,7 +33,7 @@ export default async function createUser(formData) {
     // hash password
     const passwordHash = await argon2.hash(validatedData.password);
     // add user to database
-    const newUser = rds.models.User.build({
+    const newUser = sequelize.models.User.build({
       username: validatedData.username,
       password: passwordHash,
       firstName: validatedData.firstName,

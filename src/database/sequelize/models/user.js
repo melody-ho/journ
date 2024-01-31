@@ -1,9 +1,21 @@
 import { DataTypes, Model } from "sequelize";
 
-export default function defineUser(sequelize) {
-  class User extends Model {}
+export default function defineModel(sequelize) {
+  class User extends Model {
+    static associate(models) {
+      // associations
+      User.hasMany(models.Entry, { foreignKey: "userId" });
+      User.belongsToMany(models.Tag, {
+        through: models.UserTag,
+        foreignKey: "userId",
+        otherKey: "tagId",
+      });
+      User.hasMany(models.UserTag, { foreignKey: "userId" });
+    }
+  }
   User.init(
     {
+      // attributes
       id: {
         type: DataTypes.UUID,
         allowNull: false,
@@ -26,10 +38,19 @@ export default function defineUser(sequelize) {
       lastName: {
         type: DataTypes.STRING,
       },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
     },
     {
       sequelize,
       modelName: "User",
     },
   );
+  return User;
 }

@@ -1,5 +1,5 @@
 import argon2 from "argon2";
-import rds from "@/database/rds";
+import sequelize from "@/database/sequelize";
 import { setUserSession } from "@/app/(api)/(authentication)/_utils/sessions";
 
 export async function POST(req) {
@@ -9,7 +9,7 @@ export async function POST(req) {
   const password = formData.get("password");
   try {
     // confirm authentication //
-    const user = await rds.models.User.findOne({
+    const user = await sequelize.models.User.findOne({
       where: { username: username },
     });
     if (!user) throw new Error("invalid credentials");

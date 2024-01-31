@@ -1,12 +1,12 @@
 "use server";
 
 /// imports ///
-import rds from "@/database/rds";
+import sequelize from "@/database/sequelize";
 
 /// main ///
 export default async function checkUsername(state, username) {
   try {
-    const user = await rds.models.User.findOne({
+    const user = await sequelize.models.User.findOne({
       attributes: ["username"],
       where: { username: username },
     });

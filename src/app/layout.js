@@ -1,11 +1,6 @@
 import "./globals.css";
 import dynamic from "next/dynamic";
 import fonts from "./_fonts";
-import rds from "@/database/rds";
-
-async function resetDatabase() {
-  await rds.sync({ force: true });
-}
 
 export const metadata = {
   title: "Journ",
@@ -18,13 +13,11 @@ for (const font of Object.values(fonts)) {
 }
 const fontVariablesString = fontVariables.join(" ");
 
-const SplashScreenWrapper = dynamic(
-  () => import("./_splash-screen"),
-  { ssr: false },
-);
+const SplashScreenWrapper = dynamic(() => import("./_splash-screen"), {
+  ssr: false,
+});
 
 export default function RootLayout({ children }) {
-  resetDatabase();
   return (
     <html className={fontVariablesString} lang="en">
       <body>

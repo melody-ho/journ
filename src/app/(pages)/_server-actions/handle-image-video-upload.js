@@ -1,9 +1,9 @@
 "use server";
 
 /// imports ///
-import rds from "@/database/rds";
 import { revalidatePath } from "next/cache";
 import s3 from "@/database/s3";
+import sequelize from "@/database/sequelize";
 import { Upload } from "@aws-sdk/lib-storage";
 
 /// private ///
@@ -19,9 +19,9 @@ export default async function handleImageVideoUpload(entryData) {
   const tagNames = JSON.parse(entryData.get("tags"));
   const type = file.type.startsWith("image/") ? "image" : "video";
   try {
-    await rds.transaction(async function addImgVideoEntryToDatabase(t) {
+    await sequelize.transaction(async function addImgVideoEntryToDatabase(t) {
       // add entry
-      const entry = await rds.models.Entry.create(
+      const entry = await sequelize.models.Entry.create(
         {
           type,
           content: caption.length === 0 ? null : caption,
@@ -36,15 +36,15 @@ export default async function handleImageVideoUpload(entryData) {
           .split(" ")
           .join("")
           .slice(0, MAX_TAG_LENGTH);
-        const [tag, created] = await rds.models.Tag.findOrCreate({
+        const [tag, created] = await sequelize.models.Tag.findOrCreate({
           where: { name: validatedTagName },
           transaction: t,
         });
-        await rds.models.UserTag.findOrCreate({
+        await sequelize.models.UserTag.findOrCreate({
           where: { userId, tagId: tag.id },
           transaction: t,
         });
-        await rds.models.EntryTag.findOrCreate({
+        await sequelize.models.EntryTag.findOrCreate({
           where: {
             entryId,
             tagId: tag.id,

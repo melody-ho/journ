@@ -3,7 +3,7 @@
 /// imports ///
 import getS3Url from "@/helper-functions/get-s3-url";
 import { Op } from "sequelize";
-import rds from "@/database/rds";
+import sequelize from "@/database/sequelize";
 
 /// private ///
 const PAGINATION_LIMIT = 16;
@@ -27,17 +27,25 @@ export default async function getEntries(
     const entriesDateFn = [];
     if (startDate)
       entriesDateFn.push(
-        rds.where(rds.fn("date", rds.col("Entry.createdAt")), ">=", startDate),
+        sequelize.where(
+          sequelize.fn("date", sequelize.col("Entry.createdAt")),
+          ">=",
+          startDate,
+        ),
       );
     if (endDate)
       entriesDateFn.push(
-        rds.where(rds.fn("date", rds.col("Entry.createdAt")), "<=", endDate),
+        sequelize.where(
+          sequelize.fn("date", sequelize.col("Entry.createdAt")),
+          "<=",
+          endDate,
+        ),
       );
     if (entriesDateFn.length !== 0) entryWhere[Op.and] = entriesDateFn;
     if (types.length !== 0) entryWhere.type = types;
     // run query
     if (tags.length === 0) {
-      entries = await rds.models.Entry.findAll({
+      entries = await sequelize.models.Entry.findAll({
         where: entryWhere,
         order: [["createdAt", "ASC"]],
         offset,
@@ -45,11 +53,11 @@ export default async function getEntries(
         raw: true,
       });
     } else {
-      const matchedEntries = await rds.models.EntryTag.findAll({
-        include: { model: rds.models.Entry, where: entryWhere },
+      const matchedEntries = await sequelize.models.EntryTag.findAll({
+        include: { model: sequelize.models.Entry, where: entryWhere },
         where: { tagId: tags },
         group: ["entryId"],
-        attributes: { include: [[rds.fn("COUNT", "id"), "matchCount"]] },
+        attributes: { include: [[sequelize.fn("COUNT", "id"), "matchCount"]] },
         having: { matchCount: tags.length },
         order: [["createdAt", "ASC"]],
         offset,

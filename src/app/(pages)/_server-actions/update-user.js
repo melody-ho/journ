@@ -2,8 +2,8 @@
 
 /// Imports ///
 import argon2 from "argon2";
-import rds from "@/database/rds";
 import { revalidatePath } from "next/cache";
+import sequelize from "@/database/sequelize";
 import z from "zod";
 
 /// Private ///
@@ -22,7 +22,7 @@ async function authorize(user, password) {
 export default async function updateUser(formData) {
   // get user
   const userId = formData.get("userId");
-  const user = await rds.models.User.findByPk(userId);
+  const user = await sequelize.models.User.findByPk(userId);
   // authorize with current password
   const currentPassword = formData.get("currentPassword");
   const authStatus = await authorize(user, currentPassword);

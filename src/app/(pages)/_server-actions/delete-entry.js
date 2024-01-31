@@ -3,8 +3,8 @@
 /// imports ///
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { Op } from "sequelize";
-import rds from "@/database/rds";
 import s3 from "@/database/s3";
+import sequelize from "@/database/sequelize";
 
 /// private ///
 const S3_BUCKET = process.env.S3_BUCKET;
@@ -12,46 +12,48 @@ const S3_BUCKET = process.env.S3_BUCKET;
 /// main ///
 export default async function deleteEntry(userId, entryId) {
   try {
-    await rds.transaction(async function deleteEntryFromDatabase(t) {
+    await sequelize.transaction(async function deleteEntryFromDatabase(t) {
       // clean up tags
-      const entryTags = await rds.models.EntryTag.findAll({
+      const entryTags = await sequelize.models.EntryTag.findAll({
         where: { entryId },
         raw: true,
       });
       for (const entryTag of entryTags) {
         const tagId = entryTag.tagId;
-        const userEntries = await rds.models.Entry.findAll({
+        const userEntries = await sequelize.models.Entry.findAll({
           attributes: ["id"],
           where: { userId },
           raw: true,
         });
         const userEntriesIds = userEntries.map((userEntry) => userEntry.id);
-        const userEntryCounts = await rds.models.EntryTag.count({
+        const userEntryCounts = await sequelize.models.EntryTag.count({
           where: { tagId, entryId: { [Op.in]: userEntriesIds } },
         });
-        const userCounts = await rds.models.UserTag.count({
+        const userCounts = await sequelize.models.UserTag.count({
           where: { tagId },
         });
+        await sequelize.models.EntryTag.destroy({
+          where: { entryId, tagId },
+          transaction: t,
+        });
         if (userEntryCounts === 1) {
-          await rds.models.UserTag.destroy({
+          await sequelize.models.UserTag.destroy({
             where: { userId, tagId },
             transaction: t,
           });
           if (userCounts === 1) {
-            await rds.models.Tag.destroy({
+            await sequelize.models.Tag.destroy({
               where: { id: tagId },
               transaction: t,
             });
           }
         }
-        await rds.models.EntryTag.destroy({
-          where: { entryId, tagId },
-          transaction: t,
-        });
       }
       // delete entry from database
-      const entryData = await rds.models.Entry.findByPk(entryId, { raw: true });
-      await rds.models.Entry.destroy({
+      const entryData = await sequelize.models.Entry.findByPk(entryId, {
+        raw: true,
+      });
+      await sequelize.models.Entry.destroy({
         where: { id: entryId },
         transaction: t,
       });
