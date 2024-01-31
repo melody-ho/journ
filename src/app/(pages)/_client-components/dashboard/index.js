@@ -77,6 +77,17 @@ export default function Dashboard({ user, userTags }) {
     e.stopPropagation(e);
   }
 
+  // update selected tags when user tags change //
+  useEffect(
+    function updateSelectedTags() {
+      const userTagIds = userTags.map((userTag) => userTag.id);
+      setSelectedTags((selectedTags) =>
+        selectedTags.filter((selectedTag) => userTagIds.includes(selectedTag)),
+      );
+    },
+    [userTags],
+  );
+
   // function passed to FiltersMenu to get selected filters //
   function getFilters(data) {
     setSelectedStartDate(data.get("startDate"));
