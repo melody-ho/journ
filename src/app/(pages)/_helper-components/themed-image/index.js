@@ -21,6 +21,7 @@ export default function ThemedImage({
         onLoad={onLoad}
         priority={true}
         src={`/${imageName}/light.svg`}
+        unoptimized
       />
     </picture>
   );
