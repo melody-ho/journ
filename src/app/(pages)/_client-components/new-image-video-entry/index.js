@@ -107,8 +107,8 @@ export default function NewImageVideoEntry({ user, userTags }) {
                     alt={`preview of ${entry.name}`}
                     className={styles.imagePreview}
                     fill={true}
-                    sizes={MAX_IMAGE_SIZE}
                     src={entry.source}
+                    unoptimized
                   />
                 </div>
               ) : (

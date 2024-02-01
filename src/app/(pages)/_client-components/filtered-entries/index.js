@@ -11,10 +11,7 @@ import ThemedImage from "@/helper-components/themed-image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-/// Private ///
-// maximum image dimension allowed for uploads //
-const MAX_IMAGE_SIZE = "1920px";
-
+/// private ///
 // generate individual entry layout sizes //
 const getType = (function getTypeFactory() {
   let _remainingSmall = false;
@@ -33,11 +30,6 @@ const getType = (function getTypeFactory() {
   }
   return getType;
 })();
-
-// load S3 URL as image URL //
-function imageLoader({ src, width, quality }) {
-  return src;
-}
 
 /// main component ///
 export default function FilteredEntries({
@@ -357,12 +349,11 @@ export default function FilteredEntries({
                         }
                         className={styles.imgEntryImage}
                         fill={true}
-                        loader={imageLoader}
                         onError={() => handleLoaded(entry.id)}
                         onLoad={() => handleLoaded(entry.id)}
                         priority={true}
-                        sizes={MAX_IMAGE_SIZE}
                         src={entry.srcUrl}
+                        unoptimized
                       />
                     </div>
                     {entry.content ? (
