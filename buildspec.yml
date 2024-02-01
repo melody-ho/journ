@@ -28,4 +28,5 @@ artifacts:
     - "package.json"
     - ".next/**/*"
     - "public/**/*"
+    - ".platform/nginx/conf.d/proxy.conf"
   name: journ-$(date +%Y-%m-%d)
