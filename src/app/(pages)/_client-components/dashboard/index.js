@@ -81,11 +81,20 @@ export default function Dashboard({ user, userTags }) {
   useEffect(
     function updateSelectedTags() {
       const userTagIds = userTags.map((userTag) => userTag.id);
-      setSelectedTags((selectedTags) =>
-        selectedTags.filter((selectedTag) => userTagIds.includes(selectedTag)),
-      );
+      let changed = false;
+      const filteredSelectedTags = [];
+      for (const selectedTag of selectedTags) {
+        if (userTagIds.includes(selectedTag)) {
+          filteredSelectedTags.push(selectedTag);
+        } else {
+          changed = true;
+        }
+      }
+      if (changed) {
+        setSelectedTags(filteredSelectedTags);
+      }
     },
-    [userTags],
+    [selectedTags, userTags],
   );
 
   // function passed to FiltersMenu to get selected filters //

@@ -63,6 +63,7 @@ export default function FilteredEntries({
     function resetComponent() {
       setEntries([]);
       setEntriesLoading([]);
+      setEntryToUpdate(null);
       setLoading(false);
       setLoadingError(false);
       setNoEntries(false);
@@ -216,21 +217,22 @@ export default function FilteredEntries({
         // retrieve entry to update
         const updatedEntry = await getEntryWithoutTags(entryToUpdate);
         // update in list of entries
-        const newEntries = entries.map((entry) => {
-          if (entry.id === entryToUpdate) {
-            if (updatedEntry === "error") {
-              return {
-                id: entryToUpdate,
-                layoutSize: entry.layoutSize,
-                error: true,
-              };
+        setEntries((entries) =>
+          entries.map((entry) => {
+            if (entry.id === entryToUpdate) {
+              if (updatedEntry === "error") {
+                return {
+                  id: entryToUpdate,
+                  layoutSize: entry.layoutSize,
+                  error: true,
+                };
+              }
+              return { ...updatedEntry, layoutSize: entry.layoutSize };
+            } else {
+              return entry;
             }
-            return { ...updatedEntry, layoutSize: entry.layoutSize };
-          } else {
-            return entry;
-          }
-        });
-        setEntries(newEntries);
+          }),
+        );
         // remove loading state for text entries or entries that failed to retrieve
         if (
           updatedEntry.type === "text" ||
@@ -242,7 +244,7 @@ export default function FilteredEntries({
       }
       if (entryToUpdate) updateEntry();
     },
-    [entries, entryToUpdate],
+    [entryToUpdate],
   );
 
   // remove entry in feed and update tags in filters menu when deleted //
