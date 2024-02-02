@@ -3,7 +3,7 @@
 /// imports ///
 import EntryModal from "../entry-modal";
 import getEntries from "@/server-actions/get-entries";
-import { getEntryWithoutTags } from "@/server-actions/get-entry";
+import { getEntryWithTagIds } from "@/server-actions/get-entry";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./index.module.css";
@@ -215,36 +215,59 @@ export default function FilteredEntries({
     function updateEntries() {
       async function updateEntry() {
         // retrieve entry to update
-        const updatedEntry = await getEntryWithoutTags(entryToUpdate);
+        const updatedEntry = await getEntryWithTagIds(entryToUpdate);
         // update in list of entries
-        setEntries((entries) =>
-          entries.map((entry) => {
-            if (entry.id === entryToUpdate) {
-              if (updatedEntry === "error") {
-                return {
-                  id: entryToUpdate,
-                  layoutSize: entry.layoutSize,
-                  error: true,
-                };
-              }
-              return { ...updatedEntry, layoutSize: entry.layoutSize };
-            } else {
-              return entry;
+        // check if current tag filters still valid
+        let filteredOut = false;
+        for (const selectedTag of selectedTags) {
+          if (!updatedEntry.tags.includes(selectedTag)) {
+            filteredOut = true;
+            break;
+          }
+        }
+        if (filteredOut) {
+          // remove if tag filters no longer valid
+          setEntries((entries) => {
+            const newEntries = entries.filter(
+              (entry) => entry.id !== entryToUpdate,
+            );
+            if (newEntries.length === 0) {
+              setNoEntries(true);
             }
-          }),
-        );
-        // remove loading state for text entries or entries that failed to retrieve
-        if (
-          updatedEntry.type === "text" ||
-          updatedEntry === "error" ||
-          updatedEntry.srcUrl === "error"
-        ) {
+            return newEntries;
+          });
           setEntryToUpdate(null);
+        } else {
+          // update if tag filters still valid
+          setEntries((entries) =>
+            entries.map((entry) => {
+              if (entry.id === entryToUpdate) {
+                if (updatedEntry === "error") {
+                  return {
+                    id: entryToUpdate,
+                    layoutSize: entry.layoutSize,
+                    error: true,
+                  };
+                }
+                return { ...updatedEntry, layoutSize: entry.layoutSize };
+              } else {
+                return entry;
+              }
+            }),
+          );
+          // remove loading state for text entries or entries that failed to retrieve
+          if (
+            updatedEntry.type === "text" ||
+            updatedEntry === "error" ||
+            updatedEntry.srcUrl === "error"
+          ) {
+            setEntryToUpdate(null);
+          }
         }
       }
       if (entryToUpdate) updateEntry();
     },
-    [entryToUpdate],
+    [entryToUpdate, selectedTags],
   );
 
   // remove entry in feed and update tags in filters menu when deleted //

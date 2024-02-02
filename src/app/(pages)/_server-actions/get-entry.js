@@ -4,8 +4,8 @@
 import getS3Url from "@/helper-functions/get-s3-url";
 import sequelize from "@/database/sequelize";
 
-/// main ///
-export async function getEntryWithoutTags(id) {
+/// private ///
+async function getEntryWithoutTags(id) {
   try {
     const entry = await sequelize.models.Entry.findByPk(id, { raw: true });
     if (entry.type === "image" || entry.type === "video") {
@@ -22,6 +22,7 @@ export async function getEntryWithoutTags(id) {
   }
 }
 
+/// main ///
 export async function getEntryWithTags(id) {
   try {
     const entry = await getEntryWithoutTags(id);
@@ -35,6 +36,25 @@ export async function getEntryWithTags(id) {
       raw: true,
     });
     entry.tags = tagDataList.map((tagData) => tagData["Tag.name"]).sort();
+    return entry;
+  } catch {
+    return "error";
+  }
+}
+
+export async function getEntryWithTagIds(id) {
+  try {
+    const entry = await getEntryWithoutTags(id);
+    if (entry === "error") {
+      return "error";
+    }
+    const tagDataList = await sequelize.models.EntryTag.findAll({
+      where: { entryId: id },
+      attributes: [],
+      include: { model: sequelize.models.Tag, attributes: ["id"] },
+      raw: true,
+    });
+    entry.tags = tagDataList.map((tagData) => tagData["Tag.id"]);
     return entry;
   } catch {
     return "error";
