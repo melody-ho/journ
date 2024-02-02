@@ -19,7 +19,7 @@ function Checkbox({ checked }) {
 
 /// main component ///
 export default function FiltesMenu({
-  passFilters,
+  applyFilters,
   previousEndDate,
   previousStartDate,
   previousTags,
@@ -112,14 +112,14 @@ export default function FiltesMenu({
     setMoreTagsSection(!moreTagsSection);
   }
 
-  function applyFilters(e) {
+  function handleApply(e) {
     e.preventDefault();
     const formData = new FormData(formRef.current);
-    passFilters(formData);
+    applyFilters(formData);
   }
 
   return (
-    <form className={styles.component} onSubmit={applyFilters} ref={formRef}>
+    <form className={styles.component} onSubmit={handleApply} ref={formRef}>
       <h1 className={styles.mainHeading}>Filters</h1>
       <button className={styles.clearBtn} onClick={clearFilters} type="button">
         Clear filters

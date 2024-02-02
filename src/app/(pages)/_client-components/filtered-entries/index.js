@@ -33,10 +33,12 @@ const getType = (function getTypeFactory() {
 
 /// main component ///
 export default function FilteredEntries({
+  feedReset,
   selectedEndDate,
   selectedStartDate,
   selectedTags,
   selectedTypes,
+  setFeedReset,
   userId,
   userTags,
 }) {
@@ -58,20 +60,23 @@ export default function FilteredEntries({
   // refs
   const observerTargetRef = useRef(null);
 
-  // reset component when filters change //
+  // reset entries feed when triggered //
   useEffect(
-    function resetComponent() {
-      setEntries([]);
-      setEntriesLoading([]);
-      setEntryToUpdate(null);
-      setLoading(false);
-      setLoadingError(false);
-      setNoEntries(false);
-      setPage(1);
-      setPageLoading(1);
-      setReachEnd(false);
+    function resetFeedWhenTriggered() {
+      if (feedReset) {
+        setEntries([]);
+        setEntriesLoading([]);
+        setEntryToUpdate(null);
+        setLoading(false);
+        setLoadingError(false);
+        setNoEntries(false);
+        setPage(1);
+        setPageLoading(1);
+        setReachEnd(false);
+        setFeedReset(false);
+      }
     },
-    [selectedEndDate, selectedStartDate, selectedTags, selectedTypes],
+    [feedReset, setFeedReset],
   );
 
   // configure intersection observer to retrieve next entries when they're in view //
@@ -232,7 +237,7 @@ export default function FilteredEntries({
               (entry) => entry.id !== entryToUpdate,
             );
             if (newEntries.length === 0) {
-              setNoEntries(true);
+              setFeedReset(true);
             }
             return newEntries;
           });
@@ -267,7 +272,7 @@ export default function FilteredEntries({
       }
       if (entryToUpdate) updateEntry();
     },
-    [entryToUpdate, selectedTags],
+    [entryToUpdate, selectedTags, setFeedReset],
   );
 
   // remove entry in feed and update tags in filters menu when deleted //

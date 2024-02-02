@@ -18,6 +18,7 @@ export default function Dashboard({ user, userTags }) {
   // states and refs //
   // states
   const [accountMenu, setAccountMenu] = useState(false);
+  const [feedReset, setFeedReset] = useState(false);
   const [filtersLabel, setFiltersLabel] = useState(false);
   const [filtersMenu, setFiltersMenu] = useState(false);
   const [newEntryLabel, setNewEntryLabel] = useState(false);
@@ -77,7 +78,7 @@ export default function Dashboard({ user, userTags }) {
     e.stopPropagation(e);
   }
 
-  // update selected tags when user tags change //
+  // update selected tags and refilter when user tags change //
   useEffect(
     function updateSelectedTags() {
       const userTagIds = userTags.map((userTag) => userTag.id);
@@ -92,17 +93,19 @@ export default function Dashboard({ user, userTags }) {
       }
       if (changed) {
         setSelectedTags(filteredSelectedTags);
+        setFeedReset(true);
       }
     },
     [selectedTags, userTags],
   );
 
-  // function passed to FiltersMenu to get selected filters //
-  function getFilters(data) {
+  // function passed to FiltersMenu to apply filters //
+  function applyFilters(data) {
     setSelectedStartDate(data.get("startDate"));
     setSelectedEndDate(data.get("endDate"));
     setSelectedTypes(data.getAll("type"));
     setSelectedTags(data.getAll("tags"));
+    setFeedReset(true);
   }
 
   return (
@@ -208,7 +211,7 @@ export default function Dashboard({ user, userTags }) {
                 <ThemedImage alt="close icon" imageName="close-icon" />
               </button>
               <FiltersMenu
-                passFilters={getFilters}
+                applyFilters={applyFilters}
                 previousEndDate={selectedEndDate}
                 previousStartDate={selectedStartDate}
                 previousTags={selectedTags}
@@ -222,10 +225,12 @@ export default function Dashboard({ user, userTags }) {
       <main className={styles.main} inert={accountMenu ? "" : null}>
         <section className={styles.entries}>
           <FilteredEntries
+            feedReset={feedReset}
             selectedEndDate={selectedEndDate}
             selectedStartDate={selectedStartDate}
             selectedTags={selectedTags}
             selectedTypes={selectedTypes}
+            setFeedReset={setFeedReset}
             userId={user.id}
             userTags={userTags}
           />
