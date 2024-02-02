@@ -59,13 +59,13 @@ export default async function getEntries(
         group: ["entryId"],
         attributes: { include: [[sequelize.fn("COUNT", "id"), "matchCount"]] },
         having: { matchCount: tags.length },
-        order: [["createdAt", "ASC"]],
         offset,
         limit: PAGINATION_LIMIT,
       });
       entries = matchedEntries.map(
         (matchedEntry) => matchedEntry.dataValues.Entry.dataValues,
       );
+      entries.sort((a, b) => a.createdAt - b.createdAt);
     }
     // get corresponding source urls from S3 for images/videos //
     entries.forEach(async (entry) => {
