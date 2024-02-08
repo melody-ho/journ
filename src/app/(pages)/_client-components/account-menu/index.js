@@ -6,6 +6,16 @@ import styles from "./index.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 
 /// main component ///
+/**
+ * Closes account menu.
+ * @callback closeType
+ * @returns {void}
+ */
+/**
+ * @param {Object} props
+ * @param {boolean} props.animateOut Indicates whether account menu is currently being animated out.
+ * @param {closeType} props.close
+ */
 export default function AccountMenu({ animateOut, close }) {
   return (
     <div

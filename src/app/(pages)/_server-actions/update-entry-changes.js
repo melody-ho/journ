@@ -5,9 +5,17 @@ import { Op } from "sequelize";
 import sequelize from "@/database/sequelize";
 
 /// private ///
+/**
+ * Maximum character length for tags.
+ */
 const MAX_TAG_LENGTH = 50;
 
 /// main ///
+/**
+ * Updates entry in database given userId, id, content, prevTags, and newTags.
+ * @param {FormData} formData includes userId, id, content, prevTags, and newTags
+ * @returns {Promise<"empty" | "error" | "success">} "empty" if attempted empty text entry, "error" if failed to update, "success" if updated successfully
+ */
 export default async function updateEntryChanges(formData) {
   try {
     const updateStatus = await sequelize.transaction(

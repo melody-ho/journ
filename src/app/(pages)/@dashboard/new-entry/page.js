@@ -1,14 +1,15 @@
+/// imports ///
 import getUserId from "@/helper-functions/get-user-id";
 import getUserTags from "@/server-actions/get-user-tags";
-import { headers } from "next/headers";
 import Link from "next/link";
 import NewEntryForms from "@/client-components/new-entry-forms";
 import styles from "./page.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 
+/// main component ///
 export default async function NewEntry() {
-  const user = await getUserId(headers());
-  const userTags = await getUserTags(user);
+  const userId = await getUserId();
+  const userTags = await getUserTags(userId);
 
   return (
     <div className={styles.page}>
@@ -19,7 +20,7 @@ export default async function NewEntry() {
         <h1 className={styles.heading}>New Entry</h1>
       </header>
       <main className={styles.main}>
-        <NewEntryForms user={user} userTags={userTags} />
+        <NewEntryForms userId={userId} userTags={userTags} />
       </main>
     </div>
   );

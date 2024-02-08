@@ -12,12 +12,14 @@ import z from "zod";
 import { useEffect, useRef, useState } from "react";
 
 /// constants ///
-// debounce duration for checking username availability //
+/**
+ * Debounce duration for checking username availability, in ms.
+ */
 const DEBOUNCE_DURATION = 200;
 
 /// main component ///
 export default function NewAccountForm() {
-  // client-side form validation //
+  // manage form input values and client side validation //
   // first name
   const [firstName, setfirstName] = useState("");
   const [firstNameMessage, setFirstNameMessage] = useState(null);
@@ -111,11 +113,9 @@ export default function NewAccountForm() {
     setUsernameInfo(!usernameInfo);
   }
 
-  // form submission //
-  // initialize states and refs
-  const newAccountFormRef = useRef(null);
+  // submit form //
   const [submissionState, setSubmissionState] = useState(null);
-  // declare submission handler
+  const newAccountFormRef = useRef(null);
   async function handleCreateAccount(e) {
     e.preventDefault();
     setSubmissionState("pending");
@@ -124,8 +124,8 @@ export default function NewAccountForm() {
     setSubmissionState(newState);
   }
 
-  // account creation status modal //
-  // show status modal when rendered
+  // handle account-creation-status modal //
+  // show when rendered
   const statusModalRef = useRef(null);
   useEffect(function openModal() {
     if (statusModalRef.current) {
@@ -133,18 +133,20 @@ export default function NewAccountForm() {
       statusModalRef.current.showModal();
     }
   });
-  // declare status modal handlers
+  // prevent closing on cancel
   function handleCancel(e) {
     e.preventDefault();
   }
   function handleEsc(e) {
     if (e.key === "Escape") e.preventDefault();
   }
+  // handle retry on error
   function handleRetry() {
     setSubmissionState(null);
     statusModalRef.current.close();
   }
 
+  // render //
   return (
     <form className={styles.form} ref={newAccountFormRef}>
       <section className={styles.nameSection}>

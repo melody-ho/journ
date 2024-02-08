@@ -164,7 +164,7 @@
   flex-grow: 1;
 }
 
-.confirmDelete {
+.deleteConfirmation {
   -webkit-backdrop-filter: blur(5px);
   align-items: center;
   backdrop-filter: blur(5px);
@@ -181,24 +181,24 @@
   z-index: 1;
 }
 
-.confirmDeleteMainText,
-.confirmDeleteSecondaryText {
+.deleteConfirmationMainText,
+.deleteConfirmationSecondaryText {
   text-align: center;
 }
 
-.confirmDeleteMainText {
+.deleteConfirmationMainText {
   font-size: calc(20px + 1vw);
   font-weight: 600;
 }
 
-.confirmDeleteSecondaryText {
+.deleteConfirmationSecondaryText {
   font-size: calc(10px + 1vw);
   font-style: italic;
   font-weight: 300;
 }
 
-.confirmDeletePrimaryBtn,
-.confirmDeleteSecondaryBtn {
+.deleteConfirmationPrimaryBtn,
+.deleteConfirmationSecondaryBtn {
   border-radius: 0.2em;
   font-family: var(--font-monarcha);
   font-size: calc(16px + 1vw);
@@ -206,14 +206,14 @@
   padding: 0.25em 0.75em;
 }
 
-.confirmDeletePrimaryBtn {
+.deleteConfirmationPrimaryBtn {
   background-color: rgb(var(--high-contrast-rgb));
   border: none;
   color: rgb(var(--background-rgb));
   margin-right: 1em;
 }
 
-.confirmDeleteSecondaryBtn {
+.deleteConfirmationSecondaryBtn {
   background-color: transparent;
   border: 0.1em solid rgb(var(--foreground-rgb));
   color: rgb(var(--foreground-rgb));

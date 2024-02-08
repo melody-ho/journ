@@ -9,6 +9,49 @@ import { v4 as uuidv4 } from "uuid";
 import { useCallback, useRef, useState } from "react";
 
 /// main component ///
+/**
+ * Removes an entry from feed.
+ * @callback removeFromFeedType
+ * @param {string} entryId
+ * @returns {void}
+ */
+/**
+ * Updates an entry in feed.
+ * @callback updateFeedEntryType
+ * @param {string} entryId
+ * @returns {void}
+ */
+/**
+ * @param {Object} props
+ * @param {{id: string,
+ *          type: "text" | "image" | "video",
+ *          content: string,
+ *          createdAt: Date,
+ *          updatedAt: Date,
+ *          userId: string,
+ *          srcUrl: string | undefined,
+ *          tagIds: Array.<string>,
+ *          tagNames: Array.<string>}} props.entry entry data
+ * @param {removeFromFeedType} props.removeFromFeed
+ * @param {React.Dispatch<false | "success" | "fail">} props.setDeleted Reports result of entry deletion from database, false when no deletion attempted or previous result acknowledged.
+ * @param {React.Dispatch<boolean>} props.setDeleting Updates whether entry deletion is in progress.
+ * @param {React.Dispatch<boolean>} props.setEmptyText Reports whether an empty text entry was attempted.
+ * @param {React.Dispatch<
+ *        ?{id: string,
+ *         type: "text" | "image" | "video",
+ *         content: string,
+ *         createdAt: Date,
+ *         updatedAt: Date,
+ *         userId: string,
+ *         srcUrl: string | undefined,
+ *         tagIds: Array.<string>,
+ *         tagNames: Array.<string>}>} props.setEntry Refetches entry when changed from containing data to null.
+ * @param {React.Dispatch<boolean>} props.setLoading Updates whether entry is being retrieved / rendering.
+ * @param {React.Dispatch<boolean>} props.setUpdateError Reports whether there was an error updating entry in database.
+ * @param {React.Dispatch<boolean>} props.setUpdating Updates whether entry update is in progress.
+ * @param {updateFeedEntryType} props.updateFeedEntry
+ * @param {Array.<{id: string, name: string}>} props.userTags
+ */
 export default function EditEntryForm({
   entry,
   removeFromFeed,
@@ -19,16 +62,54 @@ export default function EditEntryForm({
   setLoading,
   setUpdateError,
   setUpdating,
-  updateFeed,
+  updateFeedEntry,
   userTags,
 }) {
-  // initialize states and refs //
-  // states
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  // document states //
+  /**
+   * @typedef {string} contentType Content currently displayed in form.
+   */
+  /**
+   * @typedef {React.Dispatch<string>} setContentType Updates content currently displayed in form.
+   */
+  /**
+   * @typedef {boolean} deleteConfirmationType Indicates whether delete confimation dialog is displayed.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setDeleteConfirmationType Toggles delete confirmation dialog.
+   */
+  /**
+   * @typedef {boolean} editableType Indicates whether form is currently editable or read-only.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setEditableType Toggles form between editable and read-only states.
+   */
+  /**
+   * @typedef {Array.<string>} tagNamesType Tag names attached to entry.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<string>>} setTagNamesType Update tag names attached to entry.
+   */
+
+  // initialize states //
+  /**
+   * @type {[contentType, setContentType]}
+   */
   const [content, setContent] = useState(entry.content);
+  /**
+   * @type {[deleteConfirmationType, setDeleteConfirmationType]}
+   */
+  const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+  /**
+   * @type {[editableType, setEditableType]}
+   */
   const [editable, setEditable] = useState(false);
-  const [tags, setTags] = useState([...entry.tags]);
-  // refs
+  /**
+   * @type {[tagNamesType, setTagNamesType]}
+   */
+  const [tagNames, setTagNames] = useState([...entry.tagNames]);
+
+  // initialize refs //
   const formRef = useRef(null);
   const contentInputRef = useRef(null);
 
@@ -38,7 +119,7 @@ export default function EditEntryForm({
   }
   function cancelEdit() {
     setContent(entry.content);
-    setTags([...entry.tags]);
+    setTagNames([...entry.tagNames]);
     setEditable(false);
   }
 
@@ -46,8 +127,8 @@ export default function EditEntryForm({
   function updateContent() {
     setContent(contentInputRef.current.value);
   }
-  const getTags = useCallback(function updateTags(passedTags) {
-    setTags([...passedTags]);
+  const getTagNames = useCallback(function updateTagNames(passedTagNames) {
+    setTagNames([...passedTagNames]);
   }, []);
 
   // handle saving changes //
@@ -57,11 +138,11 @@ export default function EditEntryForm({
     const formData = new FormData(formRef.current);
     formData.append("userId", entry.userId);
     formData.append("id", entry.id);
-    formData.append("prevTags", JSON.stringify(entry.tags));
-    formData.append("newTags", JSON.stringify(tags));
+    formData.append("prevTags", JSON.stringify(entry.tagNames));
+    formData.append("newTags", JSON.stringify(tagNames));
     const updateStatus = await updateEntryChanges(formData);
     if (updateStatus === "success") {
-      updateFeed(entry.id);
+      updateFeedEntry(entry.id);
       setEntry(null);
       setLoading(true);
     } else if (updateStatus === "empty") {
@@ -73,16 +154,14 @@ export default function EditEntryForm({
   }
 
   // handle deleting entry //
-  function displayConfirmDelete() {
+  function displayDeleteConfirmation() {
     setEditable(false);
-    setConfirmDelete(true);
+    setDeleteConfirmation(true);
   }
-
   function cancelDelete() {
     setEditable(true);
-    setConfirmDelete(false);
+    setDeleteConfirmation(false);
   }
-
   async function handleDelete(userId, entryId) {
     setDeleting(true);
     const deleteStatus = await deleteEntry(userId, entryId);
@@ -95,6 +174,7 @@ export default function EditEntryForm({
     setDeleting(false);
   }
 
+  // render //
   return (
     <>
       <form
@@ -129,15 +209,15 @@ export default function EditEntryForm({
         {editable ? (
           <TagDropdown
             instruction="Edit tags"
-            passEntryTags={getTags}
-            preSelectedTags={entry.tags}
+            passEntryTagNames={getTagNames}
+            preSelectedTagNames={entry.tagNames}
             userTags={userTags}
           />
-        ) : tags.length > 0 ? (
+        ) : tagNames.length > 0 ? (
           <ul className={styles.tags}>
-            {tags.map((tag) => (
+            {tagNames.map((tagName) => (
               <li className={styles.tag} key={uuidv4()}>
-                {tag}
+                {tagName}
               </li>
             ))}
           </ul>
@@ -166,7 +246,7 @@ export default function EditEntryForm({
             <div className={styles.deleteActions}>
               <button
                 className={`${styles.deleteBtn} ${styles.secondaryBtn}`}
-                onClick={displayConfirmDelete}
+                onClick={displayDeleteConfirmation}
                 type="button"
               >
                 delete entry
@@ -176,31 +256,33 @@ export default function EditEntryForm({
         ) : (
           <button
             className={`${styles.enableEditBtn} ${styles.secondaryBtn}`}
-            disabled={confirmDelete}
+            disabled={deleteConfirmation}
             onClick={enableEdit}
             type="button"
           >
             edit
           </button>
         )}
-        {confirmDelete ? (
-          <div className={styles.confirmDelete}>
+        {deleteConfirmation ? (
+          <div className={styles.deleteConfirmation}>
             <div>
-              <p className={styles.confirmDeleteMainText}>Delete this entry?</p>
-              <p className={styles.confirmDeleteSecondaryText}>
+              <p className={styles.deleteConfirmationMainText}>
+                Delete this entry?
+              </p>
+              <p className={styles.deleteConfirmationSecondaryText}>
                 This action cannot be undone.
               </p>
             </div>
             <div>
               <button
-                className={styles.confirmDeletePrimaryBtn}
+                className={styles.deleteConfirmationPrimaryBtn}
                 onClick={() => handleDelete(entry.userId, entry.id)}
                 type="button"
               >
                 Yes
               </button>
               <button
-                className={styles.confirmDeleteSecondaryBtn}
+                className={styles.deleteConfirmationSecondaryBtn}
                 onClick={cancelDelete}
                 type="button"
               >

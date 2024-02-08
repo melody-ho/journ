@@ -6,15 +6,28 @@ import { Op } from "sequelize";
 import sequelize from "@/database/sequelize";
 
 /// private ///
+/**
+ * Number of entries per page.
+ */
 const PAGINATION_LIMIT = 16;
 
 /// main ///
+/**
+ * Retrieves entries given filters and page number.
+ * @param {string} userId
+ * @param {Date} startDate
+ * @param {Date} endDate
+ * @param {Array.<"text" | "image" | "video">} types
+ * @param {Array.<string>} tagIds
+ * @param {number} page
+ * @returns {Promise<"error" | Array.<{id: string, type: "text" | "image" | "video", content: string, createdAt: Date, updatedAt: Date, srcUrl: string | undefined}>>} "error" if failed to retrieve
+ */
 export default async function getEntries(
   userId,
   startDate,
   endDate,
   types,
-  tags,
+  tagIds,
   page,
 ) {
   try {
@@ -44,7 +57,7 @@ export default async function getEntries(
     if (entriesDateFn.length !== 0) entryWhere[Op.and] = entriesDateFn;
     if (types.length !== 0) entryWhere.type = types;
     // run query
-    if (tags.length === 0) {
+    if (tagIds.length === 0) {
       entries = await sequelize.models.Entry.findAll({
         where: entryWhere,
         order: [["createdAt", "ASC"]],
@@ -55,10 +68,10 @@ export default async function getEntries(
     } else {
       const matchedEntries = await sequelize.models.EntryTag.findAll({
         include: { model: sequelize.models.Entry, where: entryWhere },
-        where: { tagId: tags },
+        where: { tagId: tagIds },
         group: ["entryId"],
         attributes: { include: [[sequelize.fn("COUNT", "id"), "matchCount"]] },
-        having: { matchCount: tags.length },
+        having: { matchCount: tagIds.length },
         offset,
         limit: PAGINATION_LIMIT,
       });

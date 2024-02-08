@@ -1,8 +1,10 @@
+/// imports ///
 import Link from "next/link";
 import NewAccountForm from "@/client-components/new-account-form";
 import styles from "./page.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 
+/// main component ///
 export default function NewAccount() {
   return (
     <div className={styles.page}>

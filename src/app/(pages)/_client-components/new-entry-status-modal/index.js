@@ -7,9 +7,27 @@ import ThemedImage from "@/helper-components/themed-image";
 import { useEffect, useRef } from "react";
 
 /// main component ///
+/**
+ * Resets new-entry form.
+ * @callback resetFormType
+ * @returns {void}
+ */
+/**
+ * Resets submission status.
+ * @callback retryType
+ * @returns {void}
+ */
+/**
+ * @param {Object} props
+ * @param {resetFormType} props.resetForm
+ * @param {retryType} props.retry
+ * @param {"adding" | "uploading" | "empty" | "error" | "success" | "success multiple"} props.status Status to show in modal.
+ */
 export default function NewEntryStatusModal({ resetForm, retry, status }) {
+  // initialize refs //
   const modalRef = useRef(null);
 
+  // show modal when rendered //
   useEffect(
     function openModal() {
       if (modalRef.current) {
@@ -20,14 +38,15 @@ export default function NewEntryStatusModal({ resetForm, retry, status }) {
     [modalRef],
   );
 
+  // prevent closing modal by cancelling //
   function handleCancel(e) {
     e.preventDefault();
   }
-
   function handleEsc(e) {
     if (e.key === "Escape") e.preventDefault();
   }
 
+  // render //
   return (
     <dialog
       className={`${styles.modal} ${

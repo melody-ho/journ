@@ -5,7 +5,11 @@ import styles from "./index.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 import { useEffect, useRef, useState } from "react";
 
-/// children components ///
+/// helper components ///
+/**
+ * @param {Object} props
+ * @param {boolean} props.checked
+ */
 function Checkbox({ checked }) {
   return (
     <div className={styles.checkboxIcon}>
@@ -18,70 +22,163 @@ function Checkbox({ checked }) {
 }
 
 /// main component ///
-export default function FiltesMenu({
+/**
+ * Applies filters.
+ * @callback applyFiltersType
+ * @param {FormData} filtersFormData includes "startDate", "endDate", "type", and "tags"
+ * @returns {void}
+ */
+/**
+ * @param {Object} props
+ * @param {applyFiltersType} props.applyFilters
+ * @param {?Date} props.previousEndDate
+ * @param {Array.<"text" | "image" | "video">} props.previousEntryTypes
+ * @param {?Date} props.previousStartDate
+ * @param {Array.<string>} props.previousTagIds
+ * @param {Array.<{id: string, name: string}>} props.userTags
+ */
+export default function FiltersMenu({
   applyFilters,
   previousEndDate,
+  previousEntryTypes,
   previousStartDate,
-  previousTags,
-  previousTypes,
+  previousTagIds,
   userTags,
 }) {
-  // initialize states and refs //
-  // states
+  // document states //
+  /**
+   * @typedef {?Date} endDateType End date selected.
+   */
+  /**
+   * @typedef {React.Dispatch<?Date>} setEndDateType Updates end date selected.
+   */
+  /**
+   * @typedef {Array.<"text" | "image" | "video">} entryTypesType Entry types selected.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<"text" | "image" | "video">>} setEntryTypesType Updates entry types selected.
+   */
+  /**
+   * @typedef {Array.<{id: string, name: string}>} matchedTagsType Tags matching search.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<{id: string, name: string}>>} setMatchedTagsType Updates tags matching search.
+   */
+  /**
+   * @typedef {boolean} moreTagsExpandType Indicates whether more tags section is expanded.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setMoreTagsExpandType Toggles more tags section expand/collapse state.
+   */
+  /**
+   * @typedef {Array.<string>} selectedTagIdsType Ids of tags selected.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<string>>} setSelectedTagIdsType Updates ids of tags selected.
+   */
+  /**
+   * @typedef {boolean} selectedTagsExpandType Indicates whether selected tags section is expanded.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setSelectedTagsExpandType Toggles selected tags section expand/collapse state.
+   */
+  /**
+   * @typedef {?Date} startDateType Start date selected.
+   */
+  /**
+   * @typedef {React.Dispatch<?Date>} setStartDateType Updates start date selected.
+   */
+  /**
+   * @typedef {?Array.<{id: string, name: string}>} unselectedMatchedTagsType Tags matching search that are not currently selected. Null when user tags are loading.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<{id: string, name: string}>} setUnselectedMatchedTagsType Updates list of tags matching search that are not currently selected.
+   */
+
+  // initialize states //
+  /**
+   * @type {[endDateType, setEndDateType]}
+   */
   const [endDate, setEndDate] = useState(previousEndDate);
-  const [filteredMatchedTags, setFilteredMatchedTags] = useState(null);
+  /**
+   * @type {[entryTypesType, setEntryTypesType]}
+   */
+  const [entryTypes, setEntryTypes] = useState([...previousEntryTypes]);
+  /**
+   * @type {[matchedTagsType, setMatchedTagsType]}
+   */
   const [matchedTags, setMatchedTags] = useState([...userTags]);
-  const [moreTagsSection, setMoreTagsSection] = useState(false);
-  const [selectedTagIds, setSelectedTagIds] = useState([...previousTags]);
-  const [selectedTagsSection, setSelectedTagsSection] = useState(false);
-  const [selectedTypes, setSelectedTypes] = useState([...previousTypes]);
+  /**
+   * @type {[moreTagsExpandType, setMoreTagsExpandType]}
+   */
+  const [moreTagsExpand, setMoreTagsExpand] = useState(false);
+  /**
+   * @type {[selectedTagIdsType, setSelectedTagIdsType]}
+   */
+  const [selectedTagIds, setSelectedTagIds] = useState([...previousTagIds]);
+  /**
+   * @type {[selectedTagsExpandType, setSelectedTagsExpandType]}
+   */
+  const [selectedTagsExpand, setSelectedTagsExpand] = useState(false);
+  /**
+   * @type {[startDateType, setStartDateType]}
+   */
   const [startDate, setStartDate] = useState(previousStartDate);
-  // refs
+  /**
+   * @type {[unselectedMatchedTagsType, setUnselectedMatchedTagsType]}
+   */
+  const [unselectedMatchedTags, setUnselectedMatchedTags] = useState(null);
+
+  // initialize refs //
   const endDateInputRef = useRef(null);
   const formRef = useRef(null);
   const startDateInputRef = useRef(null);
   const tagSearchInputRef = useRef(null);
 
-  // update filtered matched tags when matched tags or selected tags change //
+  // update unselected matched tags when matched tags or selected tags change //
   useEffect(
     function filterMatchedTags() {
       const filtered = matchedTags.filter(
         (matchedTag) => !selectedTagIds.includes(matchedTag.id),
       );
-      setFilteredMatchedTags([...filtered]);
+      setUnselectedMatchedTags([...filtered]);
     },
     [matchedTags, selectedTagIds],
   );
 
-  // declare event handlers //
+  // handle clearing filters //
   function clearFilters() {
     setStartDate(null);
     setEndDate(null);
-    setSelectedTypes([]);
+    setEntryTypes([]);
     setSelectedTagIds([]);
     setMatchedTags([...userTags]);
     tagSearchInputRef.current.value = "";
   }
 
+  // handle updating start date //
   function updateStartDate() {
     setStartDate(startDateInputRef.current.value);
   }
 
+  // handle updating end date //
   function updateEndDate() {
     setEndDate(endDateInputRef.current.value);
   }
 
-  function updateSelectedTypes(e) {
+  // handle updating selected types //
+  function updateEntryTypes(e) {
     if (e.target.checked) {
-      setSelectedTypes((selectedTypes) => [...selectedTypes, e.target.value]);
+      setEntryTypes((entryTypes) => [...entryTypes, e.target.value]);
     } else {
-      const newSelectedTypes = selectedTypes.filter(
-        (selectedTypes) => selectedTypes !== e.target.value,
+      const newEntryTypes = entryTypes.filter(
+        (entryTypes) => entryTypes !== e.target.value,
       );
-      setSelectedTypes(newSelectedTypes);
+      setEntryTypes(newEntryTypes);
     }
   }
 
+  // handle updating selected tags //
   function updateSelectedTagIds(e) {
     if (e.target.checked) {
       setSelectedTagIds((selectedTagIds) => [
@@ -96,6 +193,7 @@ export default function FiltesMenu({
     }
   }
 
+  // handle updating matched tags //
   function updateMatchedTags(e) {
     const regex = new RegExp(e.target.value, "i");
     const newMatchedTags = userTags.filter((userTag) =>
@@ -104,20 +202,24 @@ export default function FiltesMenu({
     setMatchedTags(newMatchedTags);
   }
 
+  // handle toggling selected tags section //
   function toggleSelectedTagsSection() {
-    setSelectedTagsSection(!selectedTagsSection);
+    setSelectedTagsExpand(!selectedTagsExpand);
   }
 
+  // handle toggling more tags section //
   function toggleMoreTagsSection() {
-    setMoreTagsSection(!moreTagsSection);
+    setMoreTagsExpand(!moreTagsExpand);
   }
 
+  // handle applying filters //
   function handleApply(e) {
     e.preventDefault();
     const formData = new FormData(formRef.current);
     applyFilters(formData);
   }
 
+  // render //
   return (
     <form className={styles.component} onSubmit={handleApply} ref={formRef}>
       <h1 className={styles.mainHeading}>Filters</h1>
@@ -171,45 +273,45 @@ export default function FiltesMenu({
           <li>
             <label className={styles.checkboxItem} htmlFor="text">
               <input
-                checked={selectedTypes.includes("text")}
+                checked={entryTypes.includes("text")}
                 className={styles.hiddenCheckbox}
                 id="text"
                 name="type"
-                onChange={updateSelectedTypes}
+                onChange={updateEntryTypes}
                 type="checkbox"
                 value="text"
               />
-              <Checkbox checked={selectedTypes.includes("text")} />
+              <Checkbox checked={entryTypes.includes("text")} />
               text
             </label>
           </li>
           <li>
             <label className={styles.checkboxItem} htmlFor="image">
               <input
-                checked={selectedTypes.includes("image")}
+                checked={entryTypes.includes("image")}
                 className={styles.hiddenCheckbox}
                 id="image"
                 name="type"
-                onChange={updateSelectedTypes}
+                onChange={updateEntryTypes}
                 type="checkbox"
                 value="image"
               />
-              <Checkbox checked={selectedTypes.includes("image")} />
+              <Checkbox checked={entryTypes.includes("image")} />
               image
             </label>
           </li>
           <li>
             <label className={styles.checkboxItem} htmlFor="video">
               <input
-                checked={selectedTypes.includes("video")}
+                checked={entryTypes.includes("video")}
                 className={styles.hiddenCheckbox}
                 id="video"
                 name="type"
-                onChange={updateSelectedTypes}
+                onChange={updateEntryTypes}
                 type="checkbox"
                 value="video"
               />
-              <Checkbox checked={selectedTypes.includes("video")} />
+              <Checkbox checked={entryTypes.includes("video")} />
               video
             </label>
           </li>
@@ -231,7 +333,7 @@ export default function FiltesMenu({
             >
               <div
                 className={`${styles.tagsSectionToggleIcon} ${
-                  selectedTagsSection ? styles.expanded : ""
+                  selectedTagsExpand ? styles.expanded : ""
                 }`}
               >
                 <ThemedImage
@@ -245,7 +347,7 @@ export default function FiltesMenu({
             </button>
             <div
               className={`${styles.tagsSectionItems} ${
-                !selectedTagsSection ? styles.collapsedTagsSection : ""
+                !selectedTagsExpand ? styles.collapsedTagsSection : ""
               }`}
               role="menu"
             >
@@ -292,13 +394,13 @@ export default function FiltesMenu({
               aria-label="Collapse/expand more tags available for selection"
               aria-haspopup="menu"
               className={styles.tagsSectionToggle}
-              disabled={filteredMatchedTags === null}
+              disabled={unselectedMatchedTags === null}
               onClick={toggleMoreTagsSection}
               type="button"
             >
               <div
                 className={`${styles.tagsSectionToggleIcon} ${
-                  moreTagsSection ? styles.expanded : ""
+                  moreTagsExpand ? styles.expanded : ""
                 }`}
               >
                 <ThemedImage
@@ -307,14 +409,14 @@ export default function FiltesMenu({
                 />
               </div>
               <h3 className={styles.tagsSectionHeading}>{`more (${
-                filteredMatchedTags === null
+                unselectedMatchedTags === null
                   ? "loading..."
-                  : filteredMatchedTags.length
+                  : unselectedMatchedTags.length
               })`}</h3>
             </button>
             <div
               className={`${styles.tagsSectionItems} ${
-                !moreTagsSection ? styles.collapsedTagsSection : ""
+                !moreTagsExpand ? styles.collapsedTagsSection : ""
               }`}
               role="menu"
             >
@@ -334,10 +436,10 @@ export default function FiltesMenu({
                   type="search"
                 />
               </div>
-              {filteredMatchedTags !== null &&
-              filteredMatchedTags.length !== 0 ? (
+              {unselectedMatchedTags !== null &&
+              unselectedMatchedTags.length !== 0 ? (
                 <ul aria-live="polite">
-                  {filteredMatchedTags.map((matchedTag) => {
+                  {unselectedMatchedTags.map((matchedTag) => {
                     if (!selectedTagIds.includes(matchedTag.id)) {
                       return (
                         <li

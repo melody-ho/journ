@@ -6,6 +6,11 @@ import sequelize from "@/database/sequelize";
 import z from "zod";
 
 /// main ///
+/**
+ * Creates new user in database given firstName, lastName, username, password, and confirmPassword.
+ * @param {FormData} formData includes firstName, lastName, username, password, and confirmPassword
+ * @returns {Promise<"error" | "success">} "error" if failed to create, "success" if created successfully
+ */
 export default async function createUser(formData) {
   // define form validation schemas
   const confirmPasswordSchema = z.literal(formData.get("password"));

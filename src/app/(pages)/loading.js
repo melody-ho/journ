@@ -1,6 +1,8 @@
+/// imports ///
 import styles from "./loading.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 
+/// main component ///
 export default function Loading() {
   return (
     <div aria-description="loading" className={styles.component}>

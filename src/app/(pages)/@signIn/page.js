@@ -1,8 +1,10 @@
+/// imports ///
 import Link from "next/link";
 import SignInForm from "@/client-components/sign-in-form";
 import styles from "./page.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 
+/// main component ///
 export default function SignIn() {
   return (
     <div className={styles.page}>

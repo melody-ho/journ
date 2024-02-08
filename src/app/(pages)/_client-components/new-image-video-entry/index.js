@@ -11,13 +11,23 @@ import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-/// private ///
-// max image dimension allowed //
+/// constants ///
+/**
+ * Max image dimension allowed, in px.
+ */
 const MAX_IMAGE_SIZE = 1920;
-// max video file size allowed //
+/**
+ * Max video file size allowed, in bytes.
+ */
 const MAX_VIDEO_SIZE = 5368709120;
 
-// resize images with at least one dimension larger than max allowed //
+/// helper functions ///
+/**
+ * Resizes and converts image.
+ * @param {string} fileURL Object URL of image to resize/convert.
+ * @param {string} fileIndex UUID attached to image being resized/converted.
+ * @returns {Promise<File>} File object of resized image in WebP.
+ */
 function resizeImage(fileURL, fileIndex) {
   return new Promise((resolve) => {
     const image = document.createElement("img");
@@ -48,40 +58,137 @@ function resizeImage(fileURL, fileIndex) {
 }
 
 /// main component ///
-export default function NewImageVideoEntry({ user, userTags }) {
+/**
+ * @param {Object} props
+ * @param {string} props.userId
+ * @param {Array.<{id: string, name: string}>} props.userTags
+ */
+export default function NewImageVideoEntry({ userId, userTags }) {
   // initialize router //
   const router = useRouter();
 
-  // initialize states and refs //
-  // states
+  // document states //
+  /**
+   * @typedef {Object} imageType
+   * @property {string} index UUID attached to file
+   * @property {string} name name of file
+   * @property {string} source object URL for file
+   * @property {File} resizedFile File object of resized image in WebP
+   */
+  /**
+   * @typedef {Array.<imageType>} imagesType List of image data.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<imageType>>} setImagesType Updates image data list.
+   */
+  /**
+   * @typedef {Array.<JSX.Element>} imagePreviewsType
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<JSX.Element>>} setImagePreviewsType
+   */
+  /**
+   * @typedef {null | "uploading" | "error" | "success" | "success multiple"} overallStatusType Overall upload status, null when no upload attempted or previous result acknowledged.
+   */
+  /**
+   * @typedef {React.Dispatch<null | "uploading" | "error" | "success" | "success multiple">} setOverallStatusType Reports overall update status, null when no upload attempted or previous result acknowledged.
+   */
+  /**
+   * @typedef {Object} tagDataType
+   * @property {Function} updateEntryTagNames Updates tag names attached to an entry when passed new array of tag names.
+   * @property {Function} getEntryTagNames Get tag names attached to an entry when called.
+   */
+  /**
+   * @typedef {Map<string, tagDataType>} tagsDataType Map containing tag names attached to each file being uploaded (key: index/UUID attached to file).
+   */
+  /**
+   * @typedef {React.Dispatch<Map<string, tagDataType>>} setTagsDataType Updates map containing tag names attached to each file being uploaded (key: index/UUID attached to file).
+   */
+  /**
+   * @typedef {Array.<string>} tagNamesForAllType Names of tags to apply to all entries in current upload.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<string>>} setTagNamesForAllType Updates names of tags to apply to all entries in current upload.
+   */
+  /**
+   * @typedef {Map<string, "adding" | "error" | "success">} uploadStatusesType Upload status for each file. (key: index/UUID attached to file, value: status of upload)
+   */
+  /**
+   * @typedef {React.Dispatch<Map<string, "adding" | "error" | "success">>} setUploadStatusesType Updates upload status for each file. (key: index/UUID attached to file, value: status of upload)
+   */
+  /**
+   * @typedef {Object} videoType
+   * @property {string} index UUID attached to file
+   * @property {string} name name of file
+   * @property {string} source object URL for file
+   * @property {File} resizedFile File object of file
+   */
+  /**
+   * @typedef {Array.<videoType>} videosType List of video data.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<videoType>>} setVideosType Updates video data list.
+   */
+  /**
+   * @typedef {Array.<JSX.Element>} videoPreviewsType
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<JSX.Element>>} setVideoPreviewsType
+   */
+
+  // initialize states //
+  /**
+   * @type {[imagesType, setImagesType]}
+   */
   const [images, setImages] = useState([]);
+  /**
+   * @type {[imagePreviewsType, setImagePreviewsType]}
+   */
   const [imagePreviews, setImagePreviews] = useState([]);
+  /**
+   * @type {[overallStatusType, setOverallStatusType]}
+   */
   const [overallStatus, setOverallStatus] = useState(null);
+  /**
+   * @type {[tagsDataType, setTagsDataType]}
+   */
   const [tagsData, setTagsData] = useState(new Map());
-  const [tagsForAll, setTagsForAll] = useState([]);
-  const [uploading, setUploading] = useState(false);
+  /**
+   * @type {[tagNamesForAllType, setTagNamesForAllType]}
+   */
+  const [tagNamesForAll, setTagNamesForAll] = useState([]);
+  /**
+   * @type {[uploadStatusesType, setUploadStatusesType]}
+   */
   const [uploadStatuses, setUploadStatuses] = useState(new Map());
+  /**
+   * @type {[videosType, setVideosType]}
+   */
   const [videos, setVideos] = useState([]);
+  /**
+   * @type {[videoPreviewsType, setVideoPreviewsType]}
+   */
   const [videoPreviews, setVideoPreviews] = useState([]);
-  // refs
+
+  // initialize refs //
   const captionRefs = useRef(new Map());
   const tagRefs = useRef(new Map());
 
-  // define factory function for managing tags data //
+  // declare factory function for managing tags data //
   const manageTagData = useCallback(() => {
-    let entryTags = [];
-    function updateEntryTags(updatedTags) {
-      entryTags = [...updatedTags];
+    let entrytagNames = [];
+    function updateEntryTagNames(updatedTagNames) {
+      entrytagNames = [...updatedTagNames];
     }
-    function getEntryTags() {
-      return entryTags;
+    function getEntryTagNames() {
+      return entrytagNames;
     }
-    return { updateEntryTags, getEntryTags };
+    return { updateEntryTagNames, getEntryTagNames };
   }, []);
 
   // update tags for all when changed //
-  const updateTagsForAll = useCallback((tags) => {
-    setTagsForAll([...tags]);
+  const updateTagNamesForAll = useCallback((tagNames) => {
+    setTagNamesForAll([...tagNames]);
   }, []);
 
   // create image/video previews //
@@ -127,7 +234,7 @@ export default function NewImageVideoEntry({ user, userTags }) {
                   className={styles.captionInput}
                   placeholder="caption..."
                   readOnly={
-                    uploading ||
+                    overallStatus === "uploading" ||
                     (uploadStatuses.has(entry.index) &&
                       uploadStatuses.get(entry.index) === "success")
                   }
@@ -142,10 +249,10 @@ export default function NewImageVideoEntry({ user, userTags }) {
                 >
                   <TagDropdown
                     instruction="Add tags"
-                    passEntryTags={tagData.updateEntryTags}
-                    preSelectedTags={tagsForAll}
+                    passEntryTagNames={tagData.updateEntryTagNames}
+                    preSelectedTagNames={tagNamesForAll}
                     readOnly={
-                      uploading ||
+                      overallStatus === "uploading" ||
                       (uploadStatuses.has(entry.index) &&
                         uploadStatuses.get(entry.index) === "success")
                     }
@@ -169,7 +276,7 @@ export default function NewImageVideoEntry({ user, userTags }) {
                     <ThemedImage alt="success icon" imageName="success-icon" />
                   </div>
                 </div>
-              ) : uploading ? (
+              ) : overallStatus === "uploading" ? (
                 // error
                 <div className={styles.uploadStatus} role="status">
                   <p className={styles.visuallyHidden}>error</p>
@@ -200,7 +307,7 @@ export default function NewImageVideoEntry({ user, userTags }) {
                   </div>
                 </>
               )
-            ) : uploading ? (
+            ) : overallStatus === "uploading" ? (
               // queued
               <div className={styles.uploadProgress} role="status">
                 <p className={styles.visuallyHidden}>queued</p>
@@ -224,7 +331,7 @@ export default function NewImageVideoEntry({ user, userTags }) {
       });
       return newPreviews;
     },
-    [manageTagData, tagsForAll, uploading, uploadStatuses, userTags],
+    [manageTagData, overallStatus, tagNamesForAll, uploadStatuses, userTags],
   );
 
   // update DOM when list of images changes //
@@ -300,7 +407,7 @@ export default function NewImageVideoEntry({ user, userTags }) {
   // handle files added through drag and drop //
   function handleFileDrop(e) {
     e.preventDefault();
-    if (!uploading) {
+    if (overallStatus !== "uploading") {
       const files = e.dataTransfer.files;
       addNewFiles(files);
     }
@@ -324,13 +431,12 @@ export default function NewImageVideoEntry({ user, userTags }) {
     const newUploadStatus = new Map(uploadStatuses);
     setUploadStatuses(newUploadStatus);
     // set up upload
-    setUploading(true);
     e.preventDefault();
     const entriesData = {};
     entriesData.indexes = [];
     entriesData.files = {};
     entriesData.captions = {};
-    entriesData.tags = {};
+    entriesData.tagNames = {};
     const files = [...images, ...videos];
     files.forEach((file) => {
       entriesData.indexes.push(file.index);
@@ -340,7 +446,7 @@ export default function NewImageVideoEntry({ user, userTags }) {
       entriesData.captions[index] = ref.value;
     });
     tagsData.forEach((tagData, index) => {
-      entriesData.tags[index] = tagData.getEntryTags();
+      entriesData.tagNames[index] = tagData.getEntryTagNames();
     });
     let error = false;
     // upload files one by one
@@ -350,10 +456,13 @@ export default function NewImageVideoEntry({ user, userTags }) {
         const uploadingState = new Map(uploadStatuses.set(index, "adding"));
         setUploadStatuses(uploadingState);
         const entryData = new FormData();
-        entryData.append("user", user);
+        entryData.append("userId", userId);
         entryData.append("file", entriesData.files[index]);
         entryData.append("caption", entriesData.captions[index]);
-        entryData.append("tags", JSON.stringify(entriesData.tags[index]));
+        entryData.append(
+          "tagNames",
+          JSON.stringify(entriesData.tagNames[index]),
+        );
         const status = await handleImageVideoUpload(entryData);
         const uploadedState = new Map(uploadStatuses.set(index, status));
         setUploadStatuses(uploadedState);
@@ -375,7 +484,6 @@ export default function NewImageVideoEntry({ user, userTags }) {
 
   // set up form if user chooses to retry upon error //
   function retry() {
-    setUploading(false);
     setOverallStatus(null);
   }
 
@@ -385,13 +493,13 @@ export default function NewImageVideoEntry({ user, userTags }) {
     setVideos([]);
     setImagePreviews([]);
     setVideoPreviews([]);
-    setTagsForAll([]);
+    setTagNamesForAll([]);
     setTagsData(new Map());
-    setUploading(false);
     setUploadStatuses(new Map());
     setOverallStatus(null);
   }
 
+  // render //
   return (
     <>
       <form>
@@ -407,7 +515,7 @@ export default function NewImageVideoEntry({ user, userTags }) {
           <input
             accept="image/*, video/*"
             className={styles.hidden}
-            disabled={uploading}
+            disabled={overallStatus === "uploading"}
             id="files"
             multiple
             name="files"
@@ -443,8 +551,10 @@ export default function NewImageVideoEntry({ user, userTags }) {
                 </p>
                 <TagDropdown
                   instruction="Add tags to all"
-                  passEntryTags={updateTagsForAll}
-                  readOnly={uploading || uploadStatuses.size > 0}
+                  passEntryTagNames={updateTagNamesForAll}
+                  readOnly={
+                    overallStatus === "uploading" || uploadStatuses.size > 0
+                  }
                   userTags={userTags}
                 />
               </div>

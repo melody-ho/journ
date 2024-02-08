@@ -8,26 +8,33 @@ import { useEffect, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 
 /// constants ///
-// duration of delay for posting form data to ensure success message is shown //
+/**
+ * Delay for posting form data to ensure success message is shown, in ms.
+ */
 const POST_DELAY = 200;
 
-/// children components ///
+/// child components ///
+/**
+ * @param {Object} props
+ * @param {"invalid" | "error" | "success"} props.status Result of attempted authorization.
+ */
 function FormFields({ status }) {
   // initialize states used for client-side validation //
   // username
-  const [usernameState, setUsernameState] = useState(null);
+  const [usernameValue, setUsernameValue] = useState(null);
   function handleUsernameChange(e) {
-    setUsernameState(e.target.value);
+    setUsernameValue(e.target.value);
   }
   // password
-  const [passwordState, setPasswordState] = useState(null);
+  const [passwordValue, setPasswordValue] = useState(null);
   function handlePasswordChange(e) {
-    setPasswordState(e.target.value);
+    setPasswordValue(e.target.value);
   }
 
   // initialize form status //
   const { pending } = useFormStatus();
 
+  // render //
   return (
     <>
       <ul>
@@ -46,7 +53,7 @@ function FormFields({ status }) {
             username
           </label>
           <p className={styles.errorMessage} role="status">
-            {usernameState === "" ? "Please enter your username." : ""}
+            {usernameValue === "" ? "Please enter your username." : ""}
           </p>
         </li>
         <li className={styles.formField}>
@@ -64,7 +71,7 @@ function FormFields({ status }) {
             password
           </label>
           <p className={styles.errorMessage} role="status">
-            {passwordState === "" ? "Please enter your password." : ""}
+            {passwordValue === "" ? "Please enter your password." : ""}
           </p>
         </li>
       </ul>
@@ -78,7 +85,7 @@ function FormFields({ status }) {
       ) : (
         <button
           className={styles.submitButton}
-          disabled={!usernameState || !passwordState}
+          disabled={!usernameValue || !passwordValue}
         >
           Log in
         </button>
@@ -105,6 +112,7 @@ export default function SignInForm() {
     [formState],
   );
 
+  // render //
   return (
     <form action={formAction} className={styles.form} ref={formRef}>
       <FormFields status={formState} />

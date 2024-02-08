@@ -2,34 +2,141 @@
 
 /// imports ///
 import EditEntryForm from "@/client-components/edit-entry-form";
-import { getEntryWithTags } from "@/server-actions/get-entry";
+import getEntry from "@/server-actions/get-entry";
 import Image from "next/image";
 import styles from "./index.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 import { useEffect, useRef, useState } from "react";
 
 /// main component ///
+/**
+ * Removes an entry from feed.
+ * @callback removeFromFeedType
+ * @param {string} entryId
+ * @returns {void}
+ */
+/**
+ * Removes modal from DOM.
+ * @callback removeModalType
+ * @returns {void}
+ */
+/**
+ * Updates an entry in feed.
+ * @callback updateFeedEntryType
+ * @param {string} entryId
+ * @returns {void}
+ */
+/**
+ * @param {Object} props
+ * @param {string} props.id Id of entry being displayed.
+ * @param {removeFromFeedType} props.removeFromFeed
+ * @param {removeModalType} props.removeModal
+ * @param {updateFeedEntryType} props.updateFeedEntry
+ * @param {Array.<{id: string, name: string}>} props.userTags
+ */
 export default function EntryModal({
   id,
   removeFromFeed,
   removeModal,
-  updateFeed,
+  updateFeedEntry,
   userTags,
 }) {
-  // initialize states and refs //
-  // states
+  // document states //
+  /**
+   * @typedef {false | "fail" | "success"} deletedType Status of entry deletion, false if no deletion attempted or previous result acknowledged.
+   */
+  /**
+   * @typedef {React.Dispatch<false | "fail" | "success">} setDeletedType Reports result of entry deletion from database, false when no deletion attempted or previous result acknowledged.
+   */
+  /**
+   * @typedef {boolean} deletingType Indicates whether entry deletion is in progress.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setDeletingType Updates whether entry deletion is in progress.
+   */
+  /**
+   * @typedef {boolean} emptyTextType Indicates whether an empty text entry was attempted.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setEmptyTextType Reports whether an empty text entry was attempted.
+   */
+  /**
+   * @typedef {?{id: string,
+   *             type: "text" | "image" | "video",
+   *             content: string,
+   *             createdAt: Date,
+   *             updatedAt: Date,
+   *             userId: string,
+   *             srcUrl: string | undefined,
+   *             tagIds: Array.<string>,
+   *             tagNames: Array.<string>} | "error"} entryType entry data, null if not yet retrieved, "error" if error retrieving
+   */
+  /**
+   * @typedef {React.Dispatch<?{
+   *            id: string,
+   *            type: "text" | "image" | "video",
+   *            content: string,
+   *            createdAt: Date,
+   *            updatedAt: Date,
+   *            userId: string,
+   *            srcUrl: string | undefined,
+   *            tagIds: Array.<string>,
+   *            tagNames: Array.<string>} | "error">} setEntryType Updates entry data, null if not yet retrieved, "error" if error retrieving.
+   */
+  /**
+   * @typedef {boolean} loadingType Indicates whether entry is being retrieved / rendering.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setLoadingType Updates whether entry is being retrieved / rendering.
+   */
+  /**
+   * @typedef {boolean} updateErrorType Indicates whether there was an error updating entry in database.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setUpdateErrorType Reports whether there was an error updating entry in database.
+   */
+  /**
+   * @typedef {boolean} updatingType Indicates whether entry update is in progress.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setUpdatingType Updates whether entry update is in progress.
+   */
+
+  // initialize states //
+  /**
+   * @type {[deletedType, setDeletedType]}
+   */
   const [deleted, setDeleted] = useState(false);
+  /**
+   * @type {[deletingType, setDeletingType]}
+   */
   const [deleting, setDeleting] = useState(false);
+  /**
+   * @type {[emptyTextType, setEmptyTextType]}
+   */
   const [emptyText, setEmptyText] = useState(false);
+  /**
+   * @type {[entryType, setEntryType]}
+   */
   const [entry, setEntry] = useState(null);
+  /**
+   * @type {[loadingType, setLoadingType]}
+   */
   const [loading, setLoading] = useState(true);
+  /**
+   * @type {[updateErrorType, setUpdateErrorType]}
+   */
   const [updateError, setUpdateError] = useState(false);
+  /**
+   * @type {[updatingType, setUpdatingType]}
+   */
   const [updating, setUpdating] = useState(false);
-  // refs
+
+  // initialize refs //
   const modalRef = useRef(null);
   const modalWrapperRef = useRef(null);
 
-  // open modal when rendered //
+  // show modal when rendered //
   useEffect(
     function show() {
       if (modalRef.current) {
@@ -43,7 +150,7 @@ export default function EntryModal({
   useEffect(
     function getEntryData() {
       async function getData() {
-        const data = await getEntryWithTags(id);
+        const data = await getEntry(id);
         if (data === "error" || data.type === "text") setLoading(false);
         setEntry(data);
       }
@@ -54,6 +161,7 @@ export default function EntryModal({
     [entry, id],
   );
   function retryGetData() {
+    setLoading(true);
     setEntry(null);
   }
 
@@ -62,7 +170,7 @@ export default function EntryModal({
     setLoading(false);
   }
 
-  // close status modal after acknowledging delete error //
+  // close status modal after acknowledging deletion error //
   function acknowledgeDeleteError() {
     setDeleted(false);
   }
@@ -77,7 +185,7 @@ export default function EntryModal({
     setEmptyText(false);
   }
 
-  // close modal on cancel if not updating or deleting //
+  // close modal on cancel if not currently updating or deleting //
   function handleClickOut(e) {
     if (
       modalWrapperRef.current &&
@@ -99,6 +207,7 @@ export default function EntryModal({
     }
   }
 
+  // render //
   return (
     <dialog
       className={`${
@@ -285,7 +394,7 @@ export default function EntryModal({
               setLoading={setLoading}
               setUpdateError={setUpdateError}
               setUpdating={setUpdating}
-              updateFeed={updateFeed}
+              updateFeedEntry={updateFeedEntry}
               userTags={userTags}
             />
           </div>

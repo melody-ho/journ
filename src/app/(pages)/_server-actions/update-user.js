@@ -7,6 +7,12 @@ import sequelize from "@/database/sequelize";
 import z from "zod";
 
 /// Private ///
+/**
+ * Authorizes credentials.
+ * @param {{password: string}} user
+ * @param {string} password
+ * @returns {Promise<"invalid" | "error" | "success">} "invalid" if incorrect password, "error" if an error occurs, "success" if successful authentication
+ */
 async function authorize(user, password) {
   try {
     if (!user) return "error";
@@ -19,6 +25,11 @@ async function authorize(user, password) {
 }
 
 /// Main ///
+/**
+ * Updates user in database given userId, firstName, lastName, username, currentPassword, newPassword(optional), and confirmNewPassword(optional).
+ * @param {FormData} formData includes userId, firstName, lastName, username, currentPassword, newPassword(optional), and confirmNewPassword(optional)
+ * @returns {Promise<"invalid" | "error" | "success">} "invalid" if incorrect current password, "error" if failed to update, "success" if user updated successfully
+ */
 export default async function updateUser(formData) {
   // get user
   const userId = formData.get("userId");

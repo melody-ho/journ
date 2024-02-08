@@ -1,7 +1,9 @@
+/// imports ///
 import Link from "next/link";
 import styles from "./not-found.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 
+/// main component ///
 export default function NotFound() {
   return (
     <div className={styles.component}>

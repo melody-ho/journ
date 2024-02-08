@@ -1,7 +1,9 @@
+/// imports ///
 import argon2 from "argon2";
 import sequelize from "@/database/sequelize";
 import { setUserSession } from "@/app/(api)/(authentication)/_utils/sessions";
 
+/// route ///
 export async function POST(req) {
   // get form data //
   const formData = await req.formData();
@@ -17,7 +19,7 @@ export async function POST(req) {
     if (!authorized) throw new Error("invalid credentials");
     // respond to successful authentication //
     const res = new Response(null, { status: 302 });
-    await setUserSession(res, user);
+    await setUserSession(res, user.id);
     res.headers.set("Location", "/");
     return res;
   } catch (error) {

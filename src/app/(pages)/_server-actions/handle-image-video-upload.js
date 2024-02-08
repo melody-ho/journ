@@ -7,16 +7,27 @@ import sequelize from "@/database/sequelize";
 import { Upload } from "@aws-sdk/lib-storage";
 
 /// private ///
+/**
+ * Maximum character length for tags.
+ */
 const MAX_TAG_LENGTH = 50;
+/**
+ * Name of S3 bucket, needs to be provided in environment variables as S3_BUCKET.
+ */
 const S3_BUCKET = process.env.S3_BUCKET;
 
 /// main ///
+/**
+ * Adds an image/video entry to database when given userId, file, caption, and tagNames.
+ * @param {FormData} entryData includes userId, file, caption, and tagNames
+ * @returns {Promise<"error" | "success">} "error" if failed to add, "success" if added successfully
+ */
 export default async function handleImageVideoUpload(entryData) {
   // get data
-  const userId = entryData.get("user");
+  const userId = entryData.get("userId");
   const file = entryData.get("file");
   const caption = entryData.get("caption");
-  const tagNames = JSON.parse(entryData.get("tags"));
+  const tagNames = JSON.parse(entryData.get("tagNames"));
   const type = file.type.startsWith("image/") ? "image" : "video";
   try {
     await sequelize.transaction(async function addImgVideoEntryToDatabase(t) {

@@ -7,9 +7,18 @@ import s3 from "@/database/s3";
 import sequelize from "@/database/sequelize";
 
 /// private ///
+/**
+ * Name of S3 bucket, needs to be provided in environment variables as S3_BUCKET.
+ */
 const S3_BUCKET = process.env.S3_BUCKET;
 
 /// main ///
+/**
+ * Deletes an entry.
+ * @param {string} userId
+ * @param {string} entryId
+ * @returns {Promise<"error" | "success">} "error" if failed to delete, "success" if deleted successfully
+ */
 export default async function deleteEntry(userId, entryId) {
   try {
     await sequelize.transaction(async function deleteEntryFromDatabase(t) {

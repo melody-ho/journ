@@ -3,7 +3,7 @@
 /// imports ///
 import EntryModal from "../entry-modal";
 import getEntries from "@/server-actions/get-entries";
-import { getEntryWithTagIds } from "@/server-actions/get-entry";
+import getEntry from "@/server-actions/get-entry";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./index.module.css";
@@ -11,11 +11,14 @@ import ThemedImage from "@/helper-components/themed-image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-/// private ///
-// generate individual entry layout sizes //
-const getType = (function getTypeFactory() {
+/// helper functions ///
+/**
+ * Generates individual entry layout size.
+ * @returns {"small" | "large"}
+ */
+const getLayoutSize = (function getLayoutSizeFactory() {
   let _remainingSmall = false;
-  function getType() {
+  function getLayoutSize() {
     if (_remainingSmall) {
       _remainingSmall = false;
       return "small";
@@ -28,36 +31,164 @@ const getType = (function getTypeFactory() {
       return "large";
     }
   }
-  return getType;
+  return getLayoutSize;
 })();
 
 /// main component ///
+/**
+ * Confirms feed has been reset.
+ * @callback confirmFeedResetType
+ * @returns {void}
+ */
+/**
+ * Triggers feed reset.
+ * @callback triggerFeedResetType
+ * @returns {void}
+ */
+/**
+ * @param {Object} props
+ * @param {confirmFeedResetType} props.confirmFeedReset
+ * @param {boolean} props.feedReset Indicates whether feed should be reset.
+ * @param {?Date} props.filterEndDate
+ * @param {Array.<"text" | "image" | "video">}  props.filterEntryTypes
+ * @param {?Date} props.filterStartDate
+ * @param {Array.<string>} props.filterTagIds
+ * @param {triggerFeedResetType} props.triggerFeedReset
+ * @param {string} props.userId
+ * @param {Array.<{id: string, name: string}>} props.userTags
+ */
 export default function FilteredEntries({
+  confirmFeedReset,
   feedReset,
-  selectedEndDate,
-  selectedStartDate,
-  selectedTags,
-  selectedTypes,
-  setFeedReset,
+  filterEndDate,
+  filterEntryTypes,
+  filterStartDate,
+  filterTagIds,
+  triggerFeedReset,
   userId,
   userTags,
 }) {
   // initialize router //
   const router = useRouter();
 
-  // initialize states and refs //
-  // states
+  // document states //
+  /**
+   * @typedef {Object} entryType An entry in feed.
+   * @property {string} id
+   * @property {"text" | "image" | "video"} type
+   * @property {string} content
+   * @property {Date} createdAt
+   * @property {Date} updatedAt
+   * @property {string | undefined} srcUrl Only required for type: "image" and type: "video".
+   * @property {"small" | "large"} layoutSize
+   * @property {number} page
+   * @property {boolean} loaded
+   * @property {boolean} error Optional. Evaluated as no error if omitted.
+   */
+  /**
+   * @typedef {Array.<entryType>} entriesType List of entries in feed.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<entryType>>} setEntriesType Updates list of entries in feed.
+   */
+  /**
+   * @typedef {Array.<entryType>} entriesLoadingType List of entries currently being loaded.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<entryType>} setEntriesLoadingType Updates list of entries currently being loaded.
+   */
+  /**
+   * @typedef {?string} entryModalIdType Id of entry being displayed in modal. No modal displayed if null.
+   */
+  /**
+   * @typedef {React.Dispatch<?string>} setEntryModalIdType Toggles modal displaying specific entry.
+   */
+  /**
+   * @typedef {?string} entryToUpdateIdType Id of entry to update in feed. No entry being updated if null.
+   */
+  /**
+   * @typedef {React.Dispatch<?string>} setEntryToUpdateIdType Triggers update of an entry when changed from null to an entry id.
+   */
+  /**
+   * @typedef {boolean} feedEndType Indicates whether there are no more entries in feed.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setFeedEndType Toggles end-of-feed UI.
+   */
+  /**
+   * @typedef {boolean} loadErrorType Indicates whether there is an error fetching next batch of entries.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setLoadErrorType Toggles error UI at end of feed.
+   */
+  /**
+   * @typedef {boolean} loadingType Indicates whether next batch of entries are still being fetched and rendered.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setLoadingType Toggles loading indicator at end of feed.
+   */
+  /**
+   * @typedef {number} nextPageType Next page number for feed.
+   */
+  /**
+   * @typedef {React.Dispatch<number>} setNextPageType Updates next page number for feed.
+   */
+  /**
+   * @typedef {boolean} noEntriesType Indicates whether there are no entries to display in feed.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setNoEntriesType Toggles message indicating there are no entries in feed.
+   */
+  /**
+   * @typedef {?number} renderPageType Number of page currently being rendered.
+   */
+  /**
+   * @typedef {React.Dispatch<?number>} setRenderPageType Updates number of page currently being rendered.
+   */
+
+  // initialize states //
+  /**
+   * @type {[entriesType, setEntriesType]}
+   */
   const [entries, setEntries] = useState([]);
+  /**
+   * @type {[entriesLoadingType, setEntriesLoadingType]}
+   */
   const [entriesLoading, setEntriesLoading] = useState([]);
-  const [entryModal, setEntryModal] = useState(null);
-  const [entryToUpdate, setEntryToUpdate] = useState(null);
+  /**
+   * @type {[entryModalIdType, setEntryModalIdType]}
+   */
+  const [entryModalId, setEntryModalId] = useState(null);
+  /**
+   * @type {[entryToUpdateIdType, setEntryToUpdateIdType]}
+   */
+  const [entryToUpdateId, setEntryToUpdateId] = useState(null);
+  /**
+   * @type {[feedEndType, setFeedEndType]}
+   */
+  const [feedEnd, setFeedEnd] = useState(false);
+  /**
+   * @type {[loadErrorType, setLoadErrorType]}
+   */
+  const [loadError, setLoadError] = useState(false);
+  /**
+   * @type {[loadingType, setLoadingType]}
+   */
   const [loading, setLoading] = useState(false);
-  const [loadingError, setLoadingError] = useState(false);
+  /**
+   * @type {[nextPageType, setNextPageType]}
+   */
+  const [nextPage, setNextPage] = useState(1);
+  /**
+   * @type {[noEntriesType, setNoEntriesType]}
+   */
   const [noEntries, setNoEntries] = useState(false);
-  const [page, setPage] = useState(1);
-  const [pageLoading, setPageLoading] = useState(1);
-  const [reachEnd, setReachEnd] = useState(false);
-  // refs
+  /**
+   * @type {[renderPageType, setRenderPageType]}
+   */
+  const [renderPage, setRenderPage] = useState(1);
+
+  // initialize refs //
   const observerTargetRef = useRef(null);
 
   // reset entries feed when triggered //
@@ -66,17 +197,17 @@ export default function FilteredEntries({
       if (feedReset) {
         setEntries([]);
         setEntriesLoading([]);
-        setEntryToUpdate(null);
+        setEntryToUpdateId(null);
+        setNextPage(1);
+        setRenderPage(1);
         setLoading(false);
-        setLoadingError(false);
+        setLoadError(false);
+        setFeedEnd(false);
         setNoEntries(false);
-        setPage(1);
-        setPageLoading(1);
-        setReachEnd(false);
-        setFeedReset(false);
+        confirmFeedReset();
       }
     },
-    [feedReset, setFeedReset],
+    [confirmFeedReset, feedReset],
   );
 
   // configure intersection observer to retrieve next entries when they're in view //
@@ -99,30 +230,30 @@ export default function FilteredEntries({
         async (targets) => {
           if (targets[0].isIntersecting) {
             setLoading(true);
-            setPageLoading(page);
+            setRenderPage(nextPage);
             const nextEntries = await getEntries(
               userId,
-              selectedStartDate,
-              selectedEndDate,
-              selectedTypes,
-              selectedTags,
-              page,
+              filterStartDate,
+              filterEndDate,
+              filterEntryTypes,
+              filterTagIds,
+              nextPage,
             );
             if (nextEntries === "error") {
-              setLoadingError(true);
+              setLoadError(true);
               setLoading(false);
             } else if (nextEntries.length === 0) {
-              if (page === 1) {
+              if (nextPage === 1) {
                 setNoEntries(true);
               } else {
-                setReachEnd(true);
+                setFeedEnd(true);
               }
               setLoading(false);
             } else {
               const entriesToAdd = nextEntries.map((nextEntry) => {
                 const entryToAdd = { ...nextEntry };
-                entryToAdd.layoutSize = getType();
-                entryToAdd.page = page;
+                entryToAdd.layoutSize = getLayoutSize();
+                entryToAdd.page = nextPage;
                 entryToAdd.loaded = entryToAdd.type === "text";
                 return entryToAdd;
               });
@@ -131,9 +262,9 @@ export default function FilteredEntries({
                 setEntriesLoading([...entriesToAdd]);
               } else {
                 setLoading(false);
-                setPageLoading(null);
+                setRenderPage(null);
               }
-              setPage((prevPage) => prevPage + 1);
+              setNextPage((prevPage) => prevPage + 1);
             }
           }
         },
@@ -148,19 +279,19 @@ export default function FilteredEntries({
     },
     [
       entries,
+      filterEndDate,
+      filterEntryTypes,
+      filterStartDate,
+      filterTagIds,
+      loadError,
       loading,
-      loadingError,
+      nextPage,
       observerTargetRef,
-      page,
-      selectedEndDate,
-      selectedStartDate,
-      selectedTags,
-      selectedTypes,
       userId,
     ],
   );
 
-  // remove next batch loading state if all images/videos are loaded //
+  // remove next batch loading state and show rendered entries when all images/videos are loaded //
   function updateLoaded(id) {
     // mark newly loaded entry
     const newEntriesLoading = entriesLoading.map((entry) => {
@@ -180,7 +311,7 @@ export default function FilteredEntries({
     // respond to current load state
     if (allLoaded) {
       setLoading(false);
-      setPageLoading(null);
+      setRenderPage(null);
       setEntriesLoading([]);
     } else {
       setEntriesLoading(newEntriesLoading);
@@ -189,67 +320,71 @@ export default function FilteredEntries({
 
   // retry retrieving next entries //
   function retryGetEntries() {
-    setLoadingError(false);
+    setLoadError(false);
   }
 
   // render entry modal when entry is clicked //
   function renderEntryModal(id) {
-    setEntryModal(id);
+    setEntryModalId(id);
   }
 
   // remove entry modal when modal is closed //
   function removeEntryModal() {
-    setEntryModal(null);
+    setEntryModalId(null);
   }
 
-  // update entry in feed and tags in filters menu when edited //
+  // update entry in feed and tags in filters menu when an entry is edited //
   // handle main update
-  function updateFeed(entryId) {
+  function updateFeedEntry(entryId) {
     router.refresh();
-    setEntryToUpdate(entryId);
+    setEntryToUpdateId(entryId);
   }
   // handle retry on error
   function retryUpdate(entryId) {
-    setEntryToUpdate(entryId);
+    setEntryToUpdateId(entryId);
   }
   // remove loading state for image/video entry being updated when loading complete or loading error
   function markUpdated() {
-    setEntryToUpdate(null);
+    setEntryToUpdateId(null);
   }
   useEffect(
     function updateEntries() {
       async function updateEntry() {
         // retrieve entry to update
-        const updatedEntry = await getEntryWithTagIds(entryToUpdate);
+        const updatedEntry = await getEntry(entryToUpdateId);
         // update in list of entries
         // check if current tag filters still valid
         let filteredOut = false;
-        for (const selectedTag of selectedTags) {
-          if (!updatedEntry.tags.includes(selectedTag)) {
+        for (const filterTagId of filterTagIds) {
+          if (!updatedEntry.tagIds.includes(filterTagId)) {
             filteredOut = true;
             break;
           }
         }
         if (filteredOut) {
+          let noEntries = false;
           // remove if tag filters no longer valid
           setEntries((entries) => {
             const newEntries = entries.filter(
-              (entry) => entry.id !== entryToUpdate,
+              (entry) => entry.id !== entryToUpdateId,
             );
             if (newEntries.length === 0) {
-              setFeedReset(true);
+              noEntries = true;
             }
             return newEntries;
           });
-          setEntryToUpdate(null);
+          if (noEntries) {
+            triggerFeedReset();
+          }
+          setEntryToUpdateId(null);
         } else {
           // update if tag filters still valid
           setEntries((entries) =>
             entries.map((entry) => {
-              if (entry.id === entryToUpdate) {
+              if (entry.id === entryToUpdateId) {
                 if (updatedEntry === "error") {
                   return {
-                    id: entryToUpdate,
+                    id: entryToUpdateId,
                     layoutSize: entry.layoutSize,
                     error: true,
                   };
@@ -266,16 +401,16 @@ export default function FilteredEntries({
             updatedEntry === "error" ||
             updatedEntry.srcUrl === "error"
           ) {
-            setEntryToUpdate(null);
+            setEntryToUpdateId(null);
           }
         }
       }
-      if (entryToUpdate) updateEntry();
+      if (entryToUpdateId) updateEntry();
     },
-    [entryToUpdate, selectedTags, setFeedReset],
+    [entryToUpdateId, filterTagIds, triggerFeedReset],
   );
 
-  // remove entry in feed and update tags in filters menu when deleted //
+  // remove entry in feed and update tags in filters menu when an entry is deleted //
   function removeFromFeed(entryId) {
     router.refresh();
     const newEntries = entries.filter((entry) => entry.id !== entryId);
@@ -287,13 +422,14 @@ export default function FilteredEntries({
 
   // handle image/video loading complete and loading error //
   function handleLoaded(entryId) {
-    if (entryToUpdate === null) {
-      updateLoaded(entryId);
-    } else if (entryId === entryToUpdate) {
+    if (entryId === entryToUpdateId) {
       markUpdated();
+    } else {
+      updateLoaded(entryId);
     }
   }
 
+  // render //
   return (
     <>
       <section className={styles.filteredEntries}>
@@ -303,7 +439,7 @@ export default function FilteredEntries({
               className={` ${styles.errorContainer}
                 ${entry.layoutSize === "small" ? styles.small : styles.large}
                 ${
-                  entry.page === pageLoading
+                  entry.page === renderPage
                     ? styles.hiddenPage
                     : styles.shownPage
                 }`}
@@ -336,22 +472,20 @@ export default function FilteredEntries({
               className={`${styles.entryBtn}
               ${entry.layoutSize === "small" ? styles.small : styles.large}
               ${
-                entry.page === pageLoading
-                  ? styles.hiddenPage
-                  : styles.shownPage
+                entry.page === renderPage ? styles.hiddenPage : styles.shownPage
               }`}
               key={entry.id}
               onClick={() => renderEntryModal(entry.id)}
               type="button"
             >
-              {entry.id === entryToUpdate ? (
+              {entry.id === entryToUpdateId ? (
                 <div className={styles.placeholder}>
                   <div className={styles.shimmer}></div>
                 </div>
               ) : null}
               <div
                 className={`${styles.entry} ${
-                  entry.id === entryToUpdate
+                  entry.id === entryToUpdateId
                     ? styles.hiddenEntry
                     : styles.shownEntry
                 }`}
@@ -426,7 +560,7 @@ export default function FilteredEntries({
         <div className={styles.loading} role="status">
           <div className={styles.loader}></div>
         </div>
-      ) : loadingError ? (
+      ) : loadError ? (
         <div className={styles.loadError} role="status">
           <div className={styles.loadErrorMessage}>
             <div className={styles.loadErrorIcon}>
@@ -446,10 +580,10 @@ export default function FilteredEntries({
           </button>
         </div>
       ) : noEntries ? (
-        !selectedStartDate &&
-        !selectedEndDate &&
-        selectedTypes.length === 0 &&
-        selectedTags.length === 0 ? (
+        !filterStartDate &&
+        !filterEndDate &&
+        filterEntryTypes.length === 0 &&
+        filterTagIds.length === 0 ? (
           <div className={styles.noEntries}>
             <p className={styles.noEntriesText}>
               You don&#39;t have any Journ entries yet.
@@ -463,7 +597,7 @@ export default function FilteredEntries({
             No entries matching current filters.
           </p>
         )
-      ) : reachEnd ? (
+      ) : feedEnd ? (
         <div className={styles.endOfFeed} role="status">
           <p className={styles.endOfFeedText}>end</p>
         </div>
@@ -474,12 +608,12 @@ export default function FilteredEntries({
           ref={observerTargetRef}
         ></div>
       )}
-      {entryModal ? (
+      {entryModalId ? (
         <EntryModal
-          id={entryModal}
+          id={entryModalId}
           removeFromFeed={removeFromFeed}
           removeModal={removeEntryModal}
-          updateFeed={updateFeed}
+          updateFeedEntry={updateFeedEntry}
           userTags={userTags}
         />
       ) : null}

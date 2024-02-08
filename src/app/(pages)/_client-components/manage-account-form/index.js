@@ -12,10 +12,16 @@ import z from "zod";
 import { useEffect, useRef, useState } from "react";
 
 /// constants ///
-// debounce duration for checking username availability //
+/**
+ * Debounce duration for checking username availability, in ms.
+ */
 const DEBOUNCE_DURATION = 200;
 
 /// main component ///
+/**
+ * @param {Object} props
+ * @param {{id: string, username: string, firstName: string, lastName: string}} props.userData
+ */
 export default function ManageAccountForm({ userData }) {
   // manage form input values and client side validation //
   // first name
@@ -169,14 +175,14 @@ export default function ManageAccountForm({ userData }) {
   );
 
   // handle enabling/disabling editing //
-  // states
+  // initialize states
   const [edit, setEdit] = useState(false);
   const [editPassword, setEditPassword] = useState(false);
-  // event handlers
+  // handle enable/disable overall edit
   function enableEdit() {
     setEdit(true);
   }
-  function handleCancelEdit() {
+  function cancelEdit() {
     setFirstName(userData.firstName);
     setFirstNameMessage(null);
     setLastName(userData.lastName);
@@ -195,10 +201,11 @@ export default function ManageAccountForm({ userData }) {
     setEditPassword(false);
     setEdit(false);
   }
-  function enablePasswordChange() {
+  // handle enable/disable password edit
+  function enablePasswordEdit() {
     setEditPassword(true);
   }
-  function cancelPasswordChange() {
+  function cancelPasswordEdit() {
     setNewPassword("");
     setNewPwdMessage(null);
     setConfirmNewPwd("");
@@ -218,9 +225,9 @@ export default function ManageAccountForm({ userData }) {
     setUsernameInfo(!usernameInfo);
   }
 
-  // handle submit //
-  const manageAccountFormRef = useRef(null);
+  // submit changes //
   const [submissionState, setSubmissionState] = useState(null);
+  const manageAccountFormRef = useRef(null);
   async function handleSaveChanges(e) {
     e.preventDefault();
     setSubmissionState("pending");
@@ -230,7 +237,7 @@ export default function ManageAccountForm({ userData }) {
     setSubmissionState(newState);
   }
 
-  // handle status modal //
+  // handle account-update-status modal //
   const statusModalRef = useRef(null);
   // show when rendered
   useEffect(function openModal() {
@@ -239,18 +246,20 @@ export default function ManageAccountForm({ userData }) {
       statusModalRef.current.showModal();
     }
   });
-  // define handlers
+  // prevent closing on cancel
   function handleCancel(e) {
     e.preventDefault();
   }
   function handleEsc(e) {
     if (e.key === "Escape") e.preventDefault();
   }
+  // handle going back to manage-account on success
   function handleBackToManageAccount() {
     setSubmissionState(null);
-    handleCancelEdit();
+    cancelEdit();
     statusModalRef.current.close();
   }
+  // handle retry on error
   function handleRetry() {
     setSubmissionState(null);
     setNewPassword("");
@@ -262,6 +271,7 @@ export default function ManageAccountForm({ userData }) {
     statusModalRef.current.close();
   }
 
+  // render //
   return (
     <>
       <form ref={manageAccountFormRef}>
@@ -409,7 +419,7 @@ export default function ManageAccountForm({ userData }) {
                       : styles.enablePwdEditBtn
                   }`}
                   onClick={
-                    editPassword ? cancelPasswordChange : enablePasswordChange
+                    editPassword ? cancelPasswordEdit : enablePasswordEdit
                   }
                   type="button"
                 >
@@ -501,7 +511,7 @@ export default function ManageAccountForm({ userData }) {
           <div className={styles.formBtns}>
             <button
               className={`${styles.secondaryBtn} ${styles.cancelBtn}`}
-              onClick={handleCancelEdit}
+              onClick={cancelEdit}
               type="button"
             >
               Cancel

@@ -7,17 +7,37 @@ import styles from "./index.module.css";
 import { useState } from "react";
 
 /// main component ///
-export default function NewEntryForms({ user, userTags }) {
+/**
+ * @param {Object} props
+ * @param {string} props.userId
+ * @param {Array.<{id: string, name: string}>} props.userTags
+ */
+export default function NewEntryForms({ userId, userTags }) {
+  // document states //
+  /**
+   * @typedef {"text" | "imageVideo"} formShownType Indicates which new-entry form is shown.
+   */
+  /**
+   * @typedef {React.Dispatch<"text" | "imageVideo">} setFormShownType Updates which new-entry form is shown.
+   */
+
+  // initialize states //
+  /**
+   * @type {[formShownType, setFormShownType]}
+   */
   const [formShown, setFormShown] = useState("text");
 
+  // handle showing new text entry form //
   function showTextForm() {
     setFormShown("text");
   }
 
+  // handle showing new image/video entry form //
   function showImageVideoForm() {
     setFormShown("imageVideo");
   }
 
+  // render //
   return (
     <div className={styles.component}>
       <menu className={styles.tabs}>
@@ -41,10 +61,10 @@ export default function NewEntryForms({ user, userTags }) {
         </button>
       </menu>
       <section className={styles.form} hidden={formShown !== "text"}>
-        <NewTextEntry user={user} userTags={userTags} />
+        <NewTextEntry userId={userId} userTags={userTags} />
       </section>
       <section className={styles.form} hidden={formShown !== "imageVideo"}>
-        <NewImageVideoEntry user={user} userTags={userTags} />
+        <NewImageVideoEntry userId={userId} userTags={userTags} />
       </section>
     </div>
   );

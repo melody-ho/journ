@@ -5,14 +5,22 @@ import { revalidatePath } from "next/cache";
 import sequelize from "@/database/sequelize";
 
 /// private ///
+/**
+ * Maximum character length for tags.
+ */
 const MAX_TAG_LENGTH = 50;
 
 /// main ///
+/**
+ * Adds text entry to database given userId, content, and tagNames.
+ * @param {FormData} formData includes userId, content, and tagNames
+ * @returns {Promise<"empty" | "error" | "success">} "empty" if attempted empty content, "error" if failed to add, "success" if added successfully
+ */
 export default async function addTextEntry(formData) {
   // get data
-  const content = formData.get("text");
-  const userId = formData.get("user");
-  const tagNames = JSON.parse(formData.get("tags"));
+  const userId = formData.get("userId");
+  const content = formData.get("content");
+  const tagNames = JSON.parse(formData.get("tagNames"));
   // check for empty input
   if (content === "") return "empty";
   try {

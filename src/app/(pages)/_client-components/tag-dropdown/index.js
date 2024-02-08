@@ -6,12 +6,22 @@ import { v4 as uuidv4 } from "uuid";
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 
 /// constants ///
-// transition duration for closing dropdown //
+/**
+ * Transition duration for closing dropdown, in ms.
+ */
 const DROPDOWN_CLOSE_DURATION = 200;
-// maximum character length for tags //
+/**
+ * Maximum character length for tags.
+ */
 const MAX_TAG_LENGTH = 50;
 
-/// children components ///
+/// helper components ///
+/**
+ * @param {Object} props
+ * @param {string} props.alt alternative text for the icon
+ * @param {string} props.dropdownId id for the dropdown menu it belongs to
+ * @param {string} props.imageName name of the icon in public directory
+ */
 function Icon({ alt, dropdownId, imageName }) {
   return (
     <picture>
@@ -25,36 +35,127 @@ function Icon({ alt, dropdownId, imageName }) {
 }
 
 /// main component ///
+/**
+ * Confirms reset of tag dropdown.
+ * @callback confirmResetType
+ * @returns {void}
+ */
+/**
+ * Reports tag names.
+ * @callback passEntryTagNamesType
+ * @param {Array.<string>} tagNames
+ * @returns {void}
+ */
+/**
+ * @param {Object} props
+ * @param {?confirmResetType} props.confirmReset only required if using reset prop
+ * @param {string} props.instructions instructions to label dropdown with
+ * @param {passEntryTagNamesType} props.passEntryTagNames
+ * @param {?Array.<string>} props.preSelectedTagNames optional, null if omitted
+ * @param {boolean} props.readOnly optional, false if ommitted
+ * @param {boolean} props.reset optional, false if omitted
+ * @param {Array.<{id: string, name: string}>} props.userTags
+ */
 export default function TagDropdown({
   confirmReset = null,
-  instruction,
-  passEntryTags,
-  preSelectedTags = null,
+  instructions,
+  passEntryTagNames,
+  preSelectedTagNames = null,
   readOnly = false,
   reset = false,
   userTags,
 }) {
-  // initialize states and refs //
-  // states
+  // document states //
+  /**
+   * @typedef {boolean | "animate out"} dropdownType Indicates whether dropdown is collapsed, expanded, or animating out.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean | "animate out"} setDropdownType Updates dropdown display state.
+   */
+  /**
+   * @typedef {Array.<string>} entryTagNamesType Names of tags to attach.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<string>>} setEntryTagNamesType Updates names of tags to attach.
+   */
+  /**
+   * @typedef {Array.<string>} matchedTagNamesType Names of tags matching search.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<string>>} setMatchedTagNamesType Updates names of tags matching search.
+   */
+  /**
+   * @typedef {Array.<string>} newTagNamesType Names of tags to create and attach.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<string>>} setNewTagNamesType Updates names of tags to create and attach.
+   */
+  /**
+   * @typedef {?{prev: Array.<string>, curr: Array.<string>}} preSelectedTagNamesTrackerType Contains previous and current pre-selected tag names. null if pre-selected tags are not applicable.
+   */
+  /**
+   * @typedef {React.DispatchWithAction<{newPreSelectedTagNames: Array.<string>}>} dispatchPreSelectedTagNamesTrackerType Updates pre-selected tag names in tracker.
+   */
+  /**
+   * @typedef {Array.<string>} selectedTagNamesType Names of existing user tags to attach.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<string>>} setSelectedTagNamesType Updates names of existing user tags to attach.
+   */
+  /**
+   * @typedef {Array.<string>} unselectedMatchedTagNamesType Names of tags matching search that are not yet selected.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<string>>} setUnselectedMatchedTagNamesType Updates names of tags matching search that are not yet selected.
+   */
+
+  // initialize states //
+  /**
+   * @type {[dropdownType, setDropdownType]}
+   */
   const [dropdown, setDropdown] = useState(false);
-  const [entryTags, setEntryTags] = useState([]);
-  const [filteredMatchedTags, setFilteredMatchedTags] = useState([]);
-  const [matchedTags, setMatchedTags] = useState([]);
-  const [newTags, setNewTags] = useState([]);
-  const [preSelected, dispatchPreSelected] = useReducer(
-    preSelectedReducer,
-    preSelectedTags !== null ? { prev: [], curr: [...preSelectedTags] } : null,
+  /**
+   * @type {[entryTagNamesType, setEntryTagNamesType]}
+   */
+  const [entryTagNames, setEntryTagNames] = useState([]);
+  /**
+   * @type {[matchedTagNamesType, setMatchedTagNamesType]}
+   */
+  const [matchedTagNames, setMatchedTagNames] = useState([]);
+  /**
+   * @type {[newTagNamesType, setNewTagNamesType]}
+   */
+  const [newTagNames, setNewTagNames] = useState([]);
+  /**
+   * @type {[selectedTagNamesType, setSelectedTagNamesType]}
+   */
+  const [selectedTagNames, setSelectedTagNames] = useState([]);
+  /**
+   * @type {[unselectedMatchedTagNamesType, setUnselectedMatchedTagNamesType]}
+   */
+  const [unselectedMatchedTagNames, setUnselectedMatchedTagNames] = useState(
+    [],
   );
-  const [selectedTags, setSelectedTags] = useState([]);
-  // refs
+
+  // initialize refs //
   const dropdownId = useRef(uuidv4());
   const dropdownRef = useRef(null);
   const tagSearchRef = useRef(null);
 
-  // define reducers //
-  function preSelectedReducer(preSelected, action) {
-    const prev = [...preSelected.curr];
-    const curr = [...action.newPreSelected];
+  // initialize reducers //
+  /**
+   * @type {[preSelectedTagNamesTrackerType, dispatchPreSelectedTagNamesTrackerType]}
+   */
+  const [preSelectedTagNamesTracker, dispatchPreSelectedTagNamesTracker] =
+    useReducer(
+      preSelectedTagNamesReducer,
+      preSelectedTagNames !== null
+        ? { prev: [], curr: [...preSelectedTagNames] }
+        : null,
+    );
+  function preSelectedTagNamesReducer(preSelectedTagNamesTracker, action) {
+    const prev = [...preSelectedTagNamesTracker.curr];
+    const curr = [...action.newPreSelectedTagNames];
     return { prev, curr };
   }
 
@@ -63,10 +164,10 @@ export default function TagDropdown({
     function resetDropdown() {
       if (reset) {
         setDropdown(false);
-        setEntryTags([]);
-        setMatchedTags([]);
-        setNewTags([]);
-        setSelectedTags([]);
+        setEntryTagNames([]);
+        setMatchedTagNames([]);
+        setNewTagNames([]);
+        setSelectedTagNames([]);
         confirmReset();
       }
     },
@@ -75,91 +176,93 @@ export default function TagDropdown({
 
   // initialize matched tags //
   useEffect(
-    function updateUserTags() {
+    function initializeMatchedTagNames() {
       if (userTags !== null) {
         const userTagNames = userTags.map((userTag) => userTag.name);
-        setMatchedTags(userTagNames);
+        setMatchedTagNames(userTagNames);
       }
     },
     [userTags],
   );
 
-  // update filtered matched tags when matched tags or selected tags change //
+  // update unselected matched tags when matched tags or selected tags change //
   useEffect(
-    function filterMatchedTags() {
-      const filtered = matchedTags.filter(
-        (matchedTag) => !selectedTags.includes(matchedTag),
+    function filterMatchedTagNames() {
+      const filtered = matchedTagNames.filter(
+        (matchedTagName) => !selectedTagNames.includes(matchedTagName),
       );
-      setFilteredMatchedTags(filtered);
+      setUnselectedMatchedTagNames(filtered);
     },
-    [matchedTags, selectedTags],
+    [matchedTagNames, selectedTagNames],
   );
 
   // pass entry tags when changed //
   useEffect(
-    function passUpdatedTags() {
-      passEntryTags([...entryTags]);
+    function passUpdatedEntryTagNames() {
+      passEntryTagNames([...entryTagNames]);
     },
-    [entryTags, passEntryTags],
+    [entryTagNames, passEntryTagNames],
   );
 
   // update new and selected tags when entry tags or user tags change //
   useEffect(
-    function updateNewAndSelected() {
+    function updateNewAndSelectedTagNames() {
       const userTagsNames = userTags.map((userTag) => userTag.name);
       const updatedNew = [];
       const updatedSelected = [];
-      for (const entryTag of entryTags) {
-        if (userTagsNames.includes(entryTag)) {
-          updatedSelected.push(entryTag);
+      for (const entryTagName of entryTagNames) {
+        if (userTagsNames.includes(entryTagName)) {
+          updatedSelected.push(entryTagName);
         } else {
-          updatedNew.push(entryTag);
+          updatedNew.push(entryTagName);
         }
       }
-      setNewTags(updatedNew);
-      setSelectedTags(updatedSelected);
+      setNewTagNames(updatedNew);
+      setSelectedTagNames(updatedSelected);
     },
-    [entryTags, userTags],
+    [entryTagNames, userTags],
   );
 
-  // update entry tags when preselected tags change //
+  // update entry tags when pre-selected tags change //
   useEffect(
-    function updatePreSelectedTags() {
-      if (preSelectedTags !== null) {
-        const newPreSelected = [...preSelectedTags];
-        dispatchPreSelected({ newPreSelected });
+    function updatePreSelectedTagNames() {
+      if (preSelectedTagNames !== null) {
+        const newPreSelectedTagNames = [...preSelectedTagNames];
+        dispatchPreSelectedTagNamesTracker({ newPreSelectedTagNames });
       }
     },
-    [dispatchPreSelected, preSelectedTags],
+    [dispatchPreSelectedTagNamesTracker, preSelectedTagNames],
   );
 
   useEffect(
-    function applyNewPreSelected() {
-      if (preSelected !== null) {
-        const added = preSelected.curr.filter(
-          (tag) => !preSelected.prev.includes(tag),
+    function applyNewPreSelectedTagNames() {
+      if (preSelectedTagNamesTracker !== null) {
+        const added = preSelectedTagNamesTracker.curr.filter(
+          (tagName) => !preSelectedTagNamesTracker.prev.includes(tagName),
         );
-        const removed = preSelected.prev.filter(
-          (tag) => !preSelected.curr.includes(tag),
+        const removed = preSelectedTagNamesTracker.prev.filter(
+          (tagName) => !preSelectedTagNamesTracker.curr.includes(tagName),
         );
         if (added.length > 0) {
-          added.forEach((tag) => {
-            setEntryTags((entryTags) => {
-              if (!entryTags.includes(tag)) {
-                return [...entryTags, tag].sort();
+          added.forEach((tagName) => {
+            setEntryTagNames((entryTagNames) => {
+              if (!entryTagNames.includes(tagName)) {
+                return [...entryTagNames, tagName].sort();
               } else {
-                return [...entryTags];
+                return [...entryTagNames];
               }
             });
           });
         } else if (removed.length > 0) {
-          setEntryTags((entryTags) =>
-            entryTags.filter((entryTag) => !removed.includes(entryTag)),
+          setEntryTagNames((entryTagNames) =>
+            entryTagNames.filter(
+              (entryTagName) => !removed.includes(entryTagName),
+            ),
           );
         }
       }
     },
-    [preSelected],
+    [preSelectedTagNamesTracker],
   );
 
   // add/remove event listener for clicking out when dropdown is shown/hidden //
@@ -180,19 +283,20 @@ export default function TagDropdown({
     [dropdown, handleClickOut],
   );
 
-  // define event handlers //
+  // handle toggling dropdown //
   function toggleDropdown() {
     if (dropdown === false) {
       setDropdown(true);
       const userTagNames = userTags
         ? userTags.map((userTag) => userTag.name)
         : [];
-      setMatchedTags(userTagNames);
+      setMatchedTagNames(userTagNames);
     } else if (dropdown === true) {
       closeDropdown();
     }
   }
 
+  // handle closing dropdown //
   function closeDropdown() {
     setDropdown("animate out");
     setTimeout(function removeDropdown() {
@@ -200,14 +304,15 @@ export default function TagDropdown({
     }, DROPDOWN_CLOSE_DURATION);
   }
 
-  function updateMatchedTags(e) {
+  // handle change in search input //
+  function updateMatchedTagNames(e) {
     const searchValue = e.target.value
       .split(" ")
       .join("")
       .slice(0, MAX_TAG_LENGTH);
     tagSearchRef.current.value = searchValue;
     const regex = new RegExp(searchValue, "i");
-    const newMatchedTags = userTags.reduce(function filterAndGetName(
+    const newMatchedTagNames = userTags.reduce(function filterAndGetName(
       result,
       userTag,
     ) {
@@ -216,33 +321,37 @@ export default function TagDropdown({
       }
       return result;
     }, []);
-    setMatchedTags(newMatchedTags);
+    setMatchedTagNames(newMatchedTagNames);
   }
 
-  function addSelectedTag(e) {
-    const updatedEntryTags = [...entryTags, e.target.value];
-    updatedEntryTags.sort();
-    setEntryTags(updatedEntryTags);
+  // handle selecting a tag //
+  function addSelectedTagName(e) {
+    const updatedEntryTagNames = [...entryTagNames, e.target.value];
+    updatedEntryTagNames.sort();
+    setEntryTagNames(updatedEntryTagNames);
   }
 
-  function addNewTag(tagName) {
-    const updatedEntryTags = [...entryTags, tagName];
-    updatedEntryTags.sort();
-    setEntryTags(updatedEntryTags);
+  // handle adding a new tag //
+  function addNewTagName(tagName) {
+    const updatedEntryTagNames = [...entryTagNames, tagName];
+    updatedEntryTagNames.sort();
+    setEntryTagNames(updatedEntryTagNames);
     tagSearchRef.current.value = "";
     const userTagNames = userTags
       ? userTags.map((userTag) => userTag.name)
       : [];
-    setMatchedTags(userTagNames);
+    setMatchedTagNames(userTagNames);
   }
 
-  function removeTag(e) {
-    const updatedEntryTags = entryTags.filter(
-      (entryTag) => entryTag !== e.target.value,
+  // handle unselecting a tag //
+  function removeTagName(e) {
+    const updatedEntryTagNames = entryTagNames.filter(
+      (entryTagName) => entryTagName !== e.target.value,
     );
-    setEntryTags(updatedEntryTags);
+    setEntryTagNames(updatedEntryTagNames);
   }
 
+  // render //
   return (
     <>
       <fieldset className={styles.fieldset}>
@@ -262,11 +371,11 @@ export default function TagDropdown({
               onClick={toggleDropdown}
               type="button"
             >
-              <span className={styles.visuallyHidden}>{instruction}</span>
+              <span className={styles.visuallyHidden}>{instructions}</span>
               <span
                 className={styles.countIndicator}
                 dropdown={dropdownId.current}
-              >{`${entryTags.length} tag(s) selected `}</span>
+              >{`${entryTagNames.length} tag(s) selected `}</span>
               <div
                 className={`${styles.dropdownIconWrapper} ${
                   dropdown ? styles.reverse : null
@@ -305,7 +414,7 @@ export default function TagDropdown({
                         className={styles.searchInput}
                         dropdown={dropdownId.current}
                         id="searchTags"
-                        onChange={updateMatchedTags}
+                        onChange={updateMatchedTagNames}
                         placeholder="Search tags..."
                         ref={tagSearchRef}
                         type="text"
@@ -313,13 +422,15 @@ export default function TagDropdown({
                     </div>
                     {tagSearchRef.current &&
                     tagSearchRef.current.value &&
-                    !matchedTags.includes(tagSearchRef.current.value) &&
-                    !newTags.includes(tagSearchRef.current.value) ? (
+                    !matchedTagNames.includes(tagSearchRef.current.value) &&
+                    !newTagNames.includes(tagSearchRef.current.value) ? (
                       <button
                         aria-live="polite"
                         className={styles.addNewBtn}
                         dropdown={dropdownId.current}
-                        onClick={() => addNewTag(tagSearchRef.current.value)}
+                        onClick={() =>
+                          addNewTagName(tagSearchRef.current.value)
+                        }
                         type="button"
                       >
                         <span
@@ -347,23 +458,23 @@ export default function TagDropdown({
                       >
                         new
                       </p>
-                      {newTags.length !== 0 ? (
+                      {newTagNames.length !== 0 ? (
                         <ul dropdown={dropdownId.current}>
-                          {newTags.map((newTag) => (
-                            <li dropdown={dropdownId.current} key={newTag}>
+                          {newTagNames.map((newTagName) => (
+                            <li dropdown={dropdownId.current} key={newTagName}>
                               <label
                                 className={styles.checkboxItem}
                                 dropdown={dropdownId.current}
-                                htmlFor={newTag}
+                                htmlFor={newTagName}
                               >
                                 <input
                                   checked
                                   className={styles.hiddenCheckbox}
                                   dropdown={dropdownId.current}
-                                  id={newTag}
-                                  onChange={removeTag}
+                                  id={newTagName}
+                                  onChange={removeTagName}
                                   type="checkbox"
-                                  value={newTag}
+                                  value={newTagName}
                                 />
                                 <div className={styles.checkboxIcon}>
                                   <Icon
@@ -372,7 +483,7 @@ export default function TagDropdown({
                                     imageName="checked-icon"
                                   />
                                 </div>
-                                {newTag}
+                                {newTagName}
                               </label>
                             </li>
                           ))}
@@ -398,27 +509,27 @@ export default function TagDropdown({
                       >
                         selected
                       </p>
-                      {selectedTags.length !== 0 ? (
+                      {selectedTagNames.length !== 0 ? (
                         <ul dropdown={dropdownId.current}>
-                          {selectedTags.map((selectedTag) => {
+                          {selectedTagNames.map((selectedTagName) => {
                             return (
                               <li
                                 dropdown={dropdownId.current}
-                                key={selectedTag}
+                                key={selectedTagName}
                               >
                                 <label
                                   className={styles.checkboxItem}
                                   dropdown={dropdownId.current}
-                                  htmlFor={selectedTag}
+                                  htmlFor={selectedTagName}
                                 >
                                   <input
                                     checked
                                     className={styles.hiddenCheckbox}
                                     dropdown={dropdownId.current}
-                                    id={selectedTag}
-                                    onChange={removeTag}
+                                    id={selectedTagName}
+                                    onChange={removeTagName}
                                     type="checkbox"
-                                    value={selectedTag}
+                                    value={selectedTagName}
                                   />
                                   <div className={styles.checkboxIcon}>
                                     <Icon
@@ -427,7 +538,7 @@ export default function TagDropdown({
                                       imageName="checked-icon"
                                     />
                                   </div>
-                                  {selectedTag}
+                                  {selectedTagName}
                                 </label>
                               </li>
                             );
@@ -454,26 +565,26 @@ export default function TagDropdown({
                       >
                         more
                       </p>
-                      {filteredMatchedTags.length !== 0 ? (
+                      {unselectedMatchedTagNames.length !== 0 ? (
                         <ul dropdown={dropdownId.current}>
-                          {filteredMatchedTags.map((matchedTag) => {
+                          {unselectedMatchedTagNames.map((matchedTagName) => {
                             return (
                               <li
                                 dropdown={dropdownId.current}
-                                key={matchedTag}
+                                key={matchedTagName}
                               >
                                 <label
                                   className={styles.checkboxItem}
                                   dropdown={dropdownId.current}
-                                  htmlFor={matchedTag}
+                                  htmlFor={matchedTagName}
                                 >
                                   <input
                                     className={styles.hiddenCheckbox}
                                     dropdown={dropdownId.current}
-                                    id={matchedTag}
-                                    onChange={addSelectedTag}
+                                    id={matchedTagName}
+                                    onChange={addSelectedTagName}
                                     type="checkbox"
-                                    value={matchedTag}
+                                    value={matchedTagName}
                                   />
                                   <div className={styles.checkboxIcon}>
                                     <Icon
@@ -482,7 +593,7 @@ export default function TagDropdown({
                                       imageName="unchecked-icon"
                                     />
                                   </div>
-                                  {matchedTag}
+                                  {matchedTagName}
                                 </label>
                               </li>
                             );

@@ -1,8 +1,10 @@
 "use client";
 
+/// imports ///
 import styles from "./error.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 
+/// main component ///
 export default function Error({ error, reset }) {
   return (
     <div className={styles.component}>

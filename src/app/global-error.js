@@ -1,21 +1,25 @@
 "use client";
 
+/// imports ///
 import "./globals.css";
 import fonts from "./_fonts";
 import styles from "./global-error.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 
+/// metadata ///
 export const metadata = {
   title: "Journ",
   description: "Your journal. Your journey.",
 };
 
+/// fonts ///
 const fontVariables = [];
 for (const font of Object.values(fonts)) {
   fontVariables.push(font.variable);
 }
 const fontVariablesString = fontVariables.join(" ");
 
+/// main component ///
 export default function GlobalError({ error, reset }) {
   return (
     <html className={fontVariablesString} lang="en">

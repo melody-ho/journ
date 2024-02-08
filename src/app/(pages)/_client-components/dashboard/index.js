@@ -10,26 +10,116 @@ import ThemedImage from "@/helper-components/themed-image";
 import { useEffect, useRef, useState } from "react";
 
 /// constants ///
-// transition duration for closing account menu //
+/**
+ * Transition duration for closing account menu, in ms.
+ */
 const ACCOUNT_MENU_CLOSE_DURATION = 300;
 
 /// main component ///
-export default function Dashboard({ user, userTags }) {
-  // states and refs //
-  // states
+/**
+ * @param {Object} props
+ * @param {{id: string, username: string, firstName: string, lastName: string}} props.userData
+ * @param {Array.<{id: string, name: string}>} props.userTags
+ */
+export default function Dashboard({ userData, userTags }) {
+  // document states //
+  /**
+   * @typedef {boolean | "animate-out"} accountMenuType Indicates display state of account menu.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean | "animate-out">} setAccountMenuType Toggles display state of account menu.
+   */
+  /**
+   * @typedef {boolean} feedResetType Triggers feed reset when changed from false to true. Confirms reset when changed from true to false.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setFeedResetType Triggers feed reset by updating from false to true. Confirms reset by updating from true to false.
+   */
+  /**
+   * @typedef {?Date} filterEndDateType End date in filters.
+   */
+  /**
+   * @typedef {React.Dispatch<?Date>} setFilterEndDateType Updates end date in filters.
+   */
+  /**
+   * @typedef {Array.<"text" | "image" | "video">} filterEntryTypesType Types of entries being filtered.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<"text" | "image" | "video">>} setFilterEntryTypesType Updates types of entries being filtered.
+   */
+  /**
+   * @typedef {boolean} filtersLabelType Indicates whether "filters" label is displayed.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setFiltersLabelType Toggles "filters" label.
+   */
+  /**
+   * @typedef {boolean} filtersMenuType Indicates whether filters menu is displayed.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setFiltersMenuType Toggles filters menu.
+   */
+  /**
+   * @typedef {?Date} filterStartDateType Start date in filters.
+   */
+  /**
+   * @typedef {React.Dispatch<?Date>} setFilterStartDateType Updates start date in filters.
+   */
+  /**
+   * @typedef {Array.<string>} filterTagIdsType Ids of tags currently being applied as filters.
+   */
+  /**
+   * @typedef {React.Dispatch<Array.<string>>} setFilterTagIdsType Updates ids of tags to apply as filters.
+   */
+  /**
+   * @typedef {boolean} newEntryLabelType Indicates whether "new entry" label is displayed.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setNewEntryLabelType Toggles "new entry" label.
+   */
+
+  // initialize states //
+  /**
+   * @type {[accountMenuType, setAccountMenuType]}
+   */
   const [accountMenu, setAccountMenu] = useState(false);
+  /**
+   * @type {[feedResetType, setFeedResetType]}
+   */
   const [feedReset, setFeedReset] = useState(false);
+  /**
+   * @type {[filterEndDateType, setFilterEndDateType]}
+   */
+  const [filterEndDate, setFilterEndDate] = useState(null);
+  /**
+   * @type {[filterEntryTypesType, setFilterEntryTypesType]}
+   */
+  const [filterEntryTypes, setFilterEntryTypes] = useState([]);
+  /**
+   * @type {[filtersLabelType, setFiltersLabelType]}
+   */
   const [filtersLabel, setFiltersLabel] = useState(false);
+  /**
+   * @type {[filtersMenuType, setFiltersMenuType]}
+   */
   const [filtersMenu, setFiltersMenu] = useState(false);
+  /**
+   * @type {[filterStartDateType, setFilterStartDateType]}
+   */
+  const [filterStartDate, setFilterStartDate] = useState(null);
+  /**
+   * @type {[filterTagIdsType, setFilterTagIdsType]}
+   */
+  const [filterTagIds, setFilterTagIds] = useState([]);
+  /**
+   * @type {[newEntryLabelType, setNewEntryLabelType]}
+   */
   const [newEntryLabel, setNewEntryLabel] = useState(false);
-  const [selectedEndDate, setSelectedEndDate] = useState(null);
-  const [selectedStartDate, setSelectedStartDate] = useState(null);
-  const [selectedTags, setSelectedTags] = useState([]);
-  const [selectedTypes, setSelectedTypes] = useState([]);
-  // refs
+
+  // initialize refs //
   const filtersModalRef = useRef(null);
 
-  // handlers for opening/closing account menu //
+  // handle opening/closing account menu //
   function toggleAccountMenu() {
     setAccountMenu(!accountMenu);
   }
@@ -40,7 +130,7 @@ export default function Dashboard({ user, userTags }) {
     }, ACCOUNT_MENU_CLOSE_DURATION);
   }
 
-  // handlers for showing/hiding entries menu labels //
+  // handle showing/hiding entries menu labels //
   function showFiltersLabel() {
     setFiltersLabel(true);
   }
@@ -54,7 +144,7 @@ export default function Dashboard({ user, userTags }) {
     setNewEntryLabel(false);
   }
 
-  // handlers for opening/closing filters menu //
+  // handle opening/closing filters menu //
   // open
   function showFiltersMenu() {
     setFiltersMenu(true);
@@ -73,7 +163,7 @@ export default function Dashboard({ user, userTags }) {
     setFiltersMenu(false);
   }
 
-  // helper function for clicking outside popups to close //
+  // assist clicking outside popups to close //
   function preventClose(e) {
     e.stopPropagation(e);
   }
@@ -84,30 +174,41 @@ export default function Dashboard({ user, userTags }) {
       const userTagIds = userTags.map((userTag) => userTag.id);
       let changed = false;
       const filteredSelectedTags = [];
-      for (const selectedTag of selectedTags) {
-        if (userTagIds.includes(selectedTag)) {
-          filteredSelectedTags.push(selectedTag);
+      for (const filterTagId of filterTagIds) {
+        if (userTagIds.includes(filterTagId)) {
+          filteredSelectedTags.push(filterTagId);
         } else {
           changed = true;
         }
       }
       if (changed) {
-        setSelectedTags(filteredSelectedTags);
+        setFilterTagIds(filteredSelectedTags);
         setFeedReset(true);
       }
     },
-    [selectedTags, userTags],
+    [filterTagIds, userTags],
   );
 
-  // function passed to FiltersMenu to apply filters //
-  function applyFilters(data) {
-    setSelectedStartDate(data.get("startDate"));
-    setSelectedEndDate(data.get("endDate"));
-    setSelectedTypes(data.getAll("type"));
-    setSelectedTags(data.getAll("tags"));
+  // handle applying filters selected in form //
+  function applyFilters(filtersFormData) {
+    setFilterStartDate(filtersFormData.get("startDate"));
+    setFilterEndDate(filtersFormData.get("endDate"));
+    setFilterEntryTypes(filtersFormData.getAll("type"));
+    setFilterTagIds(filtersFormData.getAll("tags"));
     setFeedReset(true);
   }
 
+  // trigger feed reset //
+  function triggerFeedReset() {
+    setFeedReset(true);
+  }
+
+  // confirm feed reset //
+  function confirmFeedReset() {
+    setFeedReset(false);
+  }
+
+  // render //
   return (
     <div
       className={styles.page}
@@ -120,7 +221,7 @@ export default function Dashboard({ user, userTags }) {
           <div className={styles.logo}>
             <ThemedImage alt="Journ Logo" imageName="logo" />
           </div>
-          <h1 className={styles.heading}>{`${user.firstName}'s Journ`}</h1>
+          <h1 className={styles.heading}>{`${userData.firstName}'s Journ`}</h1>
         </div>
         <div>
           <button
@@ -212,10 +313,10 @@ export default function Dashboard({ user, userTags }) {
               </button>
               <FiltersMenu
                 applyFilters={applyFilters}
-                previousEndDate={selectedEndDate}
-                previousStartDate={selectedStartDate}
-                previousTags={selectedTags}
-                previousTypes={selectedTypes}
+                previousEndDate={filterEndDate}
+                previousEntryTypes={filterEntryTypes}
+                previousStartDate={filterStartDate}
+                previousTagIds={filterTagIds}
                 userTags={userTags}
               />
             </div>
@@ -225,13 +326,14 @@ export default function Dashboard({ user, userTags }) {
       <main className={styles.main} inert={accountMenu ? "" : null}>
         <section className={styles.entries}>
           <FilteredEntries
+            confirmFeedReset={confirmFeedReset}
             feedReset={feedReset}
-            selectedEndDate={selectedEndDate}
-            selectedStartDate={selectedStartDate}
-            selectedTags={selectedTags}
-            selectedTypes={selectedTypes}
-            setFeedReset={setFeedReset}
-            userId={user.id}
+            filterEndDate={filterEndDate}
+            filterEntryTypes={filterEntryTypes}
+            filterStartDate={filterStartDate}
+            filterTagIds={filterTagIds}
+            triggerFeedReset={triggerFeedReset}
+            userId={userData.id}
             userTags={userTags}
           />
         </section>

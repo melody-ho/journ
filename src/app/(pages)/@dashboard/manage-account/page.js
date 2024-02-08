@@ -1,11 +1,13 @@
-import getUser from "@/helper-functions/get-user";
+/// imports ///
+import getUserData from "@/helper-functions/get-user-data";
 import Link from "next/link";
 import ManageAccountForm from "@/client-components/manage-account-form";
 import styles from "./page.module.css";
 import ThemedImage from "@/helper-components/themed-image";
 
+/// main component ///
 export default async function ManageAccount() {
-  const userData = await getUser();
+  const userData = await getUserData();
 
   return (
     <div className={styles.page}>
@@ -16,7 +18,7 @@ export default async function ManageAccount() {
       </header>
       <main className={styles.main}>
         <h1 className={styles.heading}>Manage Account</h1>
-        <ManageAccountForm userData={userData.dataValues} />
+        <ManageAccountForm userData={userData} />
       </main>
     </div>
   );

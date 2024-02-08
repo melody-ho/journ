@@ -1,12 +1,16 @@
 /// imports ///
 import getUserId from "./get-user-id";
-import { headers } from "next/headers";
 import sequelize from "@/database/sequelize";
 
 /// main ///
-export default async function getUser() {
-  const userId = await getUserId(headers());
+/**
+ * Retrieves user data.
+ * @returns {Promise<{id: string, username: string, firstName: string, lastName: string}>}
+ */
+export default async function getUserData() {
+  const userId = await getUserId();
   return await sequelize.models.User.findByPk(userId, {
     attributes: { exclude: ["password", "createdAt", "updatedAt"] },
+    raw: true,
   });
 }

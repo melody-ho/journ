@@ -9,16 +9,50 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
 /// main component ///
-export default function NewTextEntry({ user, userTags }) {
+/**
+ * @param {Object} props
+ * @param {string} props.userId
+ * @param {Array.<{id: string, name: string}>} props.userTags
+ */
+export default function NewTextEntry({ userId, userTags }) {
   // initialize router //
   const router = useRouter();
 
-  // initialize states and refs //
-  // states
+  // document states //
+  /**
+   * @typedef {boolean} resetTagDropdownType Indicates whether tag dropdown is currently being reset.
+   */
+  /**
+   * @typedef {React.Dispatch<boolean>} setResetTagDropdownType Updates whether tag dropdown is currently being reset.
+   */
+  /**
+   * @typedef {null | "adding" | "empty" | "error" | "success"} submitStatusType Submission status of new text entry, null when no submission attempted or previous status acknowledged.
+   */
+  /**
+   * @typedef {React.Dispatch<null | "adding" | "empty" | "error" | "success">} setSubmitStatusType Reports submission status of new text entry, null when no submission attempted or previous status acknowledged.
+   */
+  /**
+   * @typedef {string} textInputValueType
+   */
+  /**
+   * @typedef {React.Dispatch<string>} setTextInputValueType
+   */
+
+  // initialize states //
+  /**
+   * @type {[resetTagDropdownType, setResetTagDropdownType]}
+   */
   const [resetTagDropdown, setResetTagDropdown] = useState(false);
+  /**
+   * @type {[submitStatusType, setSubmitStatusType]}
+   */
   const [submitStatus, setSubmitStatus] = useState(null);
+  /**
+   * @type {[textInputValueType, setTextInputValueType]}
+   */
   const [textInputValue, setTextInputValue] = useState("");
-  // refs
+
+  // initialize refs //
   const textFormRef = useRef(null);
   const textInputRef = useRef(null);
 
@@ -33,9 +67,9 @@ export default function NewTextEntry({ user, userTags }) {
   }
 
   // update selected tags when changed in tag dropdown //
-  let tags = [];
-  function getEntryTags(entryTags) {
-    tags = [...entryTags];
+  let tagNames = [];
+  function getEntryTagNames(entryTagNames) {
+    tagNames = [...entryTagNames];
   }
 
   // add new text entry when form is submitted//
@@ -43,8 +77,8 @@ export default function NewTextEntry({ user, userTags }) {
     setSubmitStatus("adding");
     e.preventDefault();
     const formData = new FormData(textFormRef.current);
-    formData.append("user", user);
-    formData.append("tags", JSON.stringify(tags));
+    formData.append("userId", userId);
+    formData.append("tagNames", JSON.stringify(tagNames));
     const status = await addTextEntry(formData);
     router.refresh();
     setSubmitStatus(status);
@@ -63,18 +97,19 @@ export default function NewTextEntry({ user, userTags }) {
     setSubmitStatus(null);
   }
 
+  // render //
   return (
     <>
       <form ref={textFormRef}>
         <h2 className={styles.visuallyHidden}>New Text Entry</h2>
         <div className={styles.textField}>
-          <label className={styles.textFieldLabel} htmlFor="text">
+          <label className={styles.textFieldLabel} htmlFor="content">
             Write something:
           </label>
           <textarea
             className={styles.textFieldInput}
-            id="text"
-            name="text"
+            id="content"
+            name="content"
             onChange={updateTextInputValue}
             ref={textInputRef}
             required
@@ -86,7 +121,7 @@ export default function NewTextEntry({ user, userTags }) {
           <TagDropdown
             confirmReset={confirmTagDropdownReset}
             instruction="Add tags"
-            passEntryTags={getEntryTags}
+            passEntryTagNames={getEntryTagNames}
             reset={resetTagDropdown}
             userTags={userTags}
           />
