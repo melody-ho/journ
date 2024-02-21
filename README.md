@@ -2,7 +2,7 @@
 
 # Journ: A Digital Scrapbooking Web App
 
-**[Journ](https://journ.melodyho.dev)** is a web app that enables users to document moments using images, videos, and text. Users can attach custom tags to their entries, creating a highly dynamic scrapbook that can be filtered for different views.
+**[Journ](https://journ.melodyho.dev)** is a digital scrapbooking web app that enables users to document moments using images, videos, and text. Users can attach custom tags to their entries, creating a highly dynamic scrapbook that can be filtered for different views.
 
 **Demo:** <https://journ.melodyho.dev>
 
@@ -10,7 +10,7 @@
 
 ## Making Of
 
-**Technology:** React, Next.js, Sequelize, SQL, AWS S3
+**Technology:** CSS Modules, React, Next.js, Sequelize, AWS S3
 
 ### Authenticating User
 
