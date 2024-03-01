@@ -6,7 +6,8 @@ import fonts from "./_fonts";
 /// metadata ///
 export const metadata = {
   title: "Journ",
-  description: "Your journal. Your journey.",
+  description:
+    "A dynamic digital scrapbook serving as your personal journal, capturing your unique journey. Add custom tags to entries and effortlessly filter for different views. Crafted with ♡ by Melody Ho.",
 };
 
 /// fonts ///
