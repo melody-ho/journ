@@ -137,14 +137,11 @@ export default function EntryModal({
   const modalWrapperRef = useRef(null);
 
   // show modal when rendered //
-  useEffect(
-    function show() {
-      if (modalRef.current) {
-        modalRef.current.showModal();
-      }
-    },
-    [modalRef],
-  );
+  useEffect(function show() {
+    if (modalRef.current) {
+      modalRef.current.showModal();
+    }
+  }, []);
 
   // get entry data //
   useEffect(

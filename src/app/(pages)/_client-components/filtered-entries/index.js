@@ -286,7 +286,6 @@ export default function FilteredEntries({
       loadError,
       loading,
       nextPage,
-      observerTargetRef,
       userId,
     ],
   );

@@ -28,15 +28,12 @@ export default function NewEntryStatusModal({ resetForm, retry, status }) {
   const modalRef = useRef(null);
 
   // show modal when rendered //
-  useEffect(
-    function openModal() {
-      if (modalRef.current) {
-        modalRef.current.close();
-        modalRef.current.showModal();
-      }
-    },
-    [modalRef],
-  );
+  useEffect(function openModal() {
+    if (modalRef.current) {
+      modalRef.current.close();
+      modalRef.current.showModal();
+    }
+  }, []);
 
   // prevent closing modal by cancelling //
   function handleCancel(e) {

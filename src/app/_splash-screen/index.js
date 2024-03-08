@@ -41,19 +41,16 @@ export default function SplashScreen({ children }) {
   const splashAnimationRef = useRef(null);
 
   // fade out and remove splash screen after fixed duration //
-  useEffect(
-    function endSplash() {
-      if (splashAnimationRef) {
-        setTimeout(function fadeoutAnimation() {
-          splashAnimationRef.current.classList.add(styles.splashFadeout);
-          setTimeout(function removeAnimation() {
-            setShow(false);
-          }, FADEOUT_DURATION);
-        }, SPLASH_DURATION);
-      }
-    },
-    [splashAnimationRef],
-  );
+  useEffect(function endSplash() {
+    if (splashAnimationRef) {
+      setTimeout(function fadeoutAnimation() {
+        splashAnimationRef.current.classList.add(styles.splashFadeout);
+        setTimeout(function removeAnimation() {
+          setShow(false);
+        }, FADEOUT_DURATION);
+      }, SPLASH_DURATION);
+    }
+  }, []);
 
   // render //
   return show ? (
