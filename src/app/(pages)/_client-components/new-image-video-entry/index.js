@@ -398,9 +398,9 @@ export default function NewImageVideoEntry({ userId, userTags }) {
   }
 
   // handle files added through file input //
-  function handleFileInput(e) {
+  async function handleFileInput(e) {
     const files = e.target.files;
-    addNewFiles(files);
+    await addNewFiles(files);
     e.target.value = "";
   }
 
