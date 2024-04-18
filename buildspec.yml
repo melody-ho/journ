@@ -26,6 +26,7 @@ artifacts:
   files:
     - "README.md"
     - "package.json"
+    - "package-lock.json"
     - ".next/**/*"
     - "public/**/*"
     - ".platform/nginx/conf.d/proxy.conf"
